@@ -5,7 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { getAuth, Auth } from 'firebase/auth';
 
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps, getApp } from "firebase/app";
 import { Analytics, getAnalytics } from "firebase/analytics";
 import { Firestore, getFirestore } from 'firebase/firestore';
 import { getMessaging } from "firebase/messaging";
@@ -28,7 +28,7 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 const analytics = getAnalytics(app);
 const auth  = getAuth(app);
 const firestore = getFirestore();
@@ -61,7 +61,7 @@ root.render(
   </FirebaseContext.Provider>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+console.log('index js');
+
+
+

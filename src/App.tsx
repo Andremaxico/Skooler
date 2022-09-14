@@ -1,12 +1,19 @@
 import React, { useContext, useState } from 'react';
-import './App.css';
+//import './nullstyle.scss';
+import './App.less';
+
 import Header from './components/Header';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Login from './components/Login';
-import 'antd/dist/antd.css'; 
 import Chat from './components/Chat';
+
 import { UserType } from './utils/types';
+
+import { Provider } from 'react-redux';
+
 import { Content, Footer } from 'antd/lib/layout/layout';
+import { store } from './Redux/store';
+import Account from './components/Account';
 
 
 const App = () => {
@@ -32,6 +39,7 @@ const App = () => {
           <Routes>
             <Route path='/login' element={<Login setAccountData={setAccountData} />}/>
             <Route path='/chat' element={<Chat />}/>
+            <Route path='/account' element={<Account />} />
           </Routes>
         </div>
       </Content>
@@ -43,7 +51,9 @@ const App = () => {
 const AppContainer = () => {
   return (
     <BrowserRouter>
-      <App />
+      <Provider store={store}>
+        <App />
+      </Provider>
     </BrowserRouter>
   )
 }
