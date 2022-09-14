@@ -1,0 +1,15 @@
+@import '../../../global-styles';
+
+.AccountInfo {
+	display: flex;
+	align-items: center;
+	.avatar {
+		margin-right: 8px;
+	}
+	.name {
+		margin: 0 4px 0 0;
+		color: #fff;
+	}
+}
+
+.loginLink {}

@@ -1,0 +1,30 @@
+@import '../../../../global-styles';
+
+.Message {
+	@include row-align;
+	margin-bottom: 12px;
+	width: 100%;
+	&:last-child {
+		margin-bottom: 0;
+	}
+	&._my {
+		justify-content: flex-end;
+	}
+	.avatar {
+		margin-right: 8px;
+	}
+	.messageBody {
+		padding: 5px 7px;
+		border-radius: 5px;
+		background-color: $mainCol;
+
+		.username {
+			@include smallText;
+			color: rgba($color: #fff, $alpha: 0.6)
+		}
+		.text {
+			@include text;
+			color: #fff;
+		}
+	}
+}

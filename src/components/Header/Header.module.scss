@@ -1,0 +1,10 @@
+//@import '../../global-styles';
+
+.AppHeader {
+	display:  flex;
+	justify-content: space-between;
+	.logo {}
+	.menu {
+		min-width: 600px;
+	}
+}
