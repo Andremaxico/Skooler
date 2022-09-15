@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useMemo, useRef, useState } from 'react'
-import { Controller, useForm } from 'react-hook-form';
+import { Control, Controller, useForm } from 'react-hook-form';
 import { Button, Col, DatePicker, Form, Input, Row, Select, Spin } from 'antd';
 import type { SelectProps, DefaultOptionType } from 'antd/es/select';
 import { schoolsAPI } from '../../../api/schoolsApi';
@@ -8,20 +8,23 @@ import { debounce } from 'lodash';
 import classes from './AccountForm.module.scss';
 import { searchSchool as searchSchools } from '../../../Redux/account/account-reducer';
 import { Option } from 'antd/lib/mentions';
-
-export interface DebounceSelectProps<ValueType = any>
-  extends Omit<SelectProps<ValueType | ValueType[]>, 'options' | 'children'> {
-  fetchOptions: (search: string) => Promise<ValueType[]>;
-  debounceTimeout?: number;
-}
+import { fieldWrapper } from '../../../UI/fieldWrapper';
+import { usersAPI } from '../../../api/usersApi';
 
 type PropsType = {};
+ 
 
-type FormFieldsType = {
+type FieldValues = AccountDataType & {
 	school: string,
+	birthDate: moment.Moment | null,
+}
+
+type BirthDateExtenderType = {
+	birthDate: moment.Moment | null,
 }
 
 type SchoolSelectItemType = {
+	disabled: boolean,
 	label: string,
 	value?: string,
 }
@@ -30,7 +33,11 @@ export const AccountForm: React.FC<PropsType> = ({}) => {
    const { 
 	  register, handleSubmit, watch, formState: {errors},
 	  control, setValue,
-	} = useForm<FormFieldsType & AccountDataType>({});
+	} = useForm<FieldValues>({
+		defaultValues: {
+
+		}
+	});
 
 	//preloader для відображення, під час запиту на сервер
 	const [fetching, setFetching] = useState(false);
@@ -46,8 +53,9 @@ export const AccountForm: React.FC<PropsType> = ({}) => {
 	const fetchRef = useRef(0);
 
 	//коли форма субітиться -> дані в staте
-	const onSubmit = (data: FormFieldsType) => {
+	const onSubmit = (data: FieldValues) => {
 		console.log('data', data);
+		usersAPI.setMyAccountData(data);
 	}
 	
 	console.log('errors', errors);
@@ -71,6 +79,7 @@ export const AccountForm: React.FC<PropsType> = ({}) => {
 				//фідформатувати результат для options
 				const schoolsList: SchoolSelectItemType[] = newOptions.map(school => {
 					return {
+						disabled: false,
 						label: school.name,
 						value: `${school.name} (${school.id})`,
 					}
@@ -135,66 +144,82 @@ export const AccountForm: React.FC<PropsType> = ({}) => {
 							>
 								<Input 
 									placeholder="Прізвище" onChange={onChange} value={value}
-									className={classes.input} type='text'
+									className={classes.input} type='text' 
 								/>
 							</Form.Item>
 						)}
-					/>
+					/> 
 				</Col>
 			</Row>
 
-			<div className={classes.schoolInfo}>
+			<Row className={classes.schoolInfo} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
 				{/* select school(input -> fetcht to server -> options) */}
-				<Form.Item >
-					<Controller 
-						name='school'
-						control={control}
-						rules={
-							{required: 'Оберіть школу!'}
-						}
-						render={({field: {onChange, value}}) => (
-							<Select
-								onChange={(value: string) => {
-									setValue('school', value);
-								}}
-								value={value}
-								labelInValue
-								filterOption={false}
-								onSearch={debounceFetcher}
-								placeholder="Знайти навчальний заклад"	
-								showSearch
-								notFoundContent={fetching ? <Spin size="small" /> : null}
-								options={schoolsSearchList}
-								className={classes.selectSchool}
-							/>
-						)}
-					/>
-				</Form.Item>
-				{/* select class */}
-				<Form.Item >
-					<Controller
-						name='class'
-						control={control}
-						rules={
-							{required: 'Chio!'}
-						}
+				<Col span={15}>
+					<Form.Item >
+						<Controller 
+							name='school'
+							control={control}
+							rules={
+								{required: 'Оберіть школу!'}
+							}
 							render={({field: {onChange, value}}) => (
-							<Select
-								placeholder='Ваш клас' className={classes.selectClass}
-								style={{ width: 120 }} onChange={onChange} value={value}
-							>
-								{classesNums.map(num => {
-									return <Select.Option value={num as unknown as string}>{num}</Select.Option>
-								})}
-							</Select>
-						)}
-					/>
-				</Form.Item>
-			</div>
+								<Select
+									onChange={onChange}
+									disabled={false}
+									value={value}
+									labelInValue
+									filterOption={false}
+									onSearch={debounceFetcher}
+									placeholder="Знайти навчальний заклад"	
+									showSearch
+									notFoundContent={fetching ? <Spin size="small" /> : null}
+									options={schoolsSearchList}
+									className={classes.selectSchool}
+								/>
+							)}
+						/>
+					</Form.Item>
+				</Col>
+				{/* select class */}
+				<Col span={3}>
+					<Form.Item >
+						<Controller
+							name='class'
+							control={control}
+							rules={
+								{required: 'Chio!'}
+							}
+								render={({field: {onChange, value}}) => (
+								<Select
+									placeholder='Ваш клас' className={classes.selectClass}
+									style={{ width: 120 }} onChange={onChange} value={value}
+								>
+									{classesNums.map(num => {
+										return <Select.Option key={num} value={num as unknown as string}>{num}</Select.Option>
+									})}
+								</Select>
+							)}
+						/>
+					</Form.Item>
+				</Col>
+			</Row>
 			{/* select birth date */}
-			<Form.Item>
-        		<DatePicker placeholder='Дата народження' />
-      	</Form.Item>
+									
+			<Controller 
+				name='birthDate'
+				control={control}
+				
+				render={({field: {onChange, value}}) => (
+					<Form.Item>
+						<DatePicker 
+							placeholder='Дата народження' value={value}
+							onChange={(value: moment.Moment | null): void => {
+								setValue('birthDate', value);
+						  }}
+						/>
+					</Form.Item>
+				)}
+			/>
 			<Button htmlType='submit'>Submit</Button>
 		</Form>	
 	);
