@@ -1,31 +1,32 @@
-import React, { useEffect } from 'react'
-import { useDispatch } from 'react-redux';
-import { AnyAction } from 'redux';
-import { sendUserData, setUsersData } from '../../Redux/account/account-reducer';
-import classes from './Account.module.scss';
+import React, { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux';
+import { selectMyAccountData } from '../../Redux/account/account-selectors';
+import { useAppDispatch } from '../../Redux/store';
+import { AccountBody } from './AccountBody';
 import { AccountForm } from './AccountForm';
 
 type PropsType = {};
 
 const Account: React.FC<PropsType> = ({}) => {
-	const dispatch = useDispatch();
+	const [isEdit, setIsEdit] = useState<boolean>(false)
+
+	const dispatch = useAppDispatch();
+	const myAccountData = useSelector(selectMyAccountData);
 
 
-	//test api
 	useEffect(() => {
-		dispatch(setUsersData() as unknown as AnyAction);
-		//@ts-ignore
-		// dispatch(sendUserData({ 'uid': {
-		// 	class: 7,
-		// 	status: 'schoolboy',
-		// 	name: 'Andriy',
-		// }}) as unknown as AnyAction)
+		
 	}, []);
-	//test api
+
+	if(!myAccountData) return <div></div>;
 
 	return (
 		<div>
-			<AccountForm />
+			{!isEdit ?
+				<AccountBody accountData={myAccountData}/>
+			:
+			<AccountForm accountData={myAccountData}/>
+			}
 		</div>
 	)
 }

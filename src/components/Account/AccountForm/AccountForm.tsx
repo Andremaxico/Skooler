@@ -10,8 +10,11 @@ import { searchSchool as searchSchools } from '../../../Redux/account/account-re
 import { Option } from 'antd/lib/mentions';
 import { fieldWrapper } from '../../../UI/fieldWrapper';
 import { usersAPI } from '../../../api/usersApi';
+import TextArea from 'antd/lib/input/TextArea';
 
-type PropsType = {};
+type PropsType = {
+	accountData: AccountDataType,
+};
  
 
 type FieldValues = AccountDataType & {
@@ -29,20 +32,16 @@ type SchoolSelectItemType = {
 	value?: string,
 }
 
-export const AccountForm: React.FC<PropsType> = ({}) => {
+export const AccountForm: React.FC<PropsType> = ({accountData}) => {
    const { 
 	  register, handleSubmit, watch, formState: {errors},
 	  control, setValue,
 	} = useForm<FieldValues>({
-		defaultValues: {
-
-		}
+		defaultValues: accountData
 	});
 
 	//preloader для відображення, під час запиту на сервер
 	const [fetching, setFetching] = useState(false);
-
-	const [currSchoolData, setCurrSchoolData] = useState<SchoolSearchItemType[]>([]);
 
 	//список для select
 	const [schoolsSearchList, setSchoolsSearchList] = useState<SchoolSelectItemType[]>([]);
@@ -57,8 +56,6 @@ export const AccountForm: React.FC<PropsType> = ({}) => {
 		console.log('data', data);
 		usersAPI.setMyAccountData(data);
 	}
-	
-	console.log('errors', errors);
 
 	const debounceFetcher = useMemo(() => {
 		const loadOptions = (value: string) => {
@@ -220,6 +217,13 @@ export const AccountForm: React.FC<PropsType> = ({}) => {
 					</Form.Item>
 				)}
 			/>
+			<Form.Item>
+				<TextArea
+					showCount maxLength={250}
+					className={classes.textareaWrap}
+					placeholder='Напишіть про себе...'
+				/>
+			</Form.Item>
 			<Button htmlType='submit'>Submit</Button>
 		</Form>	
 	);

@@ -37,6 +37,7 @@ export type AccountDataType = {
 	surname?: string,
 	status?: 'teacher' | 'schoolboy',
 	birthDate?: moment.Moment | null | any, 
+	aboutMe?: string | null,
 }
 
 export type SchoolResultValueType = {
