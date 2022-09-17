@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/Skooler/static/css/main.6b4a59c8.css",
-    "main.js": "/Skooler/static/js/main.8c8325db.js",
+    "main.css": "/Skooler/static/css/main.da423db6.css",
+    "main.js": "/Skooler/static/js/main.bbae06b8.js",
     "index.html": "/Skooler/index.html",
-    "main.6b4a59c8.css.map": "/Skooler/static/css/main.6b4a59c8.css.map",
-    "main.8c8325db.js.map": "/Skooler/static/js/main.8c8325db.js.map"
+    "main.da423db6.css.map": "/Skooler/static/css/main.da423db6.css.map",
+    "main.bbae06b8.js.map": "/Skooler/static/js/main.bbae06b8.js.map"
   },
   "entrypoints": [
-    "static/css/main.6b4a59c8.css",
-    "static/js/main.8c8325db.js"
+    "static/css/main.da423db6.css",
+    "static/js/main.bbae06b8.js"
   ]
 }
