@@ -11,22 +11,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectMessages } from '../../Redux/chat/selectors';
 import { startMessaging, stopMessaging } from '../../Redux/chat/reducer';
 import { AnyAction } from 'redux';
+import Preloader from '../../UI/Preloader';
+import { useAppDispatch } from '../../Redux/store';
 
 
 const Chat = () => {
 	const { auth } = useContext(FirebaseContext);
 	const [authData] = useAuthState(auth as Auth);
 
-	const messages = useSelector(selectMessages);
-
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
 
 	useEffect(() => {
-		dispatch(startMessaging() as unknown as AnyAction);
-
-		return () => {
-			stopMessaging();
-		}
+		dispatch(startMessaging());
 	}, []);
 
 
@@ -34,7 +30,7 @@ const Chat = () => {
 
 	return (
 		<div className={classes.Chat}>
-			<Messages messagesData={messages}/>
+			<Messages />
 			<NewMessageForm authData={authData} />
 		</div>
 	)

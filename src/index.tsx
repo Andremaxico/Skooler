@@ -31,6 +31,8 @@ const firebaseConfig = {
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 const analytics = getAnalytics(app);
 const auth  = getAuth(app);
+auth.useDeviceLanguage();
+
 const firestore = getFirestore();
 const messaging = getMessaging(app);
 const database = getDatabase(app);

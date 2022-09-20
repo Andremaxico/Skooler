@@ -14,7 +14,7 @@
 		margin-right: 8px;
 	}
 	.messageBody {
-		padding: 5px 7px;
+		padding: 9px 7px 10px;
 		border-radius: 5px;
 		background-color: $mainCol;
 
@@ -24,6 +24,7 @@
 		}
 		.text {
 			@include text;
+			margin-bottom: 0;
 			color: #fff;
 		}
 	}

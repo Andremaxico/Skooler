@@ -11,6 +11,11 @@ $black: rgb(51, 51, 51);
 $grayBg: #fefefe;
 $gray: rgb(131, 131, 131);
 //mixins
+@mixin size($w, $h: $w) {
+  width: $w;
+  height: $h;
+}
+
 @mixin font-style($fz, $lh, $fw: 400, $col: $black) {
     font-size: $fz;
     line-height: $lh;

@@ -1,7 +1,7 @@
 import { Avatar, Button } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import React, { useContext, useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { UserType } from '../../../utils/types';
 import classes from './AccountInfo.module.scss';
 import { FirebaseContext } from '../../..';
@@ -22,10 +22,12 @@ export const AccountInfo: React.FC<PropsType> = ({accountData}) => {
 
 	return (
 		<div className={classes.AccountInfo}>
-			<Avatar 
-				icon={<UserOutlined />} src={userData.photoURL}
-				className={classes.avatar} 
-			/>
+			<Link to='/account'>
+				<Avatar 
+					icon={<UserOutlined />} src={userData.photoURL}
+					className={classes.avatar} 
+				/>
+			</Link>
 
 			<p className={classes.name}>{userData.displayName}</p>
 

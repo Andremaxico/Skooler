@@ -4,9 +4,11 @@ import chatReducer from './chat/reducer';
 import accountReducer from './account/account-reducer';
 import { usersReducer } from './users/users-reducer';
 import { useDispatch } from 'react-redux';
+import { appReducer } from './app/appReducer';
 
 export const store = configureStore({ 
 	reducer: {
+		app: appReducer,
 		messages: chatReducer,
 		account: accountReducer,
 		users: usersReducer,

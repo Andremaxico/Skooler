@@ -10,13 +10,7 @@ type PropsType = {};
 const Account: React.FC<PropsType> = ({}) => {
 	const [isEdit, setIsEdit] = useState<boolean>(false)
 
-	const dispatch = useAppDispatch();
 	const myAccountData = useSelector(selectMyAccountData);
-
-
-	useEffect(() => {
-		
-	}, []);
 
 	if(!myAccountData) return <div></div>;
 

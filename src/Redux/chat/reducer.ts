@@ -3,41 +3,48 @@ import { Item } from "firebase/analytics";
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createReducer, createAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { AppDispatchType } from '../store';
-import chatAPI from '../../api/chatApi';
+import chatAPI, { FetchingSubscriberType } from '../../api/chatApi';
 
 export type ChatStateType = {
 	messagesData: Array<MessageDataType> | null,
+	isFetching: boolean,
 }
 
 
 //=========ACTIONS=========
-export const messagesReceived = createAction('chat/SET_MESSAGES', (data: Array<MessageDataType> | null) => {
-	return {
-		payload: {
-			messagesData: data,
-		}
-	}
-})
+export const messagesReceived = createAction<MessagesDataType>('chat/SET_MESSAGES');
+
+export const fetchingStatusChanged = createAction<boolean>('chat/SET_IS_FETCHING');
 
 //===========================REDUCER========================
 const initialState: ChatStateType = {
 	messagesData: null,
+	isFetching: false,
 }
 
 const chatReducer = createReducer(initialState, (builder) => {
 	builder
 		.addCase(messagesReceived, (state, action) => {
-			state.messagesData = action.payload.messagesData
+			state.messagesData = action.payload;
+		})
+		.addCase(fetchingStatusChanged, (sttae, action) => {
+			sttae.isFetching = action.payload;
 		})
 		.addDefaultCase((state, action) => {});
 });
 
 //==========================THUNKS====================
 
+const fetchingSubscriberCreator = (dispatch: AppDispatchType): FetchingSubscriberType => (value: boolean) => {
+	dispatch(fetchingStatusChanged(value));
+	console.log('fetch sub v', value)
+} 
+
 export const startMessaging = () => (dispatch: AppDispatchType) => {
 	chatAPI.subscribe((data: MessagesDataType) => {
 		dispatch(messagesReceived(data));
-	})
+	});
+	chatAPI.fetchingSubscribe(fetchingSubscriberCreator(dispatch));
 }
 
 export const stopMessaging = () => {

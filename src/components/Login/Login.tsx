@@ -1,3 +1,5 @@
+import Icon, { HomeOutlined } from '@ant-design/icons';
+import type { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon';
 import { Button } from 'antd';
 import { Auth, getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import React, { useContext } from 'react';
@@ -7,17 +9,27 @@ import classes from './Login.module.scss';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { Navigate } from 'react-router-dom';
 import Preloader from '../../UI/Preloader';
+import { GoogleIcon } from '../../icons/Icons';
+import { useAppDispatch } from '../../Redux/store';
+import { loginDataReceived } from '../../Redux/account/account-reducer';
+import { useSelector } from 'react-redux';
+import { selectMyLoginData } from '../../Redux/account/account-selectors';
 
-type PropsType = {
-	setAccountData: (data: UserType) => void,
-}
+type PropsType = {}
 
-const Login: React.FC<PropsType> = ({setAccountData}) => {
+const Login: React.FC<PropsType> = ({}) => {
 	const { auth } = useContext(FirebaseContext);
-	const [authData, loading, error] = useAuthState(auth as Auth);
 
-	if(loading) return <Preloader />
-	if(authData) return <Navigate to='/chat' replace={true}/>	
+	const authData = useSelector(selectMyLoginData);
+
+	console.log('Login', authData);
+
+	const dispatch = useAppDispatch();
+	const setAccountData = (data: UserType) => {
+		dispatch(loginDataReceived(data));
+	}
+
+	if(!!authData) return <Navigate to='/chat' replace={true}/>	
 
 	const login = async () => {
 		const provider = new GoogleAuthProvider();
@@ -28,7 +40,10 @@ const Login: React.FC<PropsType> = ({setAccountData}) => {
 
 	return (
 		<div className={classes.Login}>
-			<Button block onClick={login}>Login</Button>
+			<Button block onClick={login} className={classes.loginBtn}>
+				Увійти 
+				<GoogleIcon className={classes.googleIcon}/>
+			</Button>
 		</div>
 	)
 }

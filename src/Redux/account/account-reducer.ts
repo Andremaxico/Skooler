@@ -35,6 +35,9 @@ const accountReducer = createReducer(initialState, (builder) => {
 		.addCase(currUserAccountReceiver, (state, action) => {
 			state.currUserAccount = action.payload;
 		})
+		.addCase(loginDataReceived, (state, action) => {
+			state.myLoginData = action.payload
+		})
 		.addDefaultCase((state, action) => {});
 });
 

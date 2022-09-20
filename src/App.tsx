@@ -1,9 +1,9 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 //import './nullstyle.scss';
 import './App.less';
 
-import Header from './components/Header';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import AppHeader from './components/Header';
+import { BrowserRouter, HashRouter, Route, Routes } from 'react-router-dom';
 import Login from './components/Login';
 import Chat from './components/Chat';
 
@@ -12,32 +12,41 @@ import { UserType } from './utils/types';
 import { Provider } from 'react-redux';
 
 import { Content, Footer } from 'antd/lib/layout/layout';
-import { store } from './Redux/store';
+import { store, useAppDispatch } from './Redux/store';
 import Account from './components/Account';
+import { networkErrorStatusChanged } from './Redux/app/appReducer';
 
 
 const App = () => {
-  const [accountData, setAccountData] = useState<null | UserType>(null);
-  // const routesData = [
-  //   {
-  //     element: <Chat />, to: '/chat'
-  //   },
-  //   {
-  //     element: <Login />, to: '/login'
-  //   }
-  // ];
+  const dispatch = useAppDispatch();
 
-  // const routesList = routesData.map((data, i) => {
-  //   return <Route element={data.element} to='/chat'/>
-  // });
+
+  useEffect(() => {
+    const offlineHandler = () => {
+      dispatch(networkErrorStatusChanged(`Перевірте з'єднання з мережею`));
+      console.log('browser is offline');
+    }
+    const onlineHandler = () => {
+      dispatch(networkErrorStatusChanged(null));
+      console.log('browser is online');
+    }
+
+    window.addEventListener('offline', offlineHandler);
+    window.addEventListener('online', onlineHandler);
+
+    return () => {
+      window.removeEventListener('offline', offlineHandler);
+      window.removeEventListener('online', onlineHandler);
+    }
+  }, []);
 
   return (
     <>
-      <Header accountData={accountData}/>
-      <Content style={{ padding: '0 50px', flex: '1 1 auto', display: 'flex' }}>
+      <AppHeader />
+      <Content className='Content'>
         <div className="site-layout-content" style={{flex: '1 1 auto'}}>
           <Routes>
-            <Route path='/login' element={<Login setAccountData={setAccountData} />}/>
+            <Route path='/login' element={<Login />}/>
             <Route path='/chat' element={<Chat />}/>
             <Route path='/account' element={<Account />} />
           </Routes>
@@ -50,11 +59,11 @@ const App = () => {
 
 const AppContainer = () => {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Provider store={store}>
         <App />
       </Provider>
-    </BrowserRouter>
+    </HashRouter>
   )
 }
 
