@@ -4,27 +4,8 @@ import axios from 'axios';
 import { addDoc, doc, setDoc } from 'firebase/firestore';
 import { auth, firestore } from '../firebase/firebaseApi';
 
-export type BirthDateObject = {
-	date: number,
-	hours?: number,
-	miliseconds?: number,
-	minutes?: number,
-	months: number,
-	seconds?: number,
-	years: number,
-
-}
-
 const instance = axios.create({
 	baseURL: 'https://real-time-chat-test-ece84-default-rtdb.europe-west1.firebasedatabase.app/',
-})
-
-let uid: string = '';
-
-auth.onAuthStateChanged((user) => {
-	if(user) {
-		uid = user.uid;
-	}
 });
 
 export const usersAPI = {
@@ -44,6 +25,7 @@ export const usersAPI = {
 
 	async getUserById(uid: string) {
 		//let user: AccountDataType | null = null;
+		console.log('get user by id', uid);
 
 		const docSnap = await getDoc(doc(firestore, 'users', uid));
 
@@ -59,11 +41,4 @@ export const usersAPI = {
 		return res;
 	},
 
-	async setMyAccountData(data: AccountDataType) {
-		if(data) {
-			const birthDate: BirthDateObject = Object.assign({}, data.birthDate.toObject());
-			const accountData = {...data, birthDate}
-			await setDoc(doc(firestore as Firestore, 'users', uid), accountData);
-		}
-	}
 }

@@ -7,16 +7,24 @@ import classes from './AccountInfo.module.scss';
 import { FirebaseContext } from '../../..';
 import { Auth, signOut } from 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import { accountDataReceived, loginDataReceived } from '../../../Redux/account/account-reducer';
+import { useAppDispatch } from '../../../Redux/store';
 
 type PropsType = {
-	accountData: UserType | null,
+	loginData: UserType | null,
 }
 
-export const AccountInfo: React.FC<PropsType> = ({accountData}) => {
+export const AccountInfo: React.FC<PropsType> = ({loginData}) => {
 	const { auth } = useContext(FirebaseContext);
-	const [ userData ] = useAuthState(auth as Auth);
 
-	if(!userData) {
+	const dispatch = useAppDispatch();
+	const signout = () => {
+		signOut(auth as Auth);
+		dispatch(loginDataReceived(null));
+		dispatch(accountDataReceived(null));
+	}
+
+	if(!loginData) {
 		return <NavLink to='/login' replace={true} className={classes.loginLink}>Login</NavLink>;
 	}
 
@@ -24,14 +32,14 @@ export const AccountInfo: React.FC<PropsType> = ({accountData}) => {
 		<div className={classes.AccountInfo}>
 			<Link to='/account'>
 				<Avatar 
-					icon={<UserOutlined />} src={userData.photoURL}
+					icon={<UserOutlined />} src={loginData.photoURL}
 					className={classes.avatar} 
 				/>
 			</Link>
 
-			<p className={classes.name}>{userData.displayName}</p>
+			<p className={classes.name}>{loginData.displayName}</p>
 
-			<Button onClick={() => signOut(auth as Auth)} type='primary' size='small'>Logout</Button>
+			<Button onClick={signout} type='primary' size='small'>Logout</Button>
 		</div>
 	)
 }

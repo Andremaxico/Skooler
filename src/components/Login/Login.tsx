@@ -11,7 +11,7 @@ import { Navigate } from 'react-router-dom';
 import Preloader from '../../UI/Preloader';
 import { GoogleIcon } from '../../icons/Icons';
 import { useAppDispatch } from '../../Redux/store';
-import { loginDataReceived } from '../../Redux/account/account-reducer';
+import { loginDataReceived, sendMyAccountData } from '../../Redux/account/account-reducer';
 import { useSelector } from 'react-redux';
 import { selectMyLoginData } from '../../Redux/account/account-selectors';
 
@@ -27,6 +27,7 @@ const Login: React.FC<PropsType> = ({}) => {
 	const dispatch = useAppDispatch();
 	const setAccountData = (data: UserType) => {
 		dispatch(loginDataReceived(data));
+		dispatch(sendMyAccountData(null));
 	}
 
 	if(!!authData) return <Navigate to='/chat' replace={true}/>	
@@ -34,7 +35,7 @@ const Login: React.FC<PropsType> = ({}) => {
 	const login = async () => {
 		const provider = new GoogleAuthProvider();
 		const { user } = await signInWithPopup(auth as Auth, provider);
-		console.log('auth data', user);
+
 		setAccountData(user);
 	}
 

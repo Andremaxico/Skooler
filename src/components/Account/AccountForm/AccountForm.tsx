@@ -1,16 +1,12 @@
-import React, { ChangeEvent, useMemo, useRef, useState } from 'react'
-import { Control, Controller, useForm } from 'react-hook-form';
+import React, { useMemo, useRef, useState } from 'react'
+import { Controller, useForm } from 'react-hook-form';
 import { Button, Col, DatePicker, Form, Input, Row, Select, Spin } from 'antd';
-import type { SelectProps, DefaultOptionType } from 'antd/es/select';
-import { schoolsAPI } from '../../../api/schoolsApi';
 import { AccountDataType, SchoolSearchItemType } from '../../../utils/types';
-import { debounce } from 'lodash';
 import classes from './AccountForm.module.scss';
-import { searchSchool as searchSchools } from '../../../Redux/account/account-reducer';
-import { Option } from 'antd/lib/mentions';
-import { fieldWrapper } from '../../../UI/fieldWrapper';
-import { usersAPI } from '../../../api/usersApi';
+import { searchSchool as searchSchools, sendMyAccountData } from '../../../Redux/account/account-reducer';
 import TextArea from 'antd/lib/input/TextArea';
+import { authAPI } from '../../../api/authApi';
+import { useAppDispatch } from '../../../Redux/store';
 
 type PropsType = {
 	accountData: AccountDataType,
@@ -51,10 +47,10 @@ export const AccountForm: React.FC<PropsType> = ({accountData}) => {
 	//це треба
 	const fetchRef = useRef(0);
 
-	//коли форма субітиться -> дані в staте
+	const dispatch = useAppDispatch();
+	//коли форма субітиться -> дані в staте -> дані на сервер
 	const onSubmit = (data: FieldValues) => {
-		console.log('data', data);
-		usersAPI.setMyAccountData(data);
+		dispatch(sendMyAccountData(data));
 	}
 
 	const debounceFetcher = useMemo(() => {

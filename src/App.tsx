@@ -3,24 +3,35 @@ import React, { useContext, useEffect, useState } from 'react';
 import './App.less';
 
 import AppHeader from './components/Header';
-import { BrowserRouter, HashRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, HashRouter, Navigate, Route, Routes } from 'react-router-dom';
 import Login from './components/Login';
 import Chat from './components/Chat';
 
 import { UserType } from './utils/types';
 
-import { Provider } from 'react-redux';
+import { Provider, useSelector } from 'react-redux';
 
 import { Content, Footer } from 'antd/lib/layout/layout';
 import { store, useAppDispatch } from './Redux/store';
 import Account from './components/Account';
 import { networkErrorStatusChanged } from './Redux/app/appReducer';
+import { loginDataReceived } from './Redux/account/account-reducer';
+import { selectMyLoginData } from './Redux/account/account-selectors';
+import Preloader from './UI/Preloader';
+import { FirebaseContext } from '.';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { Auth } from 'firebase/auth';
 
 
 const App = () => {
+  const { auth } = useContext(FirebaseContext);
+  const [ user ] = useAuthState(auth as Auth);
+
+  const [isFetching, setIsFetching] = useState<boolean>(false);
+
   const dispatch = useAppDispatch();
 
-
+  //online/ofline listeners
   useEffect(() => {
     const offlineHandler = () => {
       dispatch(networkErrorStatusChanged(`Перевірте з'єднання з мережею`));
@@ -40,6 +51,23 @@ const App = () => {
     }
   }, []);
 
+  //get login data 
+  useEffect(() => {
+    const getLoginData = async () => {
+      if(user) {
+        setIsFetching(true);
+        console.time('start');
+        console.log('app.tsx user: ', user);
+        await dispatch(loginDataReceived({...user}));
+        setIsFetching(false);
+        console.time('end');
+      }
+    }
+    getLoginData();
+    
+  }, [user]);
+
+  if(isFetching) return <Preloader />
   return (
     <>
       <AppHeader />

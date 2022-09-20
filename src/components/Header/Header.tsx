@@ -17,14 +17,8 @@ type PropsType = {};
 
 const AppHeader: React.FC<PropsType> = ({}) => {
 	const networkError  = useSelector(selectNetworkError);
-	const accountData = useSelector(selectMyLoginData);
+	const loginData = useSelector(selectMyLoginData);
 	const location = useLocation();
-
-	//test api
-	React.useEffect(() => {
-		console.log('account data', accountData);
-	}, [accountData]);
-	
 
 	const linksData: LinkDataType[] = [
 		{
@@ -43,20 +37,17 @@ const AppHeader: React.FC<PropsType> = ({}) => {
 	})
 
 	return (
-		<>	
-			<Header className={classes.AppHeader}>
-				<div className={classes.logo}>Logo</div>
-				<Menu
-					theme='dark' mode='horizontal' defaultSelectedKeys={[location.pathname]}
-					items={navItems} className={classes.menu} selectedKeys={[location.pathname]}
-				/>
-				<AccountInfo accountData={accountData}/>
-				{networkError && 
-					<NetworkError message={networkError}/>
-				}
-			</Header>
-
-		</>
+		<Header className={classes.AppHeader}>
+			<div className={classes.logo}>Logo</div>
+			<Menu
+				theme='dark' mode='horizontal' defaultSelectedKeys={[location.pathname]}
+				items={navItems} className={classes.menu} selectedKeys={[location.pathname]}
+			/>
+			<AccountInfo loginData={loginData}/>
+			{networkError && 
+				<NetworkError message={networkError}/>
+			}
+		</Header>
 	)
 }
 

@@ -1,7 +1,8 @@
+import { authAPI } from './../../api/authApi';
 import { AppDispatchType, RootStateType } from './../store';
 import { ThunkAction } from 'redux-thunk';
 import { AppDispatch } from './../../../../samurai-way/src/Redux/redux-store';
-import { AccountDataType } from './../../utils/types/index';
+import { AccountDataType, UserType } from './../../utils/types/index';
 import { createReducer, createAction, AnyAction } from '@reduxjs/toolkit';
 import { schoolsAPI } from '../../api/schoolsApi';
 import { usersAPI } from '../../api/usersApi';
@@ -16,9 +17,9 @@ type _ThunkType = ThunkAction<void, AccountStateType, unknown, AnyAction>;
 
 
 //=========ACTIONS=========
-export const accountDataReceived = createAction<AccountDataType>('account/SET_MY_ACCOUNT_DATA');
-export const loginDataReceived = createAction<User>('account/LOGIN_DATA_RECEIVED');
-export const currUserAccountReceiver = createAction<AccountDataType>('account/CURR_USER_ACCOUNT_RECEIVED');
+export const accountDataReceived = createAction<AccountDataType | null>('account/SET_MY_ACCOUNT_DATA');
+export const loginDataReceived = createAction<User | null>('account/LOGIN_DATA_RECEIVED');
+export const currUserAccountReceived = createAction<AccountDataType>('account/CURR_USER_ACCOUNT_RECEIVED');
 
 const initialState: AccountStateType = {
 	myAccountData: null,
@@ -32,7 +33,7 @@ const accountReducer = createReducer(initialState, (builder) => {
 		.addCase(accountDataReceived, (state, action) => {
 			state.myAccountData = action.payload;
 		})
-		.addCase(currUserAccountReceiver, (state, action) => {
+		.addCase(currUserAccountReceived, (state, action) => {
 			state.currUserAccount = action.payload;
 		})
 		.addCase(loginDataReceived, (state, action) => {
@@ -46,14 +47,20 @@ export const searchSchool = async (value: string) => {
 	return data;
 }
 
-export const getMyAccount = () => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
-	if(getState() && getState()?.account.myLoginData?.uid) {
-		const data: AccountDataType | undefined = await usersAPI.getUserById(getState().account.myLoginData?.uid as string);
-		if(data) {
-			dispatch(accountDataReceived(data));
-		}
-	} else {
-		console.error('no login data');
+export const setMyAccount = (authData: UserType) => async (dispatch: AppDispatchType) => {
+	console.log('set my account auth data', authData);
+	const data: AccountDataType | undefined = await usersAPI.getUserById(authData.uid as string);
+	console.log('set my ccount data', data);
+	if(data) {
+		dispatch(accountDataReceived(data));
+	}
+}
+
+export const sendMyAccountData = (data: AccountDataType | null) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
+	const uid = getState().account.myLoginData?.uid;
+
+	if(uid) {
+		authAPI.setMyAccountData(data, uid);
 	}
 }
 
