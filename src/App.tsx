@@ -27,7 +27,7 @@ const App = () => {
   const { auth } = useContext(FirebaseContext);
   const [ user ] = useAuthState(auth as Auth);
 
-  const [isFetching, setIsFetching] = useState<boolean>(false);
+  const [isFetching, setIsFetching] = useState<boolean>(true);
 
   const dispatch = useAppDispatch();
 
@@ -51,33 +51,32 @@ const App = () => {
     }
   }, []);
 
+  console.log('app is fetching', isFetching);
+
   //get login data 
   useEffect(() => {
     const getLoginData = async () => {
       if(user) {
         setIsFetching(true);
-        console.time('start');
-        console.log('app.tsx user: ', user);
         await dispatch(loginDataReceived({...user}));
         setIsFetching(false);
-        console.time('end');
       }
     }
     getLoginData();
     
   }, [user]);
-
-  if(isFetching) return <Preloader />
   return (
     <>
       <AppHeader />
       <Content className='Content'>
         <div className="site-layout-content" style={{flex: '1 1 auto'}}>
-          <Routes>
-            <Route path='/login' element={<Login />}/>
-            <Route path='/chat' element={<Chat />}/>
-            <Route path='/account' element={<Account />} />
-          </Routes>
+          {isFetching ? <Preloader /> :
+            <Routes>
+              <Route path='/login' element={<Login />}/>
+              <Route path='/chat' element={<Chat />}/>
+              <Route path='/account' element={<Account />} />
+            </Routes>
+          }
         </div>
       </Content>
     <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>

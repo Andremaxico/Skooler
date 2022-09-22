@@ -30,7 +30,7 @@ const Login: React.FC<PropsType> = ({}) => {
 		dispatch(sendMyAccountData(null));
 	}
 
-	if(!!authData) return <Navigate to='/chat' replace={true}/>	
+	if(!!authData) return <Navigate to='/account' replace={true}/>	
 
 	const login = async () => {
 		const provider = new GoogleAuthProvider();

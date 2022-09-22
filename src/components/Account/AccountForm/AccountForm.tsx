@@ -1,26 +1,28 @@
 import React, { useMemo, useRef, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form';
 import { Button, Col, DatePicker, Form, Input, Row, Select, Spin } from 'antd';
-import { AccountDataType, SchoolSearchItemType } from '../../../utils/types';
+import { AccountDataType, ReceivedAccountDataType, SchoolInfoType, SchoolSearchItemType } from '../../../utils/types';
 import classes from './AccountForm.module.scss';
-import { searchSchool as searchSchools, sendMyAccountData } from '../../../Redux/account/account-reducer';
+import { searchSchool as searchSchools, sendMyAccountData, setMyAccount, setMyAvatarUrl, setMySchool } from '../../../Redux/account/account-reducer';
 import TextArea from 'antd/lib/input/TextArea';
 import { authAPI } from '../../../api/authApi';
 import { useAppDispatch } from '../../../Redux/store';
+import moment from 'moment';
+import { InitialInput } from './InitialInput';
+import { AvatarUpload } from './AvatarUpload';
+import { UploadAvatarInfoType } from './AvatarUpload/AvatarUpload';
 
 type PropsType = {
-	accountData: AccountDataType,
+	accountData: ReceivedAccountDataType | null,
+	setIsEdit: (value: boolean) => void,
 };
  
+type SchoolDefaultValueType = ((SchoolInfoType | SchoolSearchItemType | undefined) & SchoolSearchItemType) | undefined;
 
-type FieldValues = AccountDataType & {
-	school: string,
-	birthDate: moment.Moment | null,
-}
-
-type BirthDateExtenderType = {
-	birthDate: moment.Moment | null,
-}
+export type FieldValues = AccountDataType & {
+	school: SchoolSearchItemType,
+	birthDate: any,
+};
 
 type SchoolSelectItemType = {
 	disabled: boolean,
@@ -28,16 +30,36 @@ type SchoolSelectItemType = {
 	value?: string,
 }
 
-export const AccountForm: React.FC<PropsType> = ({accountData}) => {
+export const AccountForm: React.FC<PropsType> = React.memo(({accountData, setIsEdit}) => {
+	console.log('form', accountData);
+	let defaultBirthDateValue = null;
+	let defaultSchoolValue: SchoolSearchItemType | null = null;
+
+	//форматовані дані для початкових значень деяких інпутів
+	if(accountData) {
+		const { date, months, years } = accountData.birthDate;
+		defaultBirthDateValue = moment(`${date}-${months}-${years}`);
+
+		//
+		const baseSchoolString = `${accountData.school.institution_name} (${accountData.school.institution_id})`;
+		defaultSchoolValue = {
+			id: Number(accountData.school.institution_id),
+			key: baseSchoolString,
+			name: baseSchoolString,
+			value: baseSchoolString,
+		}
+	}
+
    const { 
 	  register, handleSubmit, watch, formState: {errors},
 	  control, setValue,
-	} = useForm<FieldValues>({
-		defaultValues: accountData
-	});
+	} = useForm<FieldValues>();
+
+	//prealoder під час відправки запиту
+	const [isSending, setIsSending] = useState<boolean>(false)
 
 	//preloader для відображення, під час запиту на сервер
-	const [fetching, setFetching] = useState(false);
+	const [fetching, setFetching] = useState<boolean>(false);
 
 	//список для select
 	const [schoolsSearchList, setSchoolsSearchList] = useState<SchoolSelectItemType[]>([]);
@@ -48,9 +70,16 @@ export const AccountForm: React.FC<PropsType> = ({accountData}) => {
 	const fetchRef = useRef(0);
 
 	const dispatch = useAppDispatch();
+
 	//коли форма субітиться -> дані в staте -> дані на сервер
-	const onSubmit = (data: FieldValues) => {
-		dispatch(sendMyAccountData(data));
+	const onSubmit = async (accountData: FieldValues) => {
+		console.log('send data', accountData);
+
+		setIsSending(true);
+		await dispatch(sendMyAccountData(accountData));
+		//await dispatch(setMySchool(Number(id)));
+		setIsSending(false);
+		setIsEdit(false);
 	}
 
 	const debounceFetcher = useMemo(() => {
@@ -84,67 +113,35 @@ export const AccountForm: React.FC<PropsType> = ({accountData}) => {
 		return loadOptions;
 	}, []);
 
+
+	if(!accountData) return <div>No initial values</div>
+
+	console.log('errors', errors);
+
 	return (
 		// onFinish == onSubmit
-		<Form onFinish={handleSubmit(onSubmit)} className={classes.AccountForm}>
+		<Form 
+			onFinish={handleSubmit(onSubmit)} className={classes.AccountForm}
+		>
 			{/* name & surname */}
 			<Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} className={classes.nsInputs}>
 				<Col span={12}>
 					{/* Input name */}
-					<Controller 
+					<InitialInput 
+						control={control} initValue={accountData.name} label="Ім'я" 
 						name='name'
-						control={control}
-						rules={{
-							required: `Ім'я є обов'язковим`,
-							minLength: {value: 2, message: "Ім'я не може бути однією буквою"},
-							maxLength: {value: 25, message: "Ім'я занадто довге, скоротіть, будь ласка"},
-						}}
-						render={({field: {onChange, value}}) => (
-							<Form.Item
-								name="name"
-								rules={[
-									{required: true, message: `Ім'я є обов'язковим`},
-									{min: 2, message: "Ім'я не може бути однією буквою"},
-									{max: 25, message: "Ім'я занадто довге, скоротіть, будь ласка"},
-								]}
-							>
-								<Input 
-									placeholder="Ім'я" onChange={onChange} value={value}
-									className={classes.input} type='text'
-								/>
-							</Form.Item>
-						)}
 					/>
 				</Col>
 				<Col span={12}>
 					{/* Input surname */}
-					<Controller 
-						name='surname'
-						control={control}
-						rules={{
-							required: `Ім'я є обов'язковим`,
-							minLength: {value: 2, message: "Ім'я не може бути однією буквою"},
-							maxLength: {value: 25, message: "Ім'я занадто довге, скоротіть, будь ласка"},
-						}}
-						render={({field: {onChange, value}}) => (
-							<Form.Item
-								name="sername"
-								rules={[
-									{required: true, message: `Прізвище є обов'язковим`},
-									{min: 2, message: "Прізвище не може бути однією буквою"},
-									{max: 25, message: "Прізвище занадто довге, скоротіть, будь ласка"},
-								]}
-							>
-								<Input 
-									placeholder="Прізвище" onChange={onChange} value={value}
-									className={classes.input} type='text' 
-								/>
-							</Form.Item>
-						)}
-					/> 
+					<InitialInput 
+						control={control} name='surname' label='Прізвище'
+						initValue={accountData.surname}
+					/>
 				</Col>
 			</Row>
 
+			{/* select schoold  */}
 			<Row className={classes.schoolInfo} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
 				{/* select school(input -> fetcht to server -> options) */}
 				<Col span={15}>
@@ -155,6 +152,7 @@ export const AccountForm: React.FC<PropsType> = ({accountData}) => {
 							rules={
 								{required: 'Оберіть школу!'}
 							}
+							defaultValue={defaultSchoolValue as SchoolSearchItemType}
 							render={({field: {onChange, value}}) => (
 								<Select
 									onChange={onChange}
@@ -179,8 +177,9 @@ export const AccountForm: React.FC<PropsType> = ({accountData}) => {
 						<Controller
 							name='class'
 							control={control}
+							defaultValue={accountData.class}
 							rules={
-								{required: 'Chio!'}
+								{required: 'Оберіть ваш клас'}
 							}
 								render={({field: {onChange, value}}) => (
 								<Select
@@ -196,32 +195,45 @@ export const AccountForm: React.FC<PropsType> = ({accountData}) => {
 					</Form.Item>
 				</Col>
 			</Row>
-			{/* select birth date */}
-									
+
+			{/* select birth date */}				
 			<Controller 
 				name='birthDate'
 				control={control}
-				
+				defaultValue={moment('10-02-2022')}
+
 				render={({field: {onChange, value}}) => (
 					<Form.Item>
 						<DatePicker 
 							placeholder='Дата народження' value={value}
 							onChange={(value: moment.Moment | null): void => {
 								setValue('birthDate', value);
-						  }}
+						  	 }}
 						/>
 					</Form.Item>
 				)}
 			/>
 			<Form.Item>
-				<TextArea
-					showCount maxLength={250}
-					className={classes.textareaWrap}
-					placeholder='Напишіть про себе...'
+				<AvatarUpload 
+					setValue={setValue} name='avatar' control={control}
 				/>
 			</Form.Item>
-			<Button htmlType='submit'>Submit</Button>
+			<Form.Item>
+				<Controller 
+					name='aboutMe'
+					control={control}
+					defaultValue={accountData.aboutMe}
+					render={({field: {onChange, value}}) => (
+						<TextArea
+							showCount maxLength={250} onChange={onChange}
+							className={classes.textareaWrap} value={value as string | number | readonly string[] | undefined}
+							placeholder='Напишіть про себе...'
+						/>
+					)}
+				/>
+			</Form.Item>
+			<Button htmlType='submit'>Зберегти</Button>
 		</Form>	
 	);
 
-}
+});

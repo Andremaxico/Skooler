@@ -63,7 +63,5 @@ root.render(
   </FirebaseContext.Provider>
 );
 
-console.log('index js');
-
 
 

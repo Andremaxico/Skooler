@@ -4,6 +4,9 @@ import { User } from 'firebase/auth';
 import { FieldValue } from 'firebase/firestore';
 import { DatePickRef } from 'antd/lib/date-picker/generatePicker/interface';
 
+import { Value } from 'sass';
+import { BirthDateObject } from '../../Redux/account/account-reducer';
+
 export type LinkDataType = {
 	path: PathsType,
 	text: string,
@@ -31,13 +34,25 @@ export type MessagesDataType = MessageDataType[];
 
 //ACCOUNT==============================
 export type AccountDataType = {
-	class?: number,
-	school?: SchoolResultValueType,
-	name?: string,
-	surname?: string,
-	status?: 'teacher' | 'schoolboy',
-	birthDate?: moment.Moment | null | any, 
-	aboutMe?: string | null,
+	class: number,
+	school: SchoolSearchItemType,
+	name: string,
+	surname: string,
+	status: 'teacher' | 'schoolboy',
+	birthDate: moment.Moment | null, 
+	aboutMe: string | null,
+	avatar?: File,
+}
+
+export type ReceivedAccountDataType = { 
+	class: number,
+	school: SchoolInfoType,
+	name: string,
+	surname: string,
+	status: 'teacher' | 'schoolboy',
+	birthDate: BirthDateObject, 
+	aboutMe: string | null,
+	avatarUrl?: string,
 }
 
 export type SchoolResultValueType = {
@@ -47,10 +62,20 @@ export type SchoolResultValueType = {
 	value: string,
 }
 
+export type SchoolInfoType = {
+	website: string,
+	region_name: string,
+	email: string,
+	institution_name: string,
+	institution_id: string,
+}
+
 //================SCHOOLS=============
 export type SchoolSearchItemType = {
 	id: number,
 	name: string,
+	key: string,
+	value: string,
 }
 
 export type UserType = User;

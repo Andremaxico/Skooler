@@ -1,5 +1,5 @@
 import { collection, Firestore, getDoc, getDocs, query, where } from 'firebase/firestore';
-import { AccountDataType } from './../utils/types/index';
+import { AccountDataType, ReceivedAccountDataType } from './../utils/types/index';
 import axios from 'axios';
 import { addDoc, doc, setDoc } from 'firebase/firestore';
 import { auth, firestore } from '../firebase/firebaseApi';
@@ -10,13 +10,11 @@ const instance = axios.create({
 
 export const usersAPI = {
 	async getUsers() {
-		let users: AccountDataType[] = [];
-
-		const collRef = collection(firestore, 'users');
+		let users: ReceivedAccountDataType[] = [];
 
 		const querySnapshot = await getDocs(collection(firestore, 'users'));
 		querySnapshot.forEach((doc) => {
-			users.push(doc.data());
+			users.push(doc.data() as ReceivedAccountDataType);
 			console.log(doc.id, " => ", doc.data());
 		});
 
@@ -30,15 +28,10 @@ export const usersAPI = {
 		const docSnap = await getDoc(doc(firestore, 'users', uid));
 
 		if(docSnap.exists()) {
-			return docSnap.data();
+			return docSnap.data() as ReceivedAccountDataType;
 		} else {
 			console.error('Такого користувача не існує!');
 		}
-	},
-
-	async addUser(userData: AccountDataType) {
-		const res = await instance.post('/users.json', {...userData});
-		return res;
 	},
 
 }
