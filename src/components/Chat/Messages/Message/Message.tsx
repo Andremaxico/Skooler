@@ -9,13 +9,11 @@ import { Auth } from 'firebase/auth';
 
 type PropsType = {
 	messageData: MessageDataType,
+	myAccountId: string,
 };
 
-const Message: React.FC<PropsType> = ({messageData}) => {
-	const { auth } = useContext(FirebaseContext)
-	const [user] = useAuthState(auth as Auth);
-
-	const isMy = messageData.uid === user?.uid;
+const Message: React.FC<PropsType> = ({messageData, myAccountId}) => {
+	const isMy = messageData.uid === myAccountId;
 
 	return (
 		<div className={`${classes.Message} ${isMy && classes._my}`}>

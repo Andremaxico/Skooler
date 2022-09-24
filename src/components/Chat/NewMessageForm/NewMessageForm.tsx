@@ -6,9 +6,10 @@ import classes from './NewMessageForm.module.scss';
 import Preloader from '../../../UI/Preloader';
 import { MessageDataType, UserType } from '../../../utils/types';
 import { serverTimestamp } from 'firebase/firestore';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { sendMessage } from '../../../Redux/chat/reducer';
 import { AnyAction } from 'redux';
+import { selectMyAccountData } from '../../../Redux/account/account-selectors';
 
 type PropsType = {
 	authData: UserType | null,
@@ -16,6 +17,7 @@ type PropsType = {
 
 export const NewMessageForm: React.FC<PropsType> = ({authData}): ReactElement<any, any> => {
 	const [messageValue, setMessageValue] = useState<string>('');
+	const accountData = useSelector(selectMyAccountData);
 
 	const dispatch = useDispatch();
 
@@ -26,8 +28,8 @@ export const NewMessageForm: React.FC<PropsType> = ({authData}): ReactElement<an
 	const addMessage = async () => {
 		const newMessageData: MessageDataType = {
 			uid: authData?.uid,
-			displayName: authData?.displayName,
-			photoUrl: authData?.photoURL,
+			displayName: `${accountData?.surname} ${accountData?.name}` || 'Анонім',
+			photoUrl: accountData?.avatarUrl || '',
 			text: messageValue,
 			createdAt: serverTimestamp(),
 		}

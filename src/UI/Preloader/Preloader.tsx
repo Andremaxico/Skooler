@@ -10,7 +10,9 @@ type PropsType = {
 const Preloader: React.FC<PropsType> = ({width, height = width}) => {
 	return (
 		<div className={classes.Preloader}>
+			<div className={classes.image}>
 			<img src={preloader} alt='Loading...' width={width || '100%'} height={height || '100%'}/>
+			</div>
 		</div>
 	)
 }

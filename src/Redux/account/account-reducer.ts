@@ -104,6 +104,8 @@ export const sendMyAccountData = (data: AccountDataType | null) => async (dispat
 	const uid = getState().account.myLoginData?.uid;
 	const loginData = getState().account.myLoginData;
 
+	console.log('send my account data');
+
 	//school name (id)
 	const schoolIdsMatches = data?.school?.key.match(/[0-9]{6}/);
 	const schoolId = !!schoolIdsMatches ? Number(schoolIdsMatches[0]) : null;
@@ -126,8 +128,6 @@ export const sendMyAccountData = (data: AccountDataType | null) => async (dispat
 		//get avatar url 
 		const avatarUrl = await authAPI.getAvatarUrl(uid);
 
-		console.log('avatar url', avatarUrl);
-
 		//set new account data
 		if(schoolData && data) {
 			accountData = {
@@ -145,12 +145,6 @@ export const sendMyAccountData = (data: AccountDataType | null) => async (dispat
 	}
 
 	dispatch(isFetchingStatusChanged(false));
-}
-
-export const setMySchool = (id: number) => async (dispatch: AppDispatchType) => {
-	const data = await schoolsAPI.getSchoolInfo(id);
-	console.log('school', data);
-	dispatch(schoolInfoReceived(data));
 }
 
 export default accountReducer;

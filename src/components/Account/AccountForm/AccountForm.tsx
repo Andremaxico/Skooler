@@ -3,7 +3,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { Button, Col, DatePicker, Form, Input, Row, Select, Spin } from 'antd';
 import { AccountDataType, ReceivedAccountDataType, SchoolInfoType, SchoolSearchItemType } from '../../../utils/types';
 import classes from './AccountForm.module.scss';
-import { searchSchool as searchSchools, sendMyAccountData, setMyAccount, setMyAvatarUrl, setMySchool } from '../../../Redux/account/account-reducer';
+import { searchSchool as searchSchools, sendMyAccountData } from '../../../Redux/account/account-reducer';
 import TextArea from 'antd/lib/input/TextArea';
 import { authAPI } from '../../../api/authApi';
 import { useAppDispatch } from '../../../Redux/store';
@@ -11,6 +11,7 @@ import moment from 'moment';
 import { InitialInput } from './InitialInput';
 import { AvatarUpload } from './AvatarUpload';
 import { UploadAvatarInfoType } from './AvatarUpload/AvatarUpload';
+import { addZero } from '../../../utils/helpers/formatters';
 
 type PropsType = {
 	accountData: ReceivedAccountDataType | null,
@@ -38,7 +39,11 @@ export const AccountForm: React.FC<PropsType> = React.memo(({accountData, setIsE
 	//форматовані дані для початкових значень деяких інпутів
 	if(accountData) {
 		const { date, months, years } = accountData.birthDate;
-		defaultBirthDateValue = moment(`${date}-${months}-${years}`);
+		console.log('bitrh date', `${date}-${months}-${years}`);
+
+		if(date && months && years) {
+			defaultBirthDateValue = moment(`${addZero(years)}-${addZero(months)}-${addZero(date)}`);
+		}  
 
 		//
 		const baseSchoolString = `${accountData.school.institution_name} (${accountData.school.institution_id})`;
@@ -50,6 +55,7 @@ export const AccountForm: React.FC<PropsType> = React.memo(({accountData, setIsE
 		}
 	}
 
+	//use Form
    const { 
 	  register, handleSubmit, watch, formState: {errors},
 	  control, setValue,
@@ -124,7 +130,7 @@ export const AccountForm: React.FC<PropsType> = React.memo(({accountData, setIsE
 			onFinish={handleSubmit(onSubmit)} className={classes.AccountForm}
 		>
 			{/* name & surname */}
-			<Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} className={classes.nsInputs}>
+			<Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} className={classes.initialsInputs}>
 				<Col span={12}>
 					{/* Input name */}
 					<InitialInput 
@@ -141,7 +147,7 @@ export const AccountForm: React.FC<PropsType> = React.memo(({accountData, setIsE
 				</Col>
 			</Row>
 
-			{/* select schoold  */}
+			{/* select schoold and class  */}
 			<Row className={classes.schoolInfo} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
 				{/* select school(input -> fetcht to server -> options) */}
 				<Col span={15}>
@@ -200,7 +206,7 @@ export const AccountForm: React.FC<PropsType> = React.memo(({accountData, setIsE
 			<Controller 
 				name='birthDate'
 				control={control}
-				defaultValue={moment('10-02-2022')}
+				defaultValue={defaultBirthDateValue}
 
 				render={({field: {onChange, value}}) => (
 					<Form.Item>
@@ -213,12 +219,13 @@ export const AccountForm: React.FC<PropsType> = React.memo(({accountData, setIsE
 					</Form.Item>
 				)}
 			/>
-			<Form.Item>
+			<Form.Item className={classes.avatarUpload}>
 				<AvatarUpload 
-					setValue={setValue} name='avatar' control={control}
+					setValue={setValue} name='avatar' 
+					control={control} avatarUrl={accountData.avatarUrl || null}
 				/>
 			</Form.Item>
-			<Form.Item>
+			<Form.Item className={classes.aboutMe}>
 				<Controller 
 					name='aboutMe'
 					control={control}
