@@ -1,13 +1,9 @@
 import { Avatar } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
-import React, { useContext } from 'react'
+import React from 'react'
 import { MessageDataType } from '../../../../utils/types';
 import classes from './Message.module.scss';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { FirebaseContext } from '../../../..';
-import { Auth } from 'firebase/auth';
 import { Link } from 'react-router-dom';
-import { getDatabase } from 'firebase/database';
 import { addZero } from '../../../../utils/helpers/formatters';
 
 type PropsType = {
