@@ -37,7 +37,6 @@ const chatReducer = createReducer(initialState, (builder) => {
 
 const fetchingSubscriberCreator = (dispatch: AppDispatchType): FetchingSubscriberType => (value: boolean) => {
 	dispatch(fetchingStatusChanged(value));
-	console.log('fetch sub v', value)
 } 
 
 export const startMessaging = () => (dispatch: AppDispatchType) => {

@@ -17,6 +17,9 @@
 		padding: 9px 7px 10px;
 		border-radius: 5px;
 		background-color: $mainCol;
+		.createDate {
+			color: #fff;
+		}
 
 		.username {
 			@include smallText;

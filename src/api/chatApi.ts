@@ -16,7 +16,6 @@ const subscribers = {
 }
 
 const notifyMessagesSubscribers = (data: MessagesDataType) => {
-	console.log('notify mes subscribers');
 	subscribers['messages-subs'].forEach(sub => sub(data));
 }
 
@@ -43,18 +42,6 @@ const unsubscribeFromMessages = onSnapshot(q,
 	}
 );
 
-const db = getDatabase();
-const connectedRef = ref(db, ".info/connected");
-
-const unsubscribeFromConnection = onValue(connectedRef, (snap) => {
-	console.log('in value', snap.val());
-	if (snap.val() === true) {
-		console.log("connected");
-	} else {
-		console.log("not connected");
-	}
-});
-
 
 const chatAPI = {
 	async subscribe(subscriber: MessageSubscriberType) {
@@ -67,7 +54,7 @@ const chatAPI = {
 			messages.push({...doc.data(), id: doc.id})
 		});
 
-		console.log('data', messages);
+		console.log('messages data', messages);
 
 		subscribers['messages-subs'].push(subscriber);
 
@@ -92,7 +79,6 @@ const chatAPI = {
 	unsubscribe() {
 		console.log('unsubscribe');
 		unsubscribeFromMessages();
-		unsubscribeFromConnection();
 	}
 }
 

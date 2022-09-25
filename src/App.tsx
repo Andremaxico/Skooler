@@ -15,7 +15,7 @@ import { Content, Footer } from 'antd/lib/layout/layout';
 import { store, useAppDispatch } from './Redux/store';
 import Account from './components/Account';
 import { networkErrorStatusChanged } from './Redux/app/appReducer';
-import { loginDataReceived } from './Redux/account/account-reducer';
+import { loginDataReceived, setMyAccount } from './Redux/account/account-reducer';
 import { selectMyLoginData } from './Redux/account/account-selectors';
 import Preloader from './UI/Preloader';
 import { FirebaseContext } from '.';
@@ -57,14 +57,16 @@ const App = () => {
   useEffect(() => {
     const getLoginData = async () => {
       if(user) {
-        setIsFetching(true);
+        console.log('user', user);
         await dispatch(loginDataReceived({...user}));
+        await dispatch(setMyAccount(user));	
         setIsFetching(false);
       }
     }
     getLoginData();
     
   }, [user]);
+
   return (
     <>
       <AppHeader />
@@ -74,7 +76,9 @@ const App = () => {
             <Routes>
               <Route path='/login' element={<Login />}/>
               <Route path='/chat' element={<Chat />}/>
-              <Route path='/account' element={<Account />} />
+              <Route path='/account' element={<Account />}>
+                <Route path=':userId'/>
+              </Route>
             </Routes>
           }
         </div>

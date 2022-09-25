@@ -17,7 +17,10 @@ const Messages: React.FC<PropsType> = ({}) => {
 
 	if(messagesData) {
 		messagesList = messagesData?.map(data => {
-			return <Message messageData={data} myAccountId={loginData?.uid || ''} />
+			return <Message 
+				messageData={data} myAccountId={loginData?.uid || ''} 
+				key={`${data.createdAt}${data.uid}`}
+			/>
 		});
 	}
 

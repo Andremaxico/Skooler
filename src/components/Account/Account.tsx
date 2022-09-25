@@ -1,9 +1,9 @@
 import { Button } from 'antd';
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
-import { Navigate } from 'react-router-dom';
-import { setMyAccount } from '../../Redux/account/account-reducer';
-import { selectAccountIsFetching, selectMyAccountData, selectMyLoginData } from '../../Redux/account/account-selectors';
+import { Navigate, useParams } from 'react-router-dom';
+import { setAnotherUserAccount, setMyAccount } from '../../Redux/account/account-reducer';
+import { selectAccountIsFetching, selectCurrUserAccountData, selectMyAccountData, selectMyLoginData } from '../../Redux/account/account-selectors';
 import { useAppDispatch } from '../../Redux/store';
 import Preloader from '../../UI/Preloader';
 import { AccountBody } from './AccountBody';
@@ -15,20 +15,25 @@ const Account: React.FC<PropsType> = ({}) => {
 	const [isEdit, setIsEdit] = useState<boolean>(false);
 
 	const myAccountData = useSelector(selectMyAccountData);
+	const currUserAccountData = useSelector(selectCurrUserAccountData);
+
 	const authData = useSelector(selectMyLoginData);
 	const isFetching = useSelector(selectAccountIsFetching);
 
+	const { userId } = useParams();
+
+	const accountData = userId ? currUserAccountData : myAccountData;
+	const isMy = !userId;
+
+	useEffect(() => {
+		if(userId) {
+			dispatch(setAnotherUserAccount(userId));
+		}
+	}, [userId]);
+
 	const dispatch = useAppDispatch();
 
-	//get account data
-	useEffect(() => {
-		if(authData) {
-			dispatch(setMyAccount(authData));	
-		}
-	}, [authData])
-
 	console.log('is fetching', isFetching);
-	console.log('my account data', myAccountData);
 
 	if(!authData) return <Navigate to='/login' replace={true}/>
 	if(isFetching) return <Preloader />;
@@ -36,12 +41,13 @@ const Account: React.FC<PropsType> = ({}) => {
 	return (
 		<div>
 			{
-			!isEdit && myAccountData ?
-				<AccountBody accountData={myAccountData}/>
+			!isEdit && accountData ?
+				<AccountBody accountData={accountData} />
 			:
-				<AccountForm accountData={myAccountData} setIsEdit={setIsEdit}/>
+				<AccountForm accountData={accountData} setIsEdit={setIsEdit}/>
 			}
-			<Button onClick={() => setIsEdit(!isEdit)}>Edit</Button>
+			
+			{ isMy && <Button onClick={() => setIsEdit(!isEdit)}>Змінити дані профілю</Button>}
 		</div>
 	)
 }

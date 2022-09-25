@@ -1,5 +1,5 @@
-import { Avatar, Button } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
+import { Avatar, Button, Dropdown, Menu } from 'antd';
+import { CaretDownFilled, UserOutlined } from '@ant-design/icons';
 import React, { useContext, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { UserType } from '../../../utils/types';
@@ -11,6 +11,7 @@ import { accountDataReceived, loginDataReceived } from '../../../Redux/account/a
 import { useAppDispatch } from '../../../Redux/store';
 import { useSelector } from 'react-redux';
 import { selectMyAccountData } from '../../../Redux/account/account-selectors';
+import { SignoutIcon } from '../../../icons/Icons';
 
 type PropsType = {
 	loginData: UserType | null,
@@ -29,6 +30,27 @@ export const AccountInfo: React.FC<PropsType> = ({loginData}) => {
 		dispatch(accountDataReceived(null));
 	}
 
+	//contex menu items fo arrow more btn
+	const menu = (
+		<Menu
+		  items={[
+				{
+					label: <div className={classes.myAccountLink}>
+						<UserOutlined /> <NavLink to='account' className={classes.toAccountLink} replace={true}>Мій профіль</NavLink>
+					</div>,
+					key: '1',
+				},
+				{
+					label: <Button 
+								onClick={signout} type='primary' danger size='small' 
+								className={classes.signoutBtn}
+							> <SignoutIcon className={classes.signOutIcon}/>  Вийти</Button>,
+					key: 'signout',
+				},
+		  ]}
+		/>
+	 );
+
 	if(!loginData) {
 		return <NavLink to='/login' replace={true} className={classes.loginLink}>Login</NavLink>;
 	}
@@ -44,11 +66,10 @@ export const AccountInfo: React.FC<PropsType> = ({loginData}) => {
 				/>
 			</Link>
 
-			<p className={classes.name}>
-				{ accountData?.name || loginData.displayName}
-			</p>
+			<Dropdown overlay={menu} trigger={['click']}>
+				<CaretDownFilled className={classes.moreBtn}/>
+			</Dropdown>
 
-			<Button onClick={signout} type='primary' size='small'>Вийти</Button>
 		</div>
 	)
 }

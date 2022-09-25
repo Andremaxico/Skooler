@@ -14,6 +14,23 @@
 		line-height: 1;
 		color: #fff;
 	}
+	.moreBtn {
+		color: #fff;
+	}
+}
+
+
+.signoutBtn {
+	width: 100%;
+}
+
+.signOutIcon {
+	@include size(12px);
+	fill: #fff;
+}
+
+.toAccountLink {
+	color: $black;
 }
 
 .loginLink {}
