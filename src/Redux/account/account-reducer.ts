@@ -10,7 +10,7 @@ import { User } from 'firebase/auth';
 export type AccountStateType = {
 	myAccountData: ReceivedAccountDataType | null,
 	myLoginData: User | null,
-	currUserAccount: ReceivedAccountDataType | null,
+	currUserAccount: ReceivedAccountDataType | null | undefined,
 	isFetching: boolean,
 }
 type _ThunkType = ThunkAction<void, AccountStateType, unknown, AnyAction>;
@@ -19,7 +19,7 @@ type _ThunkType = ThunkAction<void, AccountStateType, unknown, AnyAction>;
 //=========ACTIONS=========
 export const accountDataReceived = createAction<ReceivedAccountDataType | null>('account/SET_MY_ACCOUNT_DATA');
 export const loginDataReceived = createAction<User | null>('account/LOGIN_DATA_RECEIVED');
-export const currUserAccountReceived = createAction<ReceivedAccountDataType>('account/CURR_USER_ACCOUNT_RECEIVED');
+export const currUserAccountReceived = createAction<ReceivedAccountDataType | undefined>('account/CURR_USER_ACCOUNT_RECEIVED');
 export const schoolInfoReceived = createAction<SchoolInfoType>('account/SCHOOL_INFO_RECEIVED');
 export const isFetchingStatusChanged = createAction<boolean>('account/IS_FETCHING_STATUS_CHANGED');
 export const avatarUrlReceived = createAction<string>('account/AVATAR_IMAGE_RECEIVED');
@@ -85,10 +85,7 @@ export const setMyAccount = (authData: UserType) => async (dispatch: AppDispatch
 export const setAnotherUserAccount = (uid: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
 	dispatch(isFetchingStatusChanged(true));
 	const data: ReceivedAccountDataType | undefined = await usersAPI.getUserById(uid);
-
-	if(data) {
-		dispatch(currUserAccountReceived(data));
-	}
+	dispatch(currUserAccountReceived(data));
 	dispatch(isFetchingStatusChanged(false));
 }
 

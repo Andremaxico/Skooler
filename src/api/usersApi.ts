@@ -30,7 +30,7 @@ export const usersAPI = {
 		if(docSnap.exists()) {
 			return docSnap.data() as ReceivedAccountDataType;
 		} else {
-			console.error('Такого користувача не існує!');
+			return undefined;
 		}
 	},
 

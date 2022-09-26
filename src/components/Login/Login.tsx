@@ -9,7 +9,7 @@ import classes from './Login.module.scss';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { Navigate } from 'react-router-dom';
 import Preloader from '../../UI/Preloader';
-import { GoogleIcon } from '../../icons/Icons';
+import { GoogleIcon } from '../../UI/Icons';
 import { useAppDispatch } from '../../Redux/store';
 import { loginDataReceived, sendMyAccountData } from '../../Redux/account/account-reducer';
 import { useSelector } from 'react-redux';

@@ -11,7 +11,7 @@ import { accountDataReceived, loginDataReceived } from '../../../Redux/account/a
 import { useAppDispatch } from '../../../Redux/store';
 import { useSelector } from 'react-redux';
 import { selectMyAccountData } from '../../../Redux/account/account-selectors';
-import { SignoutIcon } from '../../../icons/Icons';
+import { SignoutIcon } from '../../../UI/Icons';
 
 type PropsType = {
 	loginData: UserType | null,
