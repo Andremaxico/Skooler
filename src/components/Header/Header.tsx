@@ -22,11 +22,14 @@ const AppHeader: React.FC<PropsType> = ({}) => {
 
 	const linksData: LinkDataType[] = [
 		{
-			path: '/chat', id: 1, text: 'Chat'
+			path: '/chat', id: 1, text: 'Чат'
 		},
 		{
-			path: '/account', id: 2, text: 'Account'
+			path: '/account', id: 2, text: 'Мій профіль'
 		},
+		{
+			path: '/myschool', id: 3, text: 'Моя школа'
+		}
 	];
 
 	const navItems = linksData.map(data => {

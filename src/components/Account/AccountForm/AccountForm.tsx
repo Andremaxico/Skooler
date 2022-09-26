@@ -12,6 +12,7 @@ import { InitialInput } from './InitialInput';
 import { AvatarUpload } from './AvatarUpload';
 import { UploadAvatarInfoType } from './AvatarUpload/AvatarUpload';
 import { addZero } from '../../../utils/helpers/formatters';
+import { sassNull } from 'sass';
 
 type PropsType = {
 	accountData: ReceivedAccountDataType | null,
@@ -38,7 +39,7 @@ export const AccountForm: React.FC<PropsType> = React.memo(({accountData, setIsE
 
 	//форматовані дані для початкових значень деяких інпутів
 	if(accountData) {
-		const { date, months, years } = accountData.birthDate;
+		const { date, months, years } = accountData?.birthDate;
 		console.log('bitrh date', `${date}-${months}-${years}`);
 
 		if(date && months && years) {
@@ -46,9 +47,9 @@ export const AccountForm: React.FC<PropsType> = React.memo(({accountData, setIsE
 		}  
 
 		//
-		const baseSchoolString = `${accountData.school.institution_name} (${accountData.school.institution_id})`;
+		const baseSchoolString = `${accountData?.school.institution_name} (${accountData?.school.institution_id})`;
 		defaultSchoolValue = {
-			id: Number(accountData.school.institution_id),
+			id: Number(accountData?.school.institution_id),
 			key: baseSchoolString,
 			name: baseSchoolString,
 			value: baseSchoolString,
@@ -119,128 +120,130 @@ export const AccountForm: React.FC<PropsType> = React.memo(({accountData, setIsE
 		return loadOptions;
 	}, []);
 
-
-	if(!accountData) return <div>No initial values</div>
-
 	console.log('errors', errors);
 
 	return (
 		// onFinish == onSubmit
-		<Form 
-			onFinish={handleSubmit(onSubmit)} className={classes.AccountForm}
-		>
-			{/* name & surname */}
-			<Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} className={classes.initialsInputs}>
-				<Col span={12}>
-					{/* Input name */}
-					<InitialInput 
-						control={control} initValue={accountData.name} label="Ім'я" 
-						name='name'
-					/>
-				</Col>
-				<Col span={12}>
-					{/* Input surname */}
-					<InitialInput 
-						control={control} name='surname' label='Прізвище'
-						initValue={accountData.surname}
-					/>
-				</Col>
-			</Row>
-
-			{/* select schoold and class  */}
-			<Row className={classes.schoolInfo} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-				{/* select school(input -> fetcht to server -> options) */}
-				<Col span={15}>
-					<Form.Item >
-						<Controller 
-							name='school'
-							control={control}
-							rules={
-								{required: 'Оберіть школу!'}
-							}
-							defaultValue={defaultSchoolValue as SchoolSearchItemType}
-							render={({field: {onChange, value}}) => (
-								<Select
-									onChange={onChange}
-									disabled={false}
-									value={value}
-									labelInValue
-									filterOption={false}
-									onSearch={debounceFetcher}
-									placeholder="Знайти навчальний заклад"	
-									showSearch
-									notFoundContent={fetching ? <Spin size="small" /> : null}
-									options={schoolsSearchList}
-									className={classes.selectSchool}
-								/>
-							)}
+		<>
+			<h2>Змінити дані профілю</h2>
+			<Form 
+				onFinish={handleSubmit(onSubmit)} className={classes.AccountForm}
+			>
+				{/* name & surname */}
+				<Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} className={classes.initialsInputs}>
+					<Col span={12}>
+						{/* Input name */}
+						<InitialInput 
+							control={control} initValue={accountData?.name || null} label="Ім'я" 
+							name='name'
 						/>
-					</Form.Item>
-				</Col>
-				{/* select class */}
-				<Col span={3}>
-					<Form.Item >
-						<Controller
-							name='class'
-							control={control}
-							defaultValue={accountData.class}
-							rules={
-								{required: 'Оберіть ваш клас'}
-							}
+					</Col>
+					<Col span={12}>
+						{/* Input surname */}
+						<InitialInput 
+							control={control} name='surname' label='Прізвище'
+							initValue={accountData?.surname || null}
+						/>
+					</Col>
+				</Row>
+
+				{/* select schoold and class  */}
+				<Row className={classes.schoolInfo} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+					{/* select school(input -> fetcht to server -> options) */}
+					<Col span={15}>
+						<Form.Item >
+							<Controller 
+								name='school'
+								control={control}
+								rules={
+									{required: 'Оберіть школу!'}
+								}
+								defaultValue={defaultSchoolValue as SchoolSearchItemType}
 								render={({field: {onChange, value}}) => (
-								<Select
-									placeholder='Ваш клас' className={classes.selectClass}
-									style={{ width: 120 }} onChange={onChange} value={value}
-								>
-									{classesNums.map(num => {
-										return <Select.Option key={num} value={num as unknown as string}>{num}</Select.Option>
-									})}
-								</Select>
-							)}
-						/>
-					</Form.Item>
-				</Col>
-			</Row>
+									<Select
+										onChange={onChange}
+										disabled={false}
+										value={value}
+										labelInValue
+										filterOption={false}
+										onSearch={debounceFetcher}
+										placeholder="Знайти навчальний заклад"	
+										showSearch
+										notFoundContent={fetching ? <Spin size="small" /> : null}
+										options={schoolsSearchList}
+										className={classes.selectSchool}
+									/>
+								)}
+							/>
+						</Form.Item>
+					</Col>
+					{/* select class */}
+					<Col span={3}>
+						<Form.Item >
+							<Controller
+								name='class'
+								control={control}
+								defaultValue={accountData?.class}
+								rules={
+									{required: 'Оберіть ваш клас'}
+								}
+									render={({field: {onChange, value}}) => (
+									<Select
+										placeholder='Ваш клас' className={classes.selectClass}
+										style={{ width: 120 }} onChange={onChange} value={value}
+									>
+										{classesNums.map(num => {
+											return <Select.Option key={num} value={num as unknown as string}>{num}</Select.Option>
+										})}
+									</Select>
+								)}
+							/>
+						</Form.Item>
+					</Col>
+				</Row>
 
-			{/* select birth date */}				
-			<Controller 
-				name='birthDate'
-				control={control}
-				defaultValue={defaultBirthDateValue}
-
-				render={({field: {onChange, value}}) => (
-					<Form.Item>
-						<DatePicker 
-							placeholder='Дата народження' value={value}
-							onChange={(value: moment.Moment | null): void => {
-								setValue('birthDate', value);
-						  	 }}
-						/>
-					</Form.Item>
-				)}
-			/>
-			<Form.Item className={classes.avatarUpload}>
-				<AvatarUpload 
-					setValue={setValue} name='avatar' 
-					control={control} avatarUrl={accountData.avatarUrl || null}
-				/>
-			</Form.Item>
-			<Form.Item className={classes.aboutMe}>
+				{/* select birth date */}				
 				<Controller 
-					name='aboutMe'
+					name='birthDate'
 					control={control}
-					defaultValue={accountData.aboutMe}
+					defaultValue={defaultBirthDateValue}
+
 					render={({field: {onChange, value}}) => (
-						<TextArea
-							showCount maxLength={250} onChange={onChange}
-							className={classes.textareaWrap} value={value as string | number | readonly string[] | undefined}
-							placeholder='Напишіть про себе...'
-						/>
+						<Form.Item>
+							<DatePicker 
+								placeholder='Дата народження' value={value}
+								onChange={(value: moment.Moment | null): void => {
+									setValue('birthDate', value);
+								}}
+							/>
+						</Form.Item>
 					)}
 				/>
-			</Form.Item>
-			<Button htmlType='submit'>Зберегти</Button>
-		</Form>	
+				<Form.Item className={classes.avatarUpload}>
+					<AvatarUpload 
+						setValue={setValue} name='avatar' 
+						control={control} avatarUrl={accountData?.avatarUrl || null}
+					/>
+				</Form.Item>
+				<Form.Item className={classes.aboutMe}>
+					<Controller 
+						name='aboutMe'
+						control={control}
+						defaultValue={accountData?.aboutMe}
+						render={({field: {onChange, value}}) => (
+							<TextArea
+								showCount maxLength={250} onChange={onChange}
+								className={classes.textareaWrap} value={value as string | number | readonly string[] | undefined}
+								placeholder='Напишіть про себе...'
+							/>
+						)}
+					/>
+				</Form.Item>
+				<Button htmlType='submit'>
+					Зберегти
+				</Button>
+			</Form>
+		</>	
 	);
 
 });

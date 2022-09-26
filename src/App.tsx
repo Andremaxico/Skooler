@@ -21,6 +21,7 @@ import Preloader from './UI/Preloader';
 import { FirebaseContext } from '.';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { Auth } from 'firebase/auth';
+import MySchool from './components/MySchool';
 
 
 const App = () => {
@@ -79,6 +80,7 @@ const App = () => {
               <Route path='/account' element={<Account />}>
                 <Route path=':userId'/>
               </Route>
+              <Route path='/myschool' element={<MySchool />}/>
             </Routes>
           }
         </div>

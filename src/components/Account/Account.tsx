@@ -12,8 +12,6 @@ import { AccountForm } from './AccountForm';
 type PropsType = {};
 
 const Account: React.FC<PropsType> = ({}) => {
-	const [isEdit, setIsEdit] = useState<boolean>(false);
-
 	const myAccountData = useSelector(selectMyAccountData);
 	const currUserAccountData = useSelector(selectCurrUserAccountData);
 
@@ -24,6 +22,8 @@ const Account: React.FC<PropsType> = ({}) => {
 
 	const accountData = userId ? currUserAccountData : myAccountData;
 	const isMy = !userId;
+
+	const [isEdit, setIsEdit] = useState<boolean>(isMy ? !!myAccountData : false);
 
 	useEffect(() => {
 		if(userId) {
@@ -47,7 +47,9 @@ const Account: React.FC<PropsType> = ({}) => {
 				<AccountForm accountData={accountData} setIsEdit={setIsEdit}/>
 			}
 			
-			{ isMy && <Button onClick={() => setIsEdit(!isEdit)}>Змінити дані профілю</Button>}
+			{ isMy && <Button onClick={() => setIsEdit(!isEdit)}>
+					{!isEdit ? 'Змінити дані профілю' : !!myAccountData ? 'Не зберігати зміни' : '' }
+				</Button>}
 		</div>
 	)
 }

@@ -18,7 +18,7 @@ export type RouteDataType = {
 	element: JSX.Element,
 }
 
-export type PathsType = '/chat' | '/login' | '/account' 
+export type PathsType = '/chat' | '/login' | '/account' | '/myschool';
 
 export type MessageDataType = {
 	uid?: string,

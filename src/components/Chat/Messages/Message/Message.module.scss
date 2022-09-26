@@ -18,11 +18,6 @@
 		max-width: 60%;
 		border-radius: 5px;
 		background-color: $mainCol;
-		.createDate {
-			margin-bottom: 0;
-			color: #fff;
-		}
-
 		.username {
 			@include smallText;
 			color: rgba($color: #fff, $alpha: 0.6)
@@ -32,6 +27,11 @@
 			word-wrap: break-word;
 			margin-bottom: 6px;
 			color: #fff;
+		}
+
+		.createDate {
+			margin-bottom: 0;
+			color: rgba($color: #fff, $alpha: 0.5);
 		}
 	}
 }
