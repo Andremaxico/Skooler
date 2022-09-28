@@ -10,6 +10,7 @@ $mainCol: #001529;
 $black: rgb(51, 51, 51);
 $grayBg: #fefefe;
 $gray: rgb(131, 131, 131);
+$lightGray: rgba($color: $gray, $alpha: 0.5);
 //mixins
 @mixin size($w, $h: $w) {
   width: $w;

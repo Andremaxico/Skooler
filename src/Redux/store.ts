@@ -5,6 +5,7 @@ import accountReducer from './account/account-reducer';
 import { usersReducer } from './users/users-reducer';
 import { useDispatch } from 'react-redux';
 import { appReducer } from './app/appReducer';
+import { schoolReducer } from './mySchool/school-reducer';
 
 export const store = configureStore({ 
 	reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
 		messages: chatReducer,
 		account: accountReducer,
 		users: usersReducer,
+		mySchool: schoolReducer,
 	} ,
 	devTools: process.env.NODE_ENV !== 'production',
 	middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk),

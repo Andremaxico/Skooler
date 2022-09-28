@@ -10,44 +10,51 @@ import { useDispatch, useSelector } from 'react-redux';
 import { sendMessage } from '../../../Redux/chat/reducer';
 import { AnyAction } from 'redux';
 import { selectMyAccountData } from '../../../Redux/account/account-selectors';
+import { Controller, useForm } from 'react-hook-form';
 
 type PropsType = {
 	authData: UserType | null,
 }
 
+type FieldValues = {
+	message: string,
+}
+
 export const NewMessageForm: React.FC<PropsType> = ({authData}): ReactElement<any, any> => {
-	const [messageValue, setMessageValue] = useState<string>('');
+	const { control, formState: {errors}, handleSubmit, reset } = useForm<FieldValues>();
 	const accountData = useSelector(selectMyAccountData);
 
 	const dispatch = useDispatch();
 
-	const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-		setMessageValue(e.target.value);
-	}
+	const onSubmit = (data: FieldValues) => addMessage(data.message);
 
-	const addMessage = async () => {
+	const addMessage = async (newMessage: string) => {
 		const newMessageData: MessageDataType = {
 			uid: authData?.uid,
 			displayName: `${accountData?.surname} ${accountData?.name}` || 'Анонім',
 			photoUrl: accountData?.avatarUrl || '',
-			text: messageValue,
+			text: newMessage,
 			createdAt: serverTimestamp(),
 		}
 
 		sendMessage(newMessageData);
-
-		//setMessagesData(messages);
-		setMessageValue('');
+		reset();
 	}
 
 	return (
-		<form className={classes.NewMessageForm} onSubmit={addMessage}>
-			<TextArea 
-				showCount maxLength={100}  value={messageValue}
-				onChange={onChange} className={classes.textareaWrap}
-				placeholder='Your message'
+		<form className={classes.NewMessageForm} onSubmit={handleSubmit(onSubmit)}>
+			<Controller
+				name='message'
+				control={control}
+				render={({field: {onChange, value}}) => (
+					<TextArea 
+						showCount maxLength={100}  value={value}
+						onChange={onChange} className={classes.textareaWrap}
+						placeholder='Your message'
+					/>
+				)} 
 			/>
-			<Button onClick={addMessage} className={classes.sendBtn} type='primary'>Send</Button>
+			<Button htmlType='submit' className={classes.sendBtn} type='primary'>Надіслати</Button>
 
 		</form>
 	)

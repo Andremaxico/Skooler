@@ -184,10 +184,8 @@ export const AccountForm: React.FC<PropsType> = React.memo(({accountData, setIsE
 								name='class'
 								control={control}
 								defaultValue={accountData?.class}
-								rules={
-									{required: 'Оберіть ваш клас'}
-								}
-									render={({field: {onChange, value}}) => (
+								rules={{required: 'Оберіть ваш клас'}}
+								render={({field: {onChange, value}}) => (
 									<Select
 										placeholder='Ваш клас' className={classes.selectClass}
 										style={{ width: 120 }} onChange={onChange} value={value}

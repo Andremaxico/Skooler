@@ -78,6 +78,17 @@ export type SchoolSearchItemType = {
 	value: string,
 }
 
+//=============================MY SCHOOL=========================
+//EVENTS
+export type EventDataType = {
+	title: string,
+	leading: string,
+	date: {seconds: number, nanoseconds?: number} | Date,
+	about: string,
+	id: string,
+	isPast?: boolean,
+}
+
 export type UserType = User;
 
 
