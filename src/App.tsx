@@ -61,8 +61,8 @@ const App = () => {
         console.log('user', user);
         await dispatch(loginDataReceived({...user}));
         await dispatch(setMyAccount(user));	
-        setIsFetching(false);
       }
+      setIsFetching(false);
     }
     getLoginData();
     
