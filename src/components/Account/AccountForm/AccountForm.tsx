@@ -13,6 +13,7 @@ import { AvatarUpload } from './AvatarUpload';
 import { UploadAvatarInfoType } from './AvatarUpload/AvatarUpload';
 import { addZero } from '../../../utils/helpers/formatters';
 import { sassNull } from 'sass';
+import { About } from '../../../UI/formControls/About';
 
 type PropsType = {
 	accountData: ReceivedAccountDataType | null,
@@ -223,20 +224,14 @@ export const AccountForm: React.FC<PropsType> = React.memo(({accountData, setIsE
 						control={control} avatarUrl={accountData?.avatarUrl || null}
 					/>
 				</Form.Item>
-				<Form.Item className={classes.aboutMe}>
-					<Controller 
-						name='aboutMe'
-						control={control}
-						defaultValue={accountData?.aboutMe}
-						render={({field: {onChange, value}}) => (
-							<TextArea
-								showCount maxLength={250} onChange={onChange}
-								className={classes.textareaWrap} value={value as string | number | readonly string[] | undefined}
-								placeholder='Напишіть про себе...'
-							/>
-						)}
-					/>
-				</Form.Item>
+				<About<FieldValues> 
+					control={control}
+					name='aboutMe'
+					defaultValue={accountData?.aboutMe}
+					maxLength={250}
+					placeholder='Напишіть про себе...'
+					className={classes.textareaWrap}
+				/>
 				<Button htmlType='submit'>
 					Зберегти
 				</Button>
