@@ -14,6 +14,7 @@ import { UploadAvatarInfoType } from './AvatarUpload/AvatarUpload';
 import { addZero } from '../../../utils/helpers/formatters';
 import { sassNull } from 'sass';
 import { About } from '../../../UI/formControls/About';
+import { ClassSelect } from '../../../UI/formControls/ClassSelect';
 
 type PropsType = {
 	accountData: ReceivedAccountDataType | null,
@@ -71,8 +72,6 @@ export const AccountForm: React.FC<PropsType> = React.memo(({accountData, setIsE
 
 	//список для select
 	const [schoolsSearchList, setSchoolsSearchList] = useState<SchoolSelectItemType[]>([]);
-
-	const classesNums: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
 	//це треба
 	const fetchRef = useRef(0);
@@ -180,6 +179,7 @@ export const AccountForm: React.FC<PropsType> = React.memo(({accountData, setIsE
 					</Col>
 					{/* select class */}
 					<Col span={3}>
+
 						<Form.Item >
 							<Controller
 								name='class'
@@ -187,14 +187,19 @@ export const AccountForm: React.FC<PropsType> = React.memo(({accountData, setIsE
 								defaultValue={accountData?.class}
 								rules={{required: 'Оберіть ваш клас'}}
 								render={({field: {onChange, value}}) => (
-									<Select
-										placeholder='Ваш клас' className={classes.selectClass}
-										style={{ width: 120 }} onChange={onChange} value={value}
+									<Form.Item
+										name={'class'}
+										rules={[
+											{required: true, message: 'Оберіть ваш клас'}
+										]}
+										initialValue={accountData?.class}
 									>
-										{classesNums.map(num => {
-											return <Select.Option key={num} value={num as unknown as string}>{num}</Select.Option>
-										})}
-									</Select>
+										<ClassSelect 
+											className={classes.classSelect}
+											onChange={onChange} value={value}
+											placeholder='Ваш клас' 
+										/>
+									</Form.Item>
 								)}
 							/>
 						</Form.Item>

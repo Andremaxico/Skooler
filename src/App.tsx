@@ -26,9 +26,9 @@ import MySchool from './components/MySchool';
 
 const App = () => {
   const { auth } = useContext(FirebaseContext);
-  const [ user ] = useAuthState(auth as Auth);
+  const [ user, loading ] = useAuthState(auth as Auth);
 
-  const [isFetching, setIsFetching] = useState<boolean>(true);
+  const [isFetching, setIsFetching] = useState<boolean>(loading);
 
   const dispatch = useAppDispatch();
 
@@ -58,11 +58,11 @@ const App = () => {
   useEffect(() => {
     const getLoginData = async () => {
       if(user) {
-        console.log('user', user);
+        console.log('user data', user);
         await dispatch(loginDataReceived({...user}));
         await dispatch(setMyAccount(user));	
+        setIsFetching(false);
       }
-      setIsFetching(false);
     }
     getLoginData();
     
@@ -73,7 +73,7 @@ const App = () => {
       <AppHeader />
       <Content className='Content'>
         <div className="site-layout-content" style={{flex: '1 1 auto'}}>
-          {isFetching ? <Preloader /> :
+          {isFetching || loading ? <Preloader /> :
             <Routes>
               <Route path='/login' element={<Login />}/>
               <Route path='/chat' element={<Chat />}/>

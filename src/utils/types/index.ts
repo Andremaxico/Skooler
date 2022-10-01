@@ -34,7 +34,7 @@ export type MessagesDataType = MessageDataType[];
 
 //ACCOUNT==============================
 export type AccountDataType = {
-	class: number,
+	class: string,
 	school: SchoolSearchItemType,
 	name: string,
 	surname: string,
@@ -45,7 +45,7 @@ export type AccountDataType = {
 }
 
 export type ReceivedAccountDataType = { 
-	class: number,
+	class: string,
 	school: SchoolInfoType,
 	name: string,
 	surname: string,
@@ -53,6 +53,7 @@ export type ReceivedAccountDataType = {
 	birthDate: BirthDateObject, 
 	aboutMe: string | null,
 	avatarUrl?: string,
+	uid: string,
 }
 
 export type SchoolResultValueType = {
