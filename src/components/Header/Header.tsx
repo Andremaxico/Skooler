@@ -10,6 +10,7 @@ import { useSelector } from 'react-redux';
 import { selectMyLoginData } from '../../Redux/account/account-selectors';
 import { selectNetworkError } from '../../Redux/app/appSelectors';
 import { NetworkError } from '../../UI/NetworkError';
+import { AppMenu } from './AppMenu';
 
 const { Header } = Layout;
 
@@ -18,34 +19,11 @@ type PropsType = {};
 const AppHeader: React.FC<PropsType> = ({}) => {
 	const networkError  = useSelector(selectNetworkError);
 	const loginData = useSelector(selectMyLoginData);
-	const location = useLocation();
-
-	const linksData: LinkDataType[] = [
-		{
-			path: '/chat', id: 1, text: 'Чат'
-		},
-		{
-			path: '/account', id: 2, text: 'Мій профіль'
-		},
-		{
-			path: '/myschool', id: 3, text: 'Моя школа'
-		}
-	];
-
-	const navItems = linksData.map(data => {
-		return getMenuItem(
-			<NavLink to={data.path} className={classes.link}>{data.text}</NavLink>,
-			data.path
-		)
-	})
 
 	return (
 		<Header className={classes.AppHeader}>
 			<div className={classes.logo}>Logo</div>
-			<Menu
-				theme='dark' mode='horizontal' defaultSelectedKeys={[location.pathname]}
-				items={navItems} className={classes.menu} selectedKeys={[location.pathname]}
-			/>
+			{/* <AppMenu mode='horizontal' /> */}
 			<AccountInfo loginData={loginData}/>
 			{networkError && 
 				<NetworkError message={networkError}/>

@@ -55,4 +55,8 @@ export const sendMessage = (data: MessageDataType) => {
 	chatAPI.sendMessage(data);
 }
 
+export const markMessageAsRead = (messageId: string, uid: string) => async (dispatch: AppDispatchType) => {
+	await chatAPI.readMessage(messageId, uid);
+}
+
 export default chatReducer;

@@ -11,6 +11,7 @@ import { sendMessage } from '../../../Redux/chat/reducer';
 import { AnyAction } from 'redux';
 import { selectMyAccountData } from '../../../Redux/account/account-selectors';
 import { Controller, useForm } from 'react-hook-form';
+import { v1 } from 'uuid';
 
 type PropsType = {
 	authData: UserType | null,
@@ -35,6 +36,8 @@ export const NewMessageForm: React.FC<PropsType> = ({authData}): ReactElement<an
 			photoUrl: accountData?.avatarUrl || '',
 			text: newMessage,
 			createdAt: serverTimestamp(),
+			id: v1(),
+			usersWhoRead: [authData?.uid],
 		}
 
 		sendMessage(newMessageData);

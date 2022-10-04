@@ -39,6 +39,11 @@ const Messages: React.FC<PropsType> = ({}) => {
 
 	});
 
+	//get unread messages count
+	const unreadCount = messagesData?.filter(data => (
+		data.usersWhoRead.includes(loginData?.uid)
+	)).length;
+
 	let messagesList: JSX.Element[] | null = null;
 
 	//set messages list
@@ -63,8 +68,6 @@ const Messages: React.FC<PropsType> = ({}) => {
 		messagesList = messages;
 	}
 
-	console.log('messages list', messagesList);
-
 	return (
 		<div className={classes.Messages} ref={listRef}>
 			{isFetching && <Preloader />}
@@ -75,7 +78,7 @@ const Messages: React.FC<PropsType> = ({}) => {
 				: <div>Немає повідомлень</div>
 			}
 
-			{listRef.current && <ScrollBottomBtn element={listRef.current}  />}
+			{listRef.current && !!messagesList?.length && <ScrollBottomBtn element={listRef.current} unreadCount={unreadCount || 0} />}
 		</div>
 	)
 }

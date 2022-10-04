@@ -11,7 +11,7 @@ import { UserType } from './utils/types';
 
 import { Provider, useSelector } from 'react-redux';
 
-import { Content, Footer } from 'antd/lib/layout/layout';
+import Layout, { Content, Footer } from 'antd/lib/layout/layout';
 import { store, useAppDispatch } from './Redux/store';
 import Account from './components/Account';
 import { networkErrorStatusChanged } from './Redux/app/appReducer';
@@ -22,6 +22,8 @@ import { FirebaseContext } from '.';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { Auth } from 'firebase/auth';
 import MySchool from './components/MySchool';
+import Sider from 'antd/lib/layout/Sider';
+import { Sidebar } from './components/Sidebar';
 
 
 const App = () => {
@@ -69,24 +71,27 @@ const App = () => {
   }, [user]);
 
   return (
-    <>
-      <AppHeader />
-      <Content className='Content'>
-        <div className="site-layout-content" style={{flex: '1 1 auto'}}>
-          {isFetching || loading ? <Preloader /> :
-            <Routes>
-              <Route path='/login' element={<Login />}/>
-              <Route path='/chat' element={<Chat />}/>
-              <Route path='/account' element={<Account />}>
-                <Route path=':userId'/>
-              </Route>
-              <Route path='/myschool' element={<MySchool />}/>
-            </Routes>
-          }
-        </div>
-      </Content>
-    <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
-    </>
+    <Layout>
+      <Sidebar />
+      <Layout>
+        <AppHeader />
+        <Content className='Content'>
+          <div className="site-layout-content" style={{flex: '1 1 auto'}}>
+            {isFetching || loading ? <Preloader /> :
+              <Routes>
+                <Route path='/login' element={<Login />}/>
+                <Route path='/chat' element={<Chat />}/>
+                <Route path='/account' element={<Account />}>
+                  <Route path=':userId'/>
+                </Route>
+                <Route path='/myschool' element={<MySchool />}/>
+              </Routes>
+            }
+          </div>
+        </Content>
+        {/* <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer> */}
+      </Layout>
+    </Layout>
   );
 }
 

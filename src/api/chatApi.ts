@@ -1,7 +1,7 @@
 import { getApp } from 'firebase/app';
 import { sendMessage } from './../../../samurai-way/src/Redux/messages-reducer';
 import { MessageDataType, MessagesDataType } from './../utils/types/index';
-import { query, collection, Firestore, orderBy, onSnapshot, DocumentData, addDoc, getDocs } from "firebase/firestore";
+import { query, collection, Firestore, orderBy, onSnapshot, DocumentData, addDoc, getDocs, setDoc, doc, updateDoc, getDoc } from "firebase/firestore";
 import { firestore } from "../firebase/firebaseApi";
 import { ref, onValue, getDatabase } from 'firebase/database';
 
@@ -34,7 +34,6 @@ const unsubscribeFromMessages = onSnapshot(q,
 			messages.push({...doc.data(), id: doc.id});
 		});
 
-		console.log('end');
 		notifyMessagesSubscribers(messages as MessagesDataType);
 	},
 	(error) => {
@@ -69,11 +68,19 @@ const chatAPI = {
 	
 	sendMessage(messageData: MessageDataType)  {
 		try {
-			addDoc(collection(firestore as Firestore, 'messages'), messageData); 
+			setDoc(doc(firestore, 'messages', messageData.id), messageData); 
 			
 		} catch(e) {
 			console.log(e);
 		}
+	},
+
+	async readMessage(messageId: string, uid: string) {
+		const docRef = doc(firestore, 'messages', messageId);
+		const messageData = await getDoc(docRef);
+		await updateDoc(docRef, {
+			usersWhoRead: [...messageData.data()?.usersWhoRead, uid]
+		});
 	},
 
 	unsubscribe() {

@@ -22,11 +22,12 @@ export type PathsType = '/chat' | '/login' | '/account' | '/myschool';
 
 export type MessageDataType = {
 	uid?: string,
-	displayName?: string | null,
+	displayName: string | null,
 	photoUrl?: string | null,
 	text: string,
-	createdAt?: FieldValue,
-	id?: string,
+	createdAt: FieldValue,
+	id: string,
+	usersWhoRead: Array<string | undefined>,
 }
 export type MessagesDataType = MessageDataType[];
 
