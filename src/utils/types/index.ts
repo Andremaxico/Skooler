@@ -27,7 +27,7 @@ export type MessageDataType = {
 	text: string,
 	createdAt: FieldValue,
 	id: string,
-	usersWhoRead: Array<string | undefined>,
+	usersWhoRead: Array<string | null>,
 }
 export type MessagesDataType = MessageDataType[];
 

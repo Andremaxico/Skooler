@@ -37,7 +37,7 @@ export const NewMessageForm: React.FC<PropsType> = ({authData}): ReactElement<an
 			text: newMessage,
 			createdAt: serverTimestamp(),
 			id: v1(),
-			usersWhoRead: [authData?.uid],
+			usersWhoRead: [authData?.uid || null],
 		}
 
 		sendMessage(newMessageData);

@@ -40,9 +40,12 @@ const Messages: React.FC<PropsType> = ({}) => {
 	});
 
 	//get unread messages count
-	const unreadCount = messagesData?.filter(data => (
-		data.usersWhoRead.includes(loginData?.uid)
-	)).length;
+	const unreadCount = messagesData?.filter(data => {
+		if(data.usersWhoRead) {
+			return data.usersWhoRead.includes(loginData?.uid || null)
+		}
+		return false;
+	}).length;
 
 	let messagesList: JSX.Element[] | null = null;
 
