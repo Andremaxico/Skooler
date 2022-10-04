@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/Skooler/static/css/main.de6be7a7.css",
-    "main.js": "/Skooler/static/js/main.31ecaf3d.js",
+    "main.js": "/Skooler/static/js/main.05534c78.js",
     "static/media/preloader.gif": "/Skooler/static/media/preloader.4fd62656cedd6729c8ae.gif",
     "static/media/birthday-icon.png": "/Skooler/static/media/birthday-icon.e6683ac2612f057cb23a.png",
     "index.html": "/Skooler/index.html",
     "main.de6be7a7.css.map": "/Skooler/static/css/main.de6be7a7.css.map",
-    "main.31ecaf3d.js.map": "/Skooler/static/js/main.31ecaf3d.js.map"
+    "main.05534c78.js.map": "/Skooler/static/js/main.05534c78.js.map"
   },
   "entrypoints": [
     "static/css/main.de6be7a7.css",
-    "static/js/main.31ecaf3d.js"
+    "static/js/main.05534c78.js"
   ]
 }
