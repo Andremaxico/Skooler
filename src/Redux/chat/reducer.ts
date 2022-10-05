@@ -59,4 +59,8 @@ export const markMessageAsRead = (messageId: string, uid: string) => async (disp
 	await chatAPI.readMessage(messageId, uid);
 }
 
+export const deleteMessage = (messageId: string) => async (dispatch: AppDispatchType) => {
+	await chatAPI.deleteMessage(messageId);
+}
+
 export default chatReducer;

@@ -9,6 +9,10 @@ import { MessageDataType } from '../../../utils/types';
 import { renderToStaticMarkup } from "react-dom/server";
 import Message from './Message';
 import classes from './Messages.module.scss';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+import confirm from 'antd/lib/modal/confirm';
+import { useAppDispatch } from '../../../Redux/store';
+import { deleteMessage } from '../../../Redux/chat/reducer';
 
 type PropsType = {}
 
@@ -22,6 +26,26 @@ const Messages: React.FC<PropsType> = ({}) => {
 	const sortedMessages: FormattedMessagesType = {};
 
 	const listRef = useRef<HTMLDivElement>(null);
+
+	//show delete message modal
+	const dispatch = useAppDispatch();
+
+	const showDeleteConfirm = (messageId: string) => {
+		confirm({
+			title: 'Видалити повідомлення',
+			icon: <ExclamationCircleOutlined />,
+			content: 'Ви дійсно хочете видалити це повдомлення?',
+			okText: 'Видалити',
+			okType: 'danger',
+			cancelText: 'Скасувати',
+			onOk() {
+				dispatch(deleteMessage(messageId));
+			},
+			onCancel() {
+				console.log('Cancel');
+			},
+		});
+	};
 
 	//sorting messages
 	messagesData?.forEach(messageData => {
@@ -57,7 +81,7 @@ const Messages: React.FC<PropsType> = ({}) => {
 			const currMessages = sortedMessages[dateStr].map(data => (
 				<Message 
 					messageData={data} myAccountId={loginData?.uid || ''} 
-					key={`${data.createdAt}${data.uid}`}
+					key={`${data.createdAt}${data.uid}`} showDeleteConfirm={showDeleteConfirm}
 		   	/>
 			));
 			const addedElements = [

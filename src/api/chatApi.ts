@@ -1,7 +1,7 @@
 import { getApp } from 'firebase/app';
 import { sendMessage } from './../../../samurai-way/src/Redux/messages-reducer';
 import { MessageDataType, MessagesDataType } from './../utils/types/index';
-import { query, collection, Firestore, orderBy, onSnapshot, DocumentData, addDoc, getDocs, setDoc, doc, updateDoc, getDoc } from "firebase/firestore";
+import { query, collection, Firestore, orderBy, onSnapshot, DocumentData, addDoc, getDocs, setDoc, doc, updateDoc, getDoc, deleteDoc } from "firebase/firestore";
 import { firestore } from "../firebase/firebaseApi";
 import { ref, onValue, getDatabase } from 'firebase/database';
 
@@ -86,7 +86,14 @@ const chatAPI = {
 	unsubscribe() {
 		console.log('unsubscribe');
 		unsubscribeFromMessages();
-	}
+	},
+
+	async deleteMessage(messageId: string) {
+		const docRef = doc(firestore, 'messages', messageId);
+
+		//delete document
+		await deleteDoc(docRef);
+	},
 }
 
 export default chatAPI;
