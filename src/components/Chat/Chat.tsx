@@ -9,17 +9,35 @@ import { Auth } from 'firebase/auth';
 import { MessageDataType } from '../../utils/types';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectMessages } from '../../Redux/chat/selectors';
-import { startMessaging, stopMessaging } from '../../Redux/chat/reducer';
+import { editMessage, startMessaging, stopMessaging } from '../../Redux/chat/reducer';
 import { AnyAction } from 'redux';
 import Preloader from '../../UI/Preloader';
 import { useAppDispatch } from '../../Redux/store';
 
+export type EditMessageDataType = {
+	value: string,
+	id: string,
+}
 
 const Chat = () => {
 	const { auth } = useContext(FirebaseContext);
 	const [authData] = useAuthState(auth as Auth);
 
+	//is exists messages now editing
+	const [isEdit, setIsEdit] = useState<boolean>(false);
+	const [editMessageData, setEditMessageData] = useState<EditMessageDataType | undefined>(undefined);
+
+	console.log('edit message data', editMessageData);
+
 	const dispatch = useAppDispatch();
+
+	const sendUpdatedMessage = (value: string) => {
+		if(editMessageData?.id) {
+			setIsEdit(false);
+			setEditMessageData(undefined);
+			dispatch(editMessage(editMessageData.id, value));
+		}
+	}
 
 	useEffect(() => {
 		dispatch(startMessaging());
@@ -28,10 +46,19 @@ const Chat = () => {
 
 	if(!authData) return <Navigate to='/login' replace={true}/>	
 
+	console.log('edit messag data', editMessageData);
+
 	return (
 		<div className={classes.Chat}>
-			<Messages />
-			<NewMessageForm authData={authData} />
+			<Messages setEditMessageData={(data: EditMessageDataType) => {
+				setEditMessageData(data);
+				setIsEdit(true);
+				console.log('set edit message data', data);
+			}}/>
+			<NewMessageForm 
+				authData={authData} isMessageEdit={isEdit} 
+				updateMessage={sendUpdatedMessage} currValue={editMessageData?.value}
+			/>
 		</div>
 	)
 }

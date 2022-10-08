@@ -50,7 +50,7 @@ export const stopMessaging = () => {
 	chatAPI.unsubscribe();
 }
 
-export const sendMessage = (data: MessageDataType) => {
+export const sendMessage = (data: MessageDataType) => async (dispatch: AppDispatchType) => {
 	console.log('send message');
 	chatAPI.sendMessage(data);
 }
@@ -58,6 +58,11 @@ export const sendMessage = (data: MessageDataType) => {
 export const markMessageAsRead = (messageId: string, uid: string) => async (dispatch: AppDispatchType) => {
 	await chatAPI.readMessage(messageId, uid);
 }
+
+export const editMessage = (messageId: string, newText: string) => async (dispatch: AppDispatchType) => {
+	console.log('edit message', messageId, newText);
+	await chatAPI.updateMessage(messageId, newText);
+} 
 
 export const deleteMessage = (messageId: string) => async (dispatch: AppDispatchType) => {
 	await chatAPI.deleteMessage(messageId);

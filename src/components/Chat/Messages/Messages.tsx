@@ -13,12 +13,15 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import confirm from 'antd/lib/modal/confirm';
 import { useAppDispatch } from '../../../Redux/store';
 import { deleteMessage } from '../../../Redux/chat/reducer';
+import { EditMessageDataType } from '../Chat';
 
-type PropsType = {}
+type PropsType = {
+	setEditMessageData: (data: EditMessageDataType) => void, 
+}
 
 type FormattedMessagesType = {[key: string]: MessageDataType[]};
 
-const Messages: React.FC<PropsType> = ({}) => {
+const Messages: React.FC<PropsType> = ({setEditMessageData}) => {
 	const messagesData = useSelector(selectMessages);
 	const isFetching = useSelector(selectIsMessagesFetching);
 	const loginData = useSelector(selectMyLoginData);
@@ -59,8 +62,6 @@ const Messages: React.FC<PropsType> = ({}) => {
 		}
 
 		sortedMessages[createDateString].push(messageData);
-		console.log('formatted messages', sortedMessages);
-
 	});
 
 	//get unread messages count
@@ -80,7 +81,7 @@ const Messages: React.FC<PropsType> = ({}) => {
 		Object.keys(sortedMessages).forEach(dateStr => {
 			const currMessages = sortedMessages[dateStr].map(data => (
 				<Message 
-					messageData={data} myAccountId={loginData?.uid || ''} 
+					messageData={data} myAccountId={loginData?.uid || ''} setEditMessageData={setEditMessageData}
 					key={`${data.createdAt}${data.uid}`} showDeleteConfirm={showDeleteConfirm}
 		   	/>
 			));
