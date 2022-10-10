@@ -17,7 +17,6 @@ const { Header } = Layout;
 type PropsType = {};
 
 const AppHeader: React.FC<PropsType> = ({}) => {
-	const networkError  = useSelector(selectNetworkError);
 	const loginData = useSelector(selectMyLoginData);
 
 	return (
@@ -25,9 +24,6 @@ const AppHeader: React.FC<PropsType> = ({}) => {
 			<div className={classes.logo}>Logo</div>
 			{/* <AppMenu mode='horizontal' /> */}
 			<AccountInfo loginData={loginData}/>
-			{networkError && 
-				<NetworkError message={networkError}/>
-			}
 		</Header>
 	)
 }

@@ -1,7 +1,7 @@
 import { Avatar, Dropdown, Menu, Typography } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import React from 'react'
-import { MessageDataType } from '../../../../utils/types';
+import { MessageDataType, UsersWhoReadMessageType } from '../../../../utils/types';
 import classes from './Message.module.scss';
 import { Link } from 'react-router-dom';
 import { addZero } from '../../../../utils/helpers/formatters';
@@ -17,10 +17,11 @@ type PropsType = {
 	myAccountId: string,
 	showDeleteConfirm: (messageId: string) => void,
 	setEditMessageData: (data: EditMessageDataType) => void,
+	openInfoModal: (usersWHoRead: UsersWhoReadMessageType) => void,
 };
 
-const Message: React.FC<PropsType> = ({messageData, myAccountId, showDeleteConfirm, setEditMessageData}) => {
-	const { text, photoUrl, uid, id, usersWhoRead, createdAt, displayName} = messageData;
+const Message: React.FC<PropsType> = ({messageData, myAccountId, showDeleteConfirm, setEditMessageData, openInfoModal}) => {
+	const { text, photoUrl, uid, id, usersWhoRead, createdAt, displayName, } = messageData;
 
 	//intersection observer hook
 	const { ref: observerRef, inView, entry } = useInView({
@@ -52,7 +53,7 @@ const Message: React.FC<PropsType> = ({messageData, myAccountId, showDeleteConfi
 					key: '1',
 				},
 				{
-					label: 'Інформація',
+					label: <Text onClick={() => openInfoModal(usersWhoRead)}>Інформація</Text>,
 					key: '3',
 				},
 				{

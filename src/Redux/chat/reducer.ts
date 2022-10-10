@@ -1,25 +1,28 @@
-import { MessageDataType, MessagesDataType } from './../../utils/types/index';
+import { MessageDataType, MessagesDataType, ReceivedAccountDataType, UsersWhoReadMessageType } from './../../utils/types/index';
 import { Item } from "firebase/analytics";
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createReducer, createAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { AppDispatchType } from '../store';
 import chatAPI, { FetchingSubscriberType } from '../../api/chatApi';
+import { usersAPI } from '../../api/usersApi';
 
 export type ChatStateType = {
 	messagesData: Array<MessageDataType> | null,
 	isFetching: boolean,
+	currMessageWhoReadList: null | ReceivedAccountDataType[],
 }
 
 
 //=========ACTIONS=========
 export const messagesReceived = createAction<MessagesDataType>('chat/SET_MESSAGES');
-
 export const fetchingStatusChanged = createAction<boolean>('chat/SET_IS_FETCHING');
+export const currMessageWhoReadListReceived = createAction<ReceivedAccountDataType[]>('chat/WHO_READ_LIST_RECEIVE');
 
 //===========================REDUCER========================
 const initialState: ChatStateType = {
 	messagesData: null,
 	isFetching: false,
+	currMessageWhoReadList: null,
 }
 
 const chatReducer = createReducer(initialState, (builder) => {
@@ -27,13 +30,32 @@ const chatReducer = createReducer(initialState, (builder) => {
 		.addCase(messagesReceived, (state, action) => {
 			state.messagesData = action.payload;
 		})
-		.addCase(fetchingStatusChanged, (sttae, action) => {
-			sttae.isFetching = action.payload;
+		.addCase(fetchingStatusChanged, (state, action) => {
+			state.isFetching = action.payload;
+		})
+		.addCase(currMessageWhoReadListReceived, (state, action) => {
+			state.currMessageWhoReadList = action.payload
 		})
 		.addDefaultCase((state, action) => {});
 });
 
 //==========================THUNKS====================
+
+export const setCurrMessageWhoReadList = (uids: UsersWhoReadMessageType) => async (dispatch: AppDispatchType) => {
+	const whoReadList: ReceivedAccountDataType[] = [];
+
+	for (let i = 0; i < uids.length; i++) {
+		const uid = uids[i];
+		if(uid) {
+			const userData = await usersAPI.getUserById(uid);
+			if(userData) {
+				whoReadList.push(userData);	
+			}	
+		}
+	}
+
+	dispatch(currMessageWhoReadListReceived(whoReadList));
+}
 
 const fetchingSubscriberCreator = (dispatch: AppDispatchType): FetchingSubscriberType => (value: boolean) => {
 	dispatch(fetchingStatusChanged(value));
@@ -50,6 +72,8 @@ export const stopMessaging = () => {
 	chatAPI.unsubscribe();
 }
 
+
+//messages interaction
 export const sendMessage = (data: MessageDataType) => async (dispatch: AppDispatchType) => {
 	console.log('send message');
 	chatAPI.sendMessage(data);

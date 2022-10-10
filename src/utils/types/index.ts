@@ -20,6 +20,8 @@ export type RouteDataType = {
 
 export type PathsType = '/chat' | '/login' | '/account' | '/myschool';
 
+export type UsersWhoReadMessageType = Array<string | null>;
+
 export type MessageDataType = {
 	uid?: string,
 	displayName: string | null,
@@ -27,7 +29,8 @@ export type MessageDataType = {
 	text: string,
 	createdAt: FieldValue,
 	id: string,
-	usersWhoRead: Array<string | null>,
+	usersWhoRead: UsersWhoReadMessageType,
+	edited: boolean,
 }
 export type MessagesDataType = MessageDataType[];
 

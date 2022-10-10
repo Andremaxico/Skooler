@@ -7,3 +7,7 @@ export const selectMessages = (state: RootStateType) => {
 export const selectIsMessagesFetching = (state: RootStateType) => {
 	return state.messages.isFetching;
 }
+
+export const selectCurrMessageWhoReadList = (state: RootStateType) => {
+	return state.messages.currMessageWhoReadList;
+}

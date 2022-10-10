@@ -24,6 +24,8 @@ import { Auth } from 'firebase/auth';
 import MySchool from './components/MySchool';
 import Sider from 'antd/lib/layout/Sider';
 import { Sidebar } from './components/Sidebar';
+import { selectNetworkError } from './Redux/app/appSelectors';
+import { NetworkError } from './UI/NetworkError';
 
 
 const App = () => {
@@ -31,19 +33,21 @@ const App = () => {
   const [ user, loading ] = useAuthState(auth as Auth);
 
   const [isFetching, setIsFetching] = useState<boolean>(loading);
+  const networkError = useSelector(selectNetworkError);
 
   const dispatch = useAppDispatch();
 
+  const offlineHandler = () => {
+    dispatch(networkErrorStatusChanged(`Перевірте з'єднання з мережею`));
+    console.log('browser is offline');
+  }
+  const onlineHandler = () => {
+    dispatch(networkErrorStatusChanged(null));
+    console.log('browser is online');
+  }
+
   //online/ofline listeners
   useEffect(() => {
-    const offlineHandler = () => {
-      dispatch(networkErrorStatusChanged(`Перевірте з'єднання з мережею`));
-      console.log('browser is offline');
-    }
-    const onlineHandler = () => {
-      dispatch(networkErrorStatusChanged(null));
-      console.log('browser is online');
-    }
 
     window.addEventListener('offline', offlineHandler);
     window.addEventListener('online', onlineHandler);
@@ -54,13 +58,21 @@ const App = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if(navigator.onLine) {
+      onlineHandler();
+    } else  {
+      offlineHandler();
+    }
+    console.log('naviagtor online check', navigator.onLine);
+  }, [navigator.onLine])
+
   console.log('app is fetching', isFetching);
 
   //get login data 
   useEffect(() => {
     const getLoginData = async () => {
       if(user) {
-        console.log('user data', user);
         await dispatch(loginDataReceived({...user}));
         await dispatch(setMyAccount(user));	
         setIsFetching(false);
@@ -77,6 +89,7 @@ const App = () => {
         <AppHeader />
         <Content className='Content'>
           <div className="site-layout-content" style={{flex: '1 1 auto'}}>
+            {networkError && <NetworkError message={networkError} />}
             {isFetching || loading ? <Preloader /> :
               <Routes>
                 <Route path='/login' element={<Login />}/>

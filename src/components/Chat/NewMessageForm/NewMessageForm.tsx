@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useRef, useState } from 'react';
 
 import { Button, Form } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
@@ -17,7 +17,6 @@ import { useAppDispatch } from '../../../Redux/store';
 type PropsType = {
 	authData: UserType | null,
 	isMessageEdit: boolean,
-	currMessageId?: string,
 	currValue?: string, 
 	updateMessage: (value: string) => void,
 }
@@ -26,7 +25,7 @@ type FieldValues = {
 	message: string,
 }
 
-export const NewMessageForm: React.FC<PropsType> = React.memo(({authData, isMessageEdit, currMessageId, currValue, updateMessage}): ReactElement<any, any> => {
+export const NewMessageForm: React.FC<PropsType> = React.memo(({authData, isMessageEdit, currValue, updateMessage}): ReactElement<any, any> => {
 	//react-hook-form
 	const { control, formState: {errors}, handleSubmit, reset, setValue } = useForm<FieldValues>();
 
@@ -34,6 +33,8 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({authData, isMess
 	const [ form ] = Form.useForm();
 
 	const accountData = useSelector(selectMyAccountData);
+
+	const messageField = useRef<HTMLTextAreaElement>(null);
 
 	const dispatch = useAppDispatch();
 
@@ -50,6 +51,10 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({authData, isMess
 	useEffect(() => {
 		//set for antd textarea
 		form.setFieldValue('message', currValue);
+		//set focus on the message field
+		if(messageField.current && isMessageEdit) {
+			messageField.current.focus();
+		}
 		//set to react-hook-form value
 		setValue('message', currValue || '');
 	}, [currValue]);
@@ -63,6 +68,7 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({authData, isMess
 			createdAt: serverTimestamp(),
 			id: v1(),
 			usersWhoRead: [authData?.uid || null],
+			edited: false,
 		}
 
 		reset();
@@ -85,6 +91,7 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({authData, isMess
 							showCount maxLength={100}  value={value}
 							onChange={onChange} className={classes.textareaWrap}
 							placeholder='Ваше повідомлення' defaultValue={currValue}
+							ref={messageField}
 						/>
 					</Form.Item>
 				)} 

@@ -100,6 +100,7 @@ const chatAPI = {
 		console.log('update message', messageId, newText);
 		await updateDoc(docRef, {
 			text: newText,
+			edited: true,
 		})
 	}
 }
