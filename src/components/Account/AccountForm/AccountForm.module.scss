@@ -1,0 +1,29 @@
+@import '../../../global-styles';
+
+.AccountForm {
+	@include column-align;
+	align-items: flex-start;
+	.initialsInputs {
+		display: flex;
+	}
+
+	.avatarUpload {
+		@include size(100px, 100px);
+		border-radius: 50%;
+		overflow: hidden;
+	}
+ї
+	.aboutMe {
+		width: 100%;
+		max-height: 300px;
+	}
+
+	.schoolInfo {
+		.selectSchool {
+			width: 100%;
+		}
+		.selectClass {
+			
+		}	
+	}
+}

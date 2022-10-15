@@ -1,0 +1,16 @@
+@import '../../../global-styles';
+
+.NewMessageForm {
+	@include column-align;
+	align-items: flex-end;
+	.textareaWrap {
+		margin-bottom: 12px;
+		width: 100%;
+		textarea {
+			width: 100%;
+			border-radius: 5px;
+			resize: none
+		}	
+	}
+	.sendBtn {}
+}

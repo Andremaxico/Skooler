@@ -1,0 +1,101 @@
+
+/*--------------------*/
+
+//variables
+$md1: 1440px;
+$md2: 1024px;
+$md3: 767px;
+
+$mainCol: #001529;
+$black: rgb(51, 51, 51);
+$grayBg: #fefefe;
+$gray: rgb(131, 131, 131);
+$lightGray: rgba($color: $gray, $alpha: 0.5);
+//mixins
+@mixin size($w, $h: $w) {
+  width: $w;
+  height: $h;
+}
+
+@mixin font-style($fz, $lh, $fw: 400, $col: $black) {
+    font-size: $fz;
+    line-height: $lh;
+    font-weight: $fw;
+    color: $col;
+}
+@mixin column-align {
+    display: flex;
+    flex-direction: column;
+}
+@mixin row-align {
+    display: flex;
+    align-items: center;
+}
+@mixin center-align {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+//typographic
+@mixin bigText {
+  @include font-style(18px, 140%, 500);
+}
+@mixin text() {
+  @include font-style(16px, 140%);
+}
+@mixin smallText() {
+  @include font-style(14px, 140%);
+}
+@mixin smallTitle() {
+  @include font-style(22px, 140%, 500);
+}
+@mixin title() {
+  @include font-style(40px, 140%, 700);
+}
+//general styles
+.container {
+  margin: 0 auto;
+  padding: 0 20px;
+  box-sizing: content-box;
+}
+@mixin formBtn() {
+  padding: 9px 15px;
+  background-color: $mainCol;
+  color: #fff;
+  font-weight: 500;
+  transition: 0.2s;
+  border-radius: 6px;
+  border: 0;
+  cursor: pointer;
+}
+
+@mixin userAvatar {
+  width: 70px;
+  height: 70px;
+  margin-right: 24px;
+  border-radius: 50%;
+  overflow: hidden;
+  img {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+@mixin input {
+  padding: 10px 14px;
+  @include smallText;
+  border: 1px solid $gray;
+  border-radius: 4px;
+  transition: 0.2s;
+  &::placeholder {
+    font-style: italic;
+    color: $gray;
+  }
+  &:hover {
+    border-color: $grayBg;
+  }
+  &:focus {
+    border-color: $mainCol;
+  }
+
+}

@@ -1,0 +1,21 @@
+@import '../../global-styles';
+
+.AppHeader {
+	// position: fixed;
+	// top: 0;
+	// left: 0;
+	// width: 100%;
+	// max-width: 100vw;
+	display:  flex;
+	justify-content: space-between;
+	z-index: 7;
+	.logo {}
+	.menu {
+		flex: 1 1 auto;
+		li {
+			a {
+				@include center-align;
+			}
+		}
+	}
+}
