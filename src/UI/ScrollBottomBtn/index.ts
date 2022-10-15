@@ -1,0 +1,1 @@
+export { ScrollBottomBtn } from './ScrollBottomBtn';

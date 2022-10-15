@@ -1,0 +1,11 @@
+@import '../../../../global-styles';
+
+.NewEventForm {
+	padding: 12px 16px;
+	margin-bottom: 16px;
+	border: 1px solid $lightGray;
+	border-radius: 6px;
+	.about {
+		margin-bottom: 0;
+	}
+}

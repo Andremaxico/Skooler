@@ -1,0 +1,29 @@
+@import '../../../global-styles';
+
+.AccountBody {
+	.AccountHeader {
+		position: relative;
+		margin-bottom: 60px;
+	}
+	.cover {
+		@include size(100%, 15vh);
+		background-color: $mainCol;
+		border-radius: 0 0 24px 24px;
+	}
+	.avatar {
+		position: absolute;
+		bottom: 0;
+		left: 30px;
+		transform: translateY(50%);
+		@include size(100px);
+		img {
+
+		}
+	}
+	.fullName {}
+	.birthDate {}
+	.classNum {}
+	.status {}
+	.about {}
+	.school {}
+}

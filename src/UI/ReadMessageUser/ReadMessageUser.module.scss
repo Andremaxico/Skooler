@@ -1,0 +1,9 @@
+@import '../../global-styles';
+
+.ReadMessageUser {
+	@include row-align;
+	.avatar {}
+	.name {
+		@include text;
+	}
+}
