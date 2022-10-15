@@ -17,6 +17,7 @@ export type ChatStateType = {
 export const messagesReceived = createAction<MessagesDataType>('chat/SET_MESSAGES');
 export const fetchingStatusChanged = createAction<boolean>('chat/SET_IS_FETCHING');
 export const currMessageWhoReadListReceived = createAction<ReceivedAccountDataType[]>('chat/WHO_READ_LIST_RECEIVE');
+export const newMessageReceived = createAction<MessageDataType>('chat/NEW_MESSAGE_RECEIVED');
 
 //===========================REDUCER========================
 const initialState: ChatStateType = {
@@ -35,6 +36,9 @@ const chatReducer = createReducer(initialState, (builder) => {
 		})
 		.addCase(currMessageWhoReadListReceived, (state, action) => {
 			state.currMessageWhoReadList = action.payload
+		})
+		.addCase(newMessageReceived, (state, action) => {
+			state.messagesData = state.messagesData ? [...state.messagesData, action.payload] : [action.payload];
 		})
 		.addDefaultCase((state, action) => {});
 });
@@ -76,7 +80,8 @@ export const stopMessaging = () => {
 //messages interaction
 export const sendMessage = (data: MessageDataType) => async (dispatch: AppDispatchType) => {
 	console.log('send message');
-	chatAPI.sendMessage(data);
+	await dispatch(newMessageReceived(data));
+	await chatAPI.sendMessage({...data, received: true});
 }
 
 export const markMessageAsRead = (messageId: string, uid: string) => async (dispatch: AppDispatchType) => {

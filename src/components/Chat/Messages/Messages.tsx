@@ -1,12 +1,11 @@
 import { FieldValue } from 'firebase/firestore';
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { selectMyLoginData } from '../../../Redux/account/account-selectors';
 import { selectCurrMessageWhoReadList, selectIsMessagesFetching, selectMessages } from '../../../Redux/chat/selectors'; 
 import Preloader from '../../../UI/Preloader';
 import { ScrollBottomBtn } from '../../../UI/ScrollBottomBtn';
 import { MessageDataType, ReceivedAccountDataType, UsersWhoReadMessageType } from '../../../utils/types';
-import { renderToStaticMarkup } from "react-dom/server";
 import Message from './Message';
 import classes from './Messages.module.scss';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
@@ -16,14 +15,16 @@ import { deleteMessage, setCurrMessageWhoReadList } from '../../../Redux/chat/re
 import { EditMessageDataType } from '../Chat';
 import { Modal } from 'antd';
 import { ReadMessageUser } from '../../../UI/ReadMessageUser';
+//import ListSubheader from '@mui/material/ListSubheader';
 
 type PropsType = {
 	setEditMessageData: (data: EditMessageDataType) => void, 
+	//ref: React.RefObject<HTMLButtonElement>,
 }
 
 type FormattedMessagesType = {[key: string]: MessageDataType[]};
 
-const Messages: React.FC<PropsType> = ({setEditMessageData}) => {
+const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessageData}, ref) => {
 	const messagesData = useSelector(selectMessages);
 	const isFetching = useSelector(selectIsMessagesFetching);
 	const loginData = useSelector(selectMyLoginData);
@@ -33,7 +34,6 @@ const Messages: React.FC<PropsType> = ({setEditMessageData}) => {
 	const [isUsersFetching, setIsUsersFetching] = useState<boolean>(false);
 
 	const listRef = useRef<HTMLDivElement>(null);
-
 	//show delete message modal
 	const dispatch = useAppDispatch();
 
@@ -57,10 +57,10 @@ const Messages: React.FC<PropsType> = ({setEditMessageData}) => {
 	//sorting messages on groups by create date
 	const sortedMessages: FormattedMessagesType = {};
 
-	messagesData?.forEach(messageData => {
+	messagesData?.forEach((messageData: MessageDataType) => {
 		//@ts-ignore
-		const createMilisecs = messageData.createdAt ? messageData.createdAt.seconds * 1000 : new Date().getTime();
-		const createDate = new Date(createMilisecs);
+		const createMilisecs = messageData.createdAt?.seconds * 1000;
+		const createDate = new Date(createMilisecs || new Date().getTime());
 		const createDateString = createDate.toLocaleDateString();
 
 		if(!sortedMessages[createDateString]) {
@@ -71,7 +71,7 @@ const Messages: React.FC<PropsType> = ({setEditMessageData}) => {
 	});
 
 	//get unread messages count
-	const unreadCount = messagesData?.filter(data => {
+	const unreadCount = messagesData?.filter((data: MessageDataType) => {
 		if(data.usersWhoRead) {
 			return !data.usersWhoRead.includes(loginData?.uid || null)
 		}
@@ -85,13 +85,18 @@ const Messages: React.FC<PropsType> = ({setEditMessageData}) => {
 		let messages: JSX.Element[] = [];
 
 		Object.keys(sortedMessages).forEach(dateStr => {
-			const currMessages = sortedMessages[dateStr].map(data => (
-				<Message 
+			const currMessages = sortedMessages[dateStr].map((data, i) => {
+				const prevUid = i > 0 ? sortedMessages[dateStr][i-1].uid : null;
+				const isShort: boolean = prevUid == data.uid;
+
+				console.log(isShort ? 'repeated messages' : 'common');
+
+				return <Message 
 					messageData={data} myAccountId={loginData?.uid || ''} setEditMessageData={setEditMessageData}
 					key={`${data.createdAt}${data.uid}`} showDeleteConfirm={showDeleteConfirm} 
-					openInfoModal={setUsersWhoReadCurrMessage}
+					openInfoModal={setUsersWhoReadCurrMessage}  isShort={isShort}
 		   	/>
-			));
+			});
 			const addedElements = [
 				<div className={classes.messagesDate}>{dateStr}</div>, 
 				...currMessages
@@ -103,10 +108,8 @@ const Messages: React.FC<PropsType> = ({setEditMessageData}) => {
 		messagesList = messages;
 	}
 
-	//get users yhat read curr message data
-	useEffect(() => {
-		console.log('who read uids', usersWhoReadCurrMessage);
-
+	//get users еhat read curr message 
+	useEffect(() => { 
 		const getUsers = async () => {
 			if(usersWhoReadCurrMessage) {
 				setIsUsersFetching(true);
@@ -138,7 +141,7 @@ const Messages: React.FC<PropsType> = ({setEditMessageData}) => {
 			{isFetching && <Preloader />}
 
 			<Modal 
-				title='Інформація повідомлення'
+				title='Переглянули'
 				open={!!usersWhoReadCurrMessage}
 				onCancel={() => closeModal()}
 				footer={null}
@@ -152,9 +155,14 @@ const Messages: React.FC<PropsType> = ({setEditMessageData}) => {
 				: <div>Немає повідомлень</div>
 			}
 
-			{listRef.current && !!messagesList?.length && <ScrollBottomBtn element={listRef.current} unreadCount={unreadCount || 0} />}
+			{/* <ListSubheader sx={{ bgcolor: 'background.paper' }}>
+				Yesterday
+			</ListSubheader> */}
+
+			{listRef.current && !!messagesList?.length && 
+			<ScrollBottomBtn element={listRef.current} ref={ref} unreadCount={unreadCount || 0} />}
 		</div>
 	)
-}
+});
 
 export default Messages

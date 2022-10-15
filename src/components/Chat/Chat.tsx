@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { Navigate } from 'react-router-dom';
 import { FirebaseContext } from '../..';
@@ -27,6 +27,9 @@ const Chat = () => {
 	const [isEdit, setIsEdit] = useState<boolean>(false);
 	const [editMessageData, setEditMessageData] = useState<EditMessageDataType | undefined>(undefined);
 
+
+	//messages list ref
+	const scrollBtnRef = useRef<HTMLButtonElement>(null);
 	console.log('edit message data', editMessageData);
 
 	const dispatch = useAppDispatch();
@@ -50,13 +53,13 @@ const Chat = () => {
 
 	return (
 		<div className={classes.Chat}>
-			<Messages setEditMessageData={(data: EditMessageDataType) => {
+			<Messages ref={scrollBtnRef} setEditMessageData={(data: EditMessageDataType) => {
 				setEditMessageData(data);
 				setIsEdit(true);
 				console.log('set edit message data', data);
 			}}/>
 			<NewMessageForm 
-				authData={authData} isMessageEdit={isEdit} 
+				authData={authData} scrollBottomBtn={scrollBtnRef.current} isMessageEdit={isEdit} 
 				updateMessage={sendUpdatedMessage} currValue={editMessageData?.value}
 			/>
 		</div>

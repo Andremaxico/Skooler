@@ -1,5 +1,5 @@
 import { Avatar, Dropdown, Menu, Typography } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined, UserOutlined } from '@ant-design/icons';
 import React from 'react'
 import { MessageDataType, UsersWhoReadMessageType } from '../../../../utils/types';
 import classes from './Message.module.scss';
@@ -15,13 +15,16 @@ const { Text } = Typography;
 type PropsType = {
 	messageData: MessageDataType,
 	myAccountId: string,
+	isShort: boolean,
 	showDeleteConfirm: (messageId: string) => void,
 	setEditMessageData: (data: EditMessageDataType) => void,
 	openInfoModal: (usersWHoRead: UsersWhoReadMessageType) => void,
 };
 
-const Message: React.FC<PropsType> = ({messageData, myAccountId, showDeleteConfirm, setEditMessageData, openInfoModal}) => {
-	const { text, photoUrl, uid, id, usersWhoRead, createdAt, displayName, } = messageData;
+const Message: React.FC<PropsType> = ({
+	messageData, myAccountId, showDeleteConfirm, setEditMessageData, openInfoModal, isShort
+}) => {
+	const { text, photoUrl, uid, id, usersWhoRead, createdAt, displayName, received, edited} = messageData;
 
 	//intersection observer hook
 	const { ref: observerRef, inView, entry } = useInView({
@@ -39,8 +42,8 @@ const Message: React.FC<PropsType> = ({messageData, myAccountId, showDeleteConfi
 	const isMy = uid === myAccountId;
 
 	//@ts-ignore
-	const createdAtMilisecs = createdAt ? createdAt.seconds * 1000 : new Date().getTime();
-	const sendDate = new Date(createdAtMilisecs);
+	const createdAtMilisecs = createdAt?.seconds * 1000;
+	const sendDate = new Date(createdAtMilisecs || new Date().getTime());
 	//getTime() - щоб не показувалися неправильні дані при надісланні повіомлення
 	const sendTime = `${addZero(sendDate.getHours())}:${addZero(sendDate.getMinutes())}`;
 
@@ -70,17 +73,27 @@ const Message: React.FC<PropsType> = ({messageData, myAccountId, showDeleteConfi
 
 	return (
 		<div className={`${classes.Message} ${isMy && classes._my}`} ref={observerRef}>
-			<Link to={`/account/${!isMy ? uid : ''}`} replace={true}>
+			{!isShort && <Link to={`/account/${!isMy ? uid : ''}`} replace={true}>
 				<Avatar 
 					src={photoUrl} size={40} icon={<UserOutlined />}
 					className={classes.avatar}
 				/>
-			</Link>
+			</Link>}
 			<Dropdown overlay={contextMenu} trigger={['contextMenu', 'click']}>
 				<div className={classes.messageBody}>
-					<h5 className={classes.username}>{displayName}</h5>
+					{!isShort && <h5 className={classes.username}>{displayName}</h5>}
 					<p className={classes.text}>{text}</p>
-					<p className={classes.createDate}>{sendTime}</p>
+					<div className={classes.info}>
+						<p className={classes.createDate}>{sendTime}</p>
+
+						{isMy && <p className={classes.receivedStatus}>
+							{received 
+							? <><CheckCircleOutlined className={classes.icon}/><CheckCircleOutlined className={classes.icon}/></> 
+							: <CheckCircleOutlined className={classes.icon} />}
+						</p>}
+
+						{edited && <p className={classes.edited}>Змінено</p>}
+					</div>
 				</div>
 			</Dropdown>
 		</div>
