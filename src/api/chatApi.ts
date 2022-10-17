@@ -1,6 +1,6 @@
 import { getApp } from 'firebase/app';
 import { sendMessage } from './../../../samurai-way/src/Redux/messages-reducer';
-import { MessageDataType, MessagesDataType } from '../utils/types/index';
+import { MessageDataType, MessagesDataType } from './../utils/types/index';
 import { query, collection, Firestore, orderBy, onSnapshot, DocumentData, addDoc, getDocs, setDoc, doc, updateDoc, getDoc, deleteDoc } from "firebase/firestore";
 import { firestore } from "../firebase/firebaseApi";
 import { ref, onValue, getDatabase } from 'firebase/database';

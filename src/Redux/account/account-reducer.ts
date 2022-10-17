@@ -1,7 +1,7 @@
-import { authAPI } from '../../api/authApi';
-import { AppDispatchType, RootStateType } from '../store';
+import { authAPI } from './../../api/authApi';
+import { AppDispatchType, RootStateType } from './../store';
 import { ThunkAction } from 'redux-thunk';
-import { AccountDataType, ReceivedAccountDataType, UserType, SchoolInfoType } from '../../utils/types/index';
+import { AccountDataType, ReceivedAccountDataType, UserType, SchoolInfoType } from './../../utils/types/index';
 import { createReducer, createAction, AnyAction } from '@reduxjs/toolkit';
 import { schoolsAPI } from '../../api/schoolsApi';
 import { usersAPI } from '../../api/usersApi';

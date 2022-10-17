@@ -1,5 +1,5 @@
 import { collection, Firestore, getDoc, getDocs, query, where } from 'firebase/firestore';
-import { AccountDataType, ReceivedAccountDataType } from '../utils/types/index';
+import { AccountDataType, ReceivedAccountDataType } from './../utils/types/index';
 import axios from 'axios';
 import { addDoc, doc, setDoc } from 'firebase/firestore';
 import { auth, firestore } from '../firebase/firebaseApi';

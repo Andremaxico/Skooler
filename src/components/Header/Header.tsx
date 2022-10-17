@@ -8,9 +8,6 @@ import classes from './Header.module.scss';
 import { schoolsAPI } from '../../api/schoolsApi';
 import { useSelector } from 'react-redux';
 import { selectMyLoginData } from '../../Redux/account/account-selectors';
-import { selectNetworkError } from '../../Redux/app/appSelectors';
-import { NetworkError } from '../../UI/NetworkError';
-import { AppMenu } from './AppMenu';
 
 const { Header } = Layout;
 

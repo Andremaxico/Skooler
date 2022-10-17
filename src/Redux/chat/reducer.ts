@@ -1,4 +1,4 @@
-import { MessageDataType, MessagesDataType, ReceivedAccountDataType, UsersWhoReadMessageType } from '../../utils/types/index';
+import { MessageDataType, MessagesDataType, ReceivedAccountDataType, UsersWhoReadMessageType } from './../../utils/types/index';
 import { Item } from "firebase/analytics";
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createReducer, createAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';

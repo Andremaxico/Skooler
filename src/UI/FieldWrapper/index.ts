@@ -1,1 +1,1 @@
-export { fieldWrapper } from './fieldWrapper';
+export { fieldWrapper } from './FieldWrapper';
