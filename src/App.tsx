@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import './nullstyle.scss';
 import "antd/dist/antd.css";
-import './App.less';
+import './App.css';
 
 import AppHeader from './components/Header';
 import { HashRouter, Route, Routes } from 'react-router-dom';

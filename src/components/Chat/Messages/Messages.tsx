@@ -17,6 +17,10 @@ import { Avatar, Modal } from 'antd';
 import { ReadMessageUser } from '../../../UI/ReadMessageUser';
 import ListSubheader from '@mui/material/ListSubheader';
 import { Link } from 'react-router-dom';
+import { MessageAvatar } from './MessageAvatar';
+import { MessagesGroup } from './MessagesGroup';
+import { MessageAvatarPropsType } from './MessageAvatar/MessageAvatar';
+import { MessagesGroupMetadataType } from './MessagesGroup/MessagesGroup';
 
 type PropsType = {
 	setEditMessageData: (data: EditMessageDataType) => void, 
@@ -24,6 +28,10 @@ type PropsType = {
 }
 
 type FormattedMessagesType = {[key: string]: MessageDataType[]};
+type MessagesGroupType = {
+	messages: JSX.Element[],
+	metadata: MessagesGroupMetadataType,
+}
 
 const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessageData}, ref) => {
 	const messagesData = useSelector(selectMessages);
@@ -71,6 +79,17 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessage
 		sortedMessages[createDateString].push(messageData);
 	});
 
+	//on scroll listener
+	useEffect(() => {
+		const handleScroll = () => {
+			console.log('onscroll');     
+		}
+		listRef.current?.addEventListener('scroll', handleScroll);
+
+		return () => {
+			listRef.current?.removeEventListener('scroll', handleScroll);
+		}
+	}, []);
 
 	//sorting messages in groups writed by 1 user in row
 	//get unread messages count
@@ -91,9 +110,9 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessage
 
 			let currMessages: JSX.Element[] = []; // curr date messages
 			let currGroupIndex = -1; // index of current filling group
-			let messagesGroups: Array<JSX.Element>[] = []; // groups of messages by 1 user in a row
+			let messagesGroups: MessagesGroupType[] = []; // groups of messages by 1 user in a row
 
-			//set messages groups
+			//set messages groups of 1 day
 			sortedMessages[dateStr].map((data, i) => {
 				const prevUid = i > 0 ? sortedMessages[dateStr][i-1].uid : null;
 				const isShort: boolean = prevUid == data.uid;
@@ -107,43 +126,42 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessage
 					/>
 				);
 
-				//if prev message's author is not current message's author, create new group
+				//create new group
 				if(!isShort) {
-					const accountAvatar = (avatarUrl: string | null | undefined) => (
-						<Link to={`/account/${!isMy ? loginData?.uid : ''}`} replace={true}>
-							<ListSubheader className={classes.avatarWrap} >	
-								<Avatar 
-									src={avatarUrl} size={40} icon={<UserOutlined />}
-									className={classes.avatar}
-								/>
-							</ListSubheader>
-						</Link>
-					)
-
 					//if not my, add user avatar, that writed these messages
 					if(!isMy) {
-						messagesGroups.push([accountAvatar(data.photoUrl)]);
+						messagesGroups.push({
+							messages: [],
+							metadata: {
+								isMy: false,
+								avatarData: {
+									photoUrl: data.photoUrl,
+									uid: data.uid,
+								}
+							}
+						});
 						//add current message to new group
-						messagesGroups[currGroupIndex+1].push(currMessage);
+						messagesGroups[currGroupIndex+1].messages.push(currMessage)
 					} else {
-						messagesGroups.push([currMessage]);
+						messagesGroups.push({
+							messages: [currMessage],
+							metadata: {isMy: true}
+						});
 					}
 					currGroupIndex++;
 				} else {
-					messagesGroups[currGroupIndex].push(currMessage);
+					messagesGroups[currGroupIndex].messages.push(currMessage);
 				}
-
-				console.log('is short', isShort);
 			});
 
-			console.log('messages groups', messagesGroups);
-
-			currMessages = messagesGroups.map(group => (
-				<div className={classes.messagesGruop}>
-
-					{group}
-				</div>
-			));
+			//data -> JSX.Element[]
+			currMessages = messagesGroups.map(group => {
+				return (
+					<MessagesGroup metadata={group.metadata} listRef={listRef}>
+						{group.messages}
+					</MessagesGroup>
+				)	
+			});
 
 			const addedElements = [
 				<div className={classes.messagesDate}>{dateStr}</div>, 

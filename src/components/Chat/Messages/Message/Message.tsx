@@ -74,14 +74,13 @@ const Message: React.FC<PropsType> = ({
 
 	return (
 		<div className={`${classes.Message} ${isMy && classes._my}`} ref={observerRef}>
-			{!isShort && !isMy && <Link to={`/account/${!isMy ? uid : ''}`} replace={true}>
+			{/* {!isShort && !isMy && <Link to={`/account/${!isMy ? uid : ''}`} replace={true}>
 				<ListSubheader>	
 					<Avatar 
 						src={photoUrl} size={40} icon={<UserOutlined />}
 						className={classes.avatar}
 					/>
-				</ListSubheader>
-			</Link>}
+			</Link>} */}
 			<Dropdown overlay={contextMenu} trigger={['contextMenu', 'click']}>
 				<div className={classes.messageBody}>
 					{!isShort && !isMy && <h5 className={classes.username}>{displayName}</h5>}
