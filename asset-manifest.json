@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/Skooler/static/css/main.95eb3c3c.css",
-    "main.js": "/Skooler/static/js/main.ab20a45a.js",
+    "main.css": "/Skooler/static/css/main.2915bcc2.css",
+    "main.js": "/Skooler/static/js/main.5c160888.js",
     "static/media/preloader.gif": "/Skooler/static/media/preloader.4fd62656cedd6729c8ae.gif",
     "static/media/birthday-icon.png": "/Skooler/static/media/birthday-icon.e6683ac2612f057cb23a.png",
-    "static/media/App.less": "/Skooler/static/media/App.111fc2842a576a26eab2.less",
+    "static/media/antd.less": "/Skooler/static/media/antd.119bcbaa37a2caac7ac2.less",
     "index.html": "/Skooler/index.html",
-    "main.95eb3c3c.css.map": "/Skooler/static/css/main.95eb3c3c.css.map",
-    "main.ab20a45a.js.map": "/Skooler/static/js/main.ab20a45a.js.map"
+    "main.2915bcc2.css.map": "/Skooler/static/css/main.2915bcc2.css.map",
+    "main.5c160888.js.map": "/Skooler/static/js/main.5c160888.js.map"
   },
   "entrypoints": [
-    "static/css/main.95eb3c3c.css",
-    "static/js/main.ab20a45a.js"
+    "static/css/main.2915bcc2.css",
+    "static/js/main.5c160888.js"
   ]
 }
