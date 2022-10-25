@@ -1,29 +1,28 @@
-import { useContext, useEffect, useState } from 'react';
-import './nullstyle.scss';
-import "antd/dist/antd.css";
+import React, { useContext, useEffect, useState } from 'react';
+//import './nullstyle.scss';
 import './App.less';
 
 import AppHeader from './components/Header';
-import { HashRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, HashRouter, Navigate, Route, Routes } from 'react-router-dom';
 import Login from './components/Login';
 import Chat from './components/Chat';
 
+import { UserType } from './utils/types';
 
 import { Provider, useSelector } from 'react-redux';
 
-
-import Layout, { Content } from 'antd/lib/layout/layout';
+import Layout, { Content, Footer } from 'antd/lib/layout/layout';
 import { store, useAppDispatch } from './Redux/store';
 import Account from './components/Account';
 import { networkErrorStatusChanged } from './Redux/app/appReducer';
 import { loginDataReceived, setMyAccount } from './Redux/account/account-reducer';
-
+import { selectMyLoginData } from './Redux/account/account-selectors';
 import Preloader from './UI/Preloader';
 import { FirebaseContext } from '.';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { Auth } from 'firebase/auth';
 import MySchool from './components/MySchool';
-
+import Sider from 'antd/lib/layout/Sider';
 import { Sidebar } from './components/Sidebar';
 import { selectNetworkError } from './Redux/app/appSelectors';
 import { NetworkError } from './UI/NetworkError';
@@ -88,9 +87,7 @@ const App = () => {
       <Sidebar />
       <Layout>
         <AppHeader />
-
-
-        <Content className='Content' style={{paddingTop: '55px'}}>
+        <Content className='Content'>
           <div className="site-layout-content" style={{flex: '1 1 auto'}}>
             {networkError && <NetworkError message={networkError} />}
             {isFetching || loading ? <Preloader /> :

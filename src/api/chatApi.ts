@@ -1,8 +1,6 @@
-import { getApp } from 'firebase/app';
 import { MessageDataType, MessagesDataType } from './../utils/types/index';
-import { query, collection, Firestore, orderBy, onSnapshot, DocumentData, addDoc, getDocs, setDoc, doc, updateDoc, getDoc, deleteDoc } from "firebase/firestore";
+import { query, collection, Firestore, orderBy, onSnapshot, DocumentData, getDocs, setDoc, doc, updateDoc, getDoc, deleteDoc } from "firebase/firestore";
 import { firestore } from "../firebase/firebaseApi";
-import { ref, onValue, getDatabase } from 'firebase/database';
 
 export type MessageSubscriberType = (messages: MessagesDataType) => void;
 export type FetchingSubscriberType = (value: boolean) => void;

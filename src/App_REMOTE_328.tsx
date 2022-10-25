@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import './nullstyle.scss';
 import "antd/dist/antd.css";
-import './App.less';
+import './App.css';
 
 import AppHeader from './components/Header';
 import { HashRouter, Route, Routes } from 'react-router-dom';
@@ -17,13 +17,11 @@ import { store, useAppDispatch } from './Redux/store';
 import Account from './components/Account';
 import { networkErrorStatusChanged } from './Redux/app/appReducer';
 import { loginDataReceived, setMyAccount } from './Redux/account/account-reducer';
-
 import Preloader from './UI/Preloader';
 import { FirebaseContext } from '.';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { Auth } from 'firebase/auth';
 import MySchool from './components/MySchool';
-
 import { Sidebar } from './components/Sidebar';
 import { selectNetworkError } from './Redux/app/appSelectors';
 import { NetworkError } from './UI/NetworkError';
@@ -88,8 +86,6 @@ const App = () => {
       <Sidebar />
       <Layout>
         <AppHeader />
-
-
         <Content className='Content' style={{paddingTop: '55px'}}>
           <div className="site-layout-content" style={{flex: '1 1 auto'}}>
             {networkError && <NetworkError message={networkError} />}

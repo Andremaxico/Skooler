@@ -10,6 +10,7 @@ import { useAppDispatch } from '../../../../Redux/store';
 import { markMessageAsRead } from '../../../../Redux/chat/reducer';
 import { DeleteMessageOption } from './MessageOptions/DeleteMessageOption';
 import { EditMessageDataType } from '../../Chat';
+import ListSubheader from '@mui/material/ListSubheader';
 const { Text } = Typography;
 
 type PropsType = {
@@ -73,15 +74,16 @@ const Message: React.FC<PropsType> = ({
 
 	return (
 		<div className={`${classes.Message} ${isMy && classes._my}`} ref={observerRef}>
-			{!isShort && <Link to={`/account/${!isMy ? uid : ''}`} replace={true}>
-				<Avatar 
-					src={photoUrl} size={40} icon={<UserOutlined />}
-					className={classes.avatar}
-				/>
-			</Link>}
+			{/* {!isShort && !isMy && <Link to={`/account/${!isMy ? uid : ''}`} replace={true}>
+				<ListSubheader>	
+					<Avatar 
+						src={photoUrl} size={40} icon={<UserOutlined />}
+						className={classes.avatar}
+					/>
+			</Link>} */}
 			<Dropdown overlay={contextMenu} trigger={['contextMenu', 'click']}>
 				<div className={classes.messageBody}>
-					{!isShort && <h5 className={classes.username}>{displayName}</h5>}
+					{!isShort && !isMy && <h5 className={classes.username}>{displayName}</h5>}
 					<p className={classes.text}>{text}</p>
 					<div className={classes.info}>
 						<p className={classes.createDate}>{sendTime}</p>
