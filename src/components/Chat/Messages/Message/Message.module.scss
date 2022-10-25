@@ -1,0 +1,62 @@
+@import '../../../../global-styles';
+
+.Message {
+	position: relative;
+	@include row-align;
+	margin-bottom: 12px;
+	width: 100%;
+	&:last-child {
+		margin-bottom: 0;
+	}
+	&._my {
+		justify-content: flex-end;
+		.avatar {
+			left: calc(100% + 8px); ///message body + margin
+			transform: translateX(0);
+		}
+	}
+	.avatar {
+		position: absolute;
+		top: 0;
+		left: -8px; // distance to message body
+		@include size(40px);
+		transform: translateX(-100%);
+	}
+	.messageBody {
+		padding: 9px 7px 10px;
+		max-width: 60%;
+		border-radius: 5px;
+		background-color: $mainCol;
+		.username {
+			@include smallText;
+			color: rgba($color: #fff, $alpha: 0.6)
+		}
+		.text {
+			@include text;
+			word-wrap: break-word;
+			margin-bottom: 6px;
+			color: #fff;
+		}
+	}
+
+	.info {
+		@include row-align;
+		justify-content: flex-end;
+		.createDate {
+			margin: 0 4px 0 0;
+			color: rgba($color: #fff, $alpha: 0.5);
+		}
+		.receivedStatus {
+			margin: 0;
+			.icon {
+				color: #fff;
+			}
+		}
+		.edited {
+			margin: 0 0 0 4px;
+			@include smallText;
+			font-style: italic;
+			color: rgba($color: #fff, $alpha: 0.5);
+		}
+	}
+}

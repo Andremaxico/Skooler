@@ -1,0 +1,41 @@
+@import '../../global-styles';
+
+.ScrollBottomBtn {
+	position: sticky;
+	left: calc(100% + 8px);
+	bottom: 20px;
+	right: 0;
+	display: flex;
+	justify-content: flex-end;
+	transition: 0.15s;
+	opacity: 1;
+	cursor: pointer;
+	z-index: 2;
+	&._hidden {
+		opacity: 0;
+	}
+	.arrow {
+		position: relative;
+		@include center-align;
+		@include size(40px);
+		border-radius: 50%;
+		background-color: $mainCol;
+		border: 1px solid rgba($color: $mainCol, $alpha: 0.3);
+		.unreadCount {
+			position: absolute;
+			top: -12px;
+			right: -8px;
+			padding: 2px 6px;
+			height: 20px;
+			@include smallText;
+			@include center-align;
+			border-radius: 16px;
+			color: #fff;
+			background-color: red;
+		}
+		.icon {
+			font-size: 20px;
+			color: #fff;
+		}
+	}
+}

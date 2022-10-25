@@ -1,0 +1,9 @@
+@import '../../../global-styles';
+
+.studyIcon {
+	@include size(14px);
+}
+
+.AppMenu {
+	width: 100%;
+}
