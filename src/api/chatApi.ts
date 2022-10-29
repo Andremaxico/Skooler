@@ -23,20 +23,9 @@ const notifyFetchingSubscribers = (value: boolean) => {
 //get query 
 const q = query(collection(firestore as Firestore, 'messages'), orderBy('createdAt'));
 
-const unsubscribeFromMessages = onSnapshot(q, 
-	(querySnapshot) => {
-		let messages: DocumentData = [];
+let unsubscribeFromMessages = () => {}; //nothing
 
-		querySnapshot.forEach((doc) => {
-			messages.push({...doc.data(), id: doc.id});
-		});
 
-		notifyMessagesSubscribers(messages as MessagesDataType);
-	},
-	(error) => {
-		console.log('error' ,error.message);
-	}
-);
 
 
 const chatAPI = {
@@ -49,6 +38,20 @@ const chatAPI = {
 		querySnapshot.forEach((doc) => {
 			messages.push({...doc.data(), id: doc.id})
 		});
+		unsubscribeFromMessages = onSnapshot(q, 
+			(querySnapshot) => {
+				let messages: DocumentData = [];
+
+				querySnapshot.forEach((doc) => {
+					messages.push({...doc.data(), id: doc.id});
+				});
+
+				notifyMessagesSubscribers(messages as MessagesDataType);
+			},
+			(error) => {
+				console.log('error' ,error.message);
+			}
+		);
 
 		console.log('messages data', messages);
 
@@ -57,6 +60,21 @@ const chatAPI = {
 		notifyMessagesSubscribers( messages as MessagesDataType );
 		notifyFetchingSubscribers(false);
 
+
+		unsubscribeFromMessages = onSnapshot(q, 
+			(querySnapshot) => {
+				let messages: DocumentData = [];
+		
+				querySnapshot.forEach((doc) => {
+					messages.push({...doc.data(), id: doc.id});
+				});
+		
+				notifyMessagesSubscribers(messages as MessagesDataType);
+			},
+			(error) => {
+				console.log('error' ,error.message);
+			}
+		);
 	},
 
 	async fetchingSubscribe(subscriber: FetchingSubscriberType) {

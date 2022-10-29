@@ -17,9 +17,7 @@ import { Avatar, Modal } from 'antd';
 import { ReadMessageUser } from '../../../UI/ReadMessageUser';
 import ListSubheader from '@mui/material/ListSubheader';
 import { Link } from 'react-router-dom';
-import { MessageAvatar } from './MessageAvatar';
 import { MessagesGroup } from './MessagesGroup';
-import { MessageAvatarPropsType } from './MessageAvatar/MessageAvatar';
 import { MessagesGroupMetadataType } from './MessagesGroup/MessagesGroup';
 
 type PropsType = {

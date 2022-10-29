@@ -27,6 +27,20 @@ import MySchool from './components/MySchool';
 import { Sidebar } from './components/Sidebar';
 import { selectNetworkError } from './Redux/app/appSelectors';
 import { NetworkError } from './UI/NetworkError';
+import { ConsoleSqlOutlined } from '@ant-design/icons';
+import { Registration } from './components/Registration';
+import { createTheme, ThemeProvider } from '@mui/material';
+
+
+
+//mui theme
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#cf4141',
+    },
+  },
+})
 
 
 const App = () => {
@@ -70,6 +84,8 @@ const App = () => {
 
   console.log('app is fetching', isFetching);
 
+  console.log('start user', user);
+
   //get login data 
   useEffect(() => {
     const getLoginData = async () => {
@@ -77,11 +93,17 @@ const App = () => {
         await dispatch(loginDataReceived({...user}));
         await dispatch(setMyAccount(user));	
         setIsFetching(false);
+      } else {
+        setTimeout(() => {
+          setIsFetching(false);
+        }, 1500)
       }
     }
     getLoginData();
     
   }, [user]);
+
+  return <Registration />
 
   return (
     <Layout>
@@ -90,9 +112,9 @@ const App = () => {
         <AppHeader />
 
 
-        <Content className='Content' style={{paddingTop: '55px'}}>
+        <Content className='Content' style={{paddingTop: '64px'}}>
           <div className="site-layout-content" style={{flex: '1 1 auto'}}>
-            {networkError && <NetworkError message={networkError} />}
+            {networkError && <NetworkError message={networkError || ''} />}
             {isFetching || loading ? <Preloader /> :
               <Routes>
                 <Route path='/login' element={<Login />}/>
@@ -115,7 +137,9 @@ const AppContainer = () => {
   return (
     <HashRouter>
       <Provider store={store}>
-        <App />
+        <ThemeProvider theme={theme}>
+          <App />
+        </ThemeProvider>
       </Provider>
     </HashRouter>
   )

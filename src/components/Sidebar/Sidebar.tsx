@@ -15,7 +15,7 @@ export const Sidebar: React.FC<PropsType> = ({}) => {
 			breakpoint={"lg"}
 			theme="light"
 			collapsedWidth={0}
-			
+			style={{paddingTop: '74px'}}
 		>
         <AppMenu mode='vertical' />
       </Sider>

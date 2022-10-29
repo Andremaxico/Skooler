@@ -13,6 +13,7 @@ const { Header } = Layout;
 
 type PropsType = {};
 
+const AppHeader: React.FC<PropsType> = ({}) => {
 	const loginData = useSelector(selectMyLoginData);
 
 	return (
