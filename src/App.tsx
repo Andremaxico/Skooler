@@ -21,7 +21,7 @@ import { loginDataReceived, setMyAccount } from './Redux/account/account-reducer
 import Preloader from './UI/Preloader';
 import { FirebaseContext } from '.';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { Auth } from 'firebase/auth';
+import { Auth, createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
 import MySchool from './components/MySchool';
 
 import { Sidebar } from './components/Sidebar';
@@ -30,7 +30,6 @@ import { NetworkError } from './UI/NetworkError';
 import { ConsoleSqlOutlined } from '@ant-design/icons';
 import { Registration } from './components/Registration';
 import { createTheme, ThemeProvider } from '@mui/material';
-
 
 
 //mui theme

@@ -6,6 +6,7 @@ import { DatePickRef } from 'antd/lib/date-picker/generatePicker/interface';
 
 import { Value } from 'sass';
 import { BirthDateObject } from '../../Redux/account/account-reducer';
+import { AnyMxRecord } from 'dns';
 
 export type LinkDataType = {
 	path: PathsType,
@@ -16,6 +17,13 @@ export type LinkDataType = {
 export type RouteDataType = {
 	to: PathRouteProps | LayoutRouteProps | IndexRouteProps,
 	element: JSX.Element,
+}
+
+export type ControllerFieldType = {
+	field: {
+		onChange: any,
+		value: any,
+	}
 }
 
 export type PathsType = '/chat' | '/login' | '/account' | '/myschool';
@@ -40,13 +48,15 @@ export type MessagesDataType = MessageDataType[];
 //ACCOUNT==============================
 export type AccountDataType = {
 	class: string,
-	school: SchoolSearchItemType,
+	schoolId: number,
 	name: string,
 	surname: string,
 	status: 'teacher' | 'schoolboy',
 	birthDate: moment.Moment | null, 
 	aboutMe: string | null,
 	avatar?: File,
+	login: string,
+	password: string,
 }
 
 export type ReceivedAccountDataType = { 

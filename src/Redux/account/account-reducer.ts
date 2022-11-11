@@ -12,6 +12,7 @@ export type AccountStateType = {
 	myLoginData: User | null,
 	currUserAccount: ReceivedAccountDataType | null | undefined,
 	isFetching: boolean,
+	currMyAvatarUrl: string | null,
 }
 type _ThunkType = ThunkAction<void, AccountStateType, unknown, AnyAction>;
 
@@ -23,12 +24,14 @@ export const currUserAccountReceived = createAction<ReceivedAccountDataType | un
 export const schoolInfoReceived = createAction<SchoolInfoType>('account/SCHOOL_INFO_RECEIVED');
 export const isFetchingStatusChanged = createAction<boolean>('account/IS_FETCHING_STATUS_CHANGED');
 export const avatarUrlReceived = createAction<string>('account/AVATAR_IMAGE_RECEIVED');
+export const currMyAvatarUrlReceived = createAction<string>('auth/CURR_MY_AVATAR_URL_RECEIVED');
 
 const initialState: AccountStateType = {
 	myAccountData: null,
 	myLoginData: null,
 	currUserAccount: null,
 	isFetching: false,
+	currMyAvatarUrl: null,
 }
 
 //uses in ReceivedAccountDataType
@@ -63,6 +66,9 @@ const accountReducer = createReducer(initialState, (builder) => {
 			if(state.myAccountData) {
 				state.myAccountData.avatarUrl = action.payload;
 			}
+		})
+		.addCase(currMyAvatarUrlReceived, (state, action) => {
+			state.currMyAvatarUrl = action.payload;
 		})
 		.addDefaultCase((state, action) => {});
 });
@@ -113,21 +119,17 @@ export const sendMyAccountData = (data: AccountDataType | null) => async (dispat
 
 	console.log('send my account data');
 
-	//school name (id)
-	const schoolIdsMatches = data?.school?.key.match(/[0-9]{6}/);
-	const schoolId = !!schoolIdsMatches ? Number(schoolIdsMatches[0]) : null;
-
 	if(uid && data) {
 		let accountData: ReceivedAccountDataType | null = null;
 		const { avatar, ...restData } = data;
 
 		//get large data about school
-		const schoolData = schoolId ? await schoolsAPI.getSchoolInfo(schoolId) : null;
+		const schoolData = data.schoolId ? await schoolsAPI.getSchoolInfo(data.schoolId) : null;
 
 		//formatting birthdate
 		const birthDate: BirthDateObject = Object.assign({}, restData?.birthDate?.toObject());
 
-		//send file to server
+		//send avatar file to server
 		if(avatar) {
 			await authAPI.sendAvatar(avatar, uid);
 		}
@@ -152,6 +154,15 @@ export const sendMyAccountData = (data: AccountDataType | null) => async (dispat
 	}
 
 	dispatch(isFetchingStatusChanged(false));
+}
+
+
+export const sendMyCurrentAvatar = (file: File | undefined, uid: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
+	if(file) {
+		await authAPI.sendAvatar(file, uid);
+		const avatarUrl = await authAPI.getAvatarUrl(uid);
+		dispatch(currMyAvatarUrlReceived(avatarUrl));
+	}
 }
 
 export default accountReducer;
