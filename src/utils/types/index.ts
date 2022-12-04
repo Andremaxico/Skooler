@@ -55,7 +55,7 @@ export type AccountDataType = {
 	birthDate: moment.Moment | null, 
 	aboutMe: string | null,
 	avatar?: File,
-	login: string,
+	email: string,
 	password: string,
 }
 

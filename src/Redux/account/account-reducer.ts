@@ -157,7 +157,7 @@ export const sendMyAccountData = (data: AccountDataType | null) => async (dispat
 }
 
 
-export const sendMyCurrentAvatar = (file: File | undefined, uid: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
+export const sendMyCurrentAvatar = (file: File | Blob | undefined, uid: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
 	console.log('send avatar file', file);
 	if(file) {
 		await authAPI.sendAvatar(file, uid);

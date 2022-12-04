@@ -6,6 +6,7 @@ import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
 export const authAPI = {
 	getAuthData(): UserType | null {
+		console.log('api,getAuthData');
 		return getAuth().currentUser;
 	},
 

@@ -4,7 +4,7 @@ import "antd/dist/antd.css";
 import './App.less';
 
 import AppHeader from './components/Header';
-import { HashRouter, Route, Routes } from 'react-router-dom';
+import { HashRouter, NavLink, Route, Routes } from 'react-router-dom';
 import Login from './components/Login';
 import Chat from './components/Chat';
 
@@ -12,7 +12,7 @@ import Chat from './components/Chat';
 import { Provider, useSelector } from 'react-redux';
 
 
-import Layout, { Content } from 'antd/lib/layout/layout';
+import Layout, { Content, Footer } from 'antd/lib/layout/layout';
 import { store, useAppDispatch } from './Redux/store';
 import Account from './components/Account';
 import { networkErrorStatusChanged } from './Redux/app/appReducer';
@@ -31,6 +31,10 @@ import { ConsoleSqlOutlined } from '@ant-design/icons';
 import { Registration } from './components/Registration';
 import { createTheme, ThemeProvider } from '@mui/material';
 
+//icons
+import SchoolIcon from '@mui/icons-material/School';
+import { IconButton } from '@mui/material';
+import MessageIcon from '@mui/icons-material/Message';
 
 //mui theme
 const theme = createTheme({
@@ -107,11 +111,11 @@ const App = () => {
     
   }, [user]);
 
-  return <Registration />
+  if(loading) return <Preloader />
+  if(!loading && !user) return <Registration />;
 
   return (
     <Layout>
-      <Sidebar />
       <Layout>
         <AppHeader />
 
@@ -131,7 +135,28 @@ const App = () => {
             }
           </div>
         </Content>
-        {/* <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer> */}
+        <Footer style={{ textAlign: 'center' }} className='footer'>
+          <nav className={'footer__nav'}>
+            <NavLink className="footer__nav-link" to={'/myschool'}>
+              <IconButton>
+                <SchoolIcon />
+              </IconButton>
+            </NavLink>
+            <NavLink className="footer__nav-link" to={'/myschool'}>
+              ше шось
+            </NavLink>
+            <NavLink className="footer__nav-link" to={'/chat'}>
+              <IconButton>
+                <MessageIcon />
+              </IconButton>
+            </NavLink>
+            <NavLink className="footer__nav-link" to={'/account'}>
+              <IconButton>
+                <SchoolIcon />
+              </IconButton>
+            </NavLink>
+          </nav>
+        </Footer>
       </Layout>
     </Layout>
   );
