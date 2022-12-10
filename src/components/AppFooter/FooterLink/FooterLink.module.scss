@@ -1,0 +1,12 @@
+@import '../../../global-styles';
+
+.link {
+	&._active {
+		.icon {
+			color: $primary;
+		}
+	}
+	.btn {
+		.icon {}
+	}
+} 

@@ -1,0 +1,18 @@
+@import '../../global-styles';
+
+.Modal {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	@include center-align;
+	background-color: rgba(0, 0, 0, 0.4);
+	opacity: 0;
+	z-index: -1;
+	&._show {
+		opacity: 1;
+		z-index: 9;
+	}
+	.body {}
+}

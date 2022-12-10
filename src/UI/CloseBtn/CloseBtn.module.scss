@@ -1,0 +1,7 @@
+@import '../../global-styles';
+
+.CloseBtn {
+	.icon {
+		@include size(50px);
+	}
+}
