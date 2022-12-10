@@ -27,11 +27,12 @@ export const AppMenu: React.FC<PropsType> = ({mode}) => {
 		}
 	];
 
-	const navIcons: {[key in PathsType]: React.ReactNode} = {
+	const navIcons: {[key in Partial<PathsType>]: React.ReactNode} = {
 		'/chat': <MessageOutlined />,
 		'/account': <UserOutlined />,
 		'/login': <div></div>,
 		'/myschool': <StudyIcon />,
+		'/': <div></div>
 	}
 
 	const navItems = linksData.map(data => {

@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import './nullstyle.scss';
 import "antd/dist/antd.css";
-import './App.less';
+import classes from './App.module.scss';
 
 import AppHeader from './components/Header';
 import { HashRouter, NavLink, Route, Routes } from 'react-router-dom';
@@ -30,11 +30,7 @@ import { NetworkError } from './UI/NetworkError';
 import { ConsoleSqlOutlined } from '@ant-design/icons';
 import { Registration } from './components/Registration';
 import { createTheme, ThemeProvider } from '@mui/material';
-
-//icons
-import SchoolIcon from '@mui/icons-material/School';
-import { IconButton } from '@mui/material';
-import MessageIcon from '@mui/icons-material/Message';
+import { AppFooter } from './components/AppFooter';
 
 //mui theme
 const theme = createTheme({
@@ -116,11 +112,8 @@ const App = () => {
 
   return (
     <Layout>
-      <Layout>
         <AppHeader />
-
-
-        <Content className='Content' style={{paddingTop: '64px'}}>
+        <Content className={classes.Content} style={{paddingTop: '64px'}}>
           <div className="site-layout-content" style={{flex: '1 1 auto'}}>
             {networkError && <NetworkError message={networkError || ''} />}
             {isFetching || loading ? <Preloader /> :
@@ -135,29 +128,7 @@ const App = () => {
             }
           </div>
         </Content>
-        <Footer style={{ textAlign: 'center' }} className='footer'>
-          <nav className={'footer__nav'}>
-            <NavLink className="footer__nav-link" to={'/myschool'}>
-              <IconButton>
-                <SchoolIcon />
-              </IconButton>
-            </NavLink>
-            <NavLink className="footer__nav-link" to={'/myschool'}>
-              ше шось
-            </NavLink>
-            <NavLink className="footer__nav-link" to={'/chat'}>
-              <IconButton>
-                <MessageIcon />
-              </IconButton>
-            </NavLink>
-            <NavLink className="footer__nav-link" to={'/account'}>
-              <IconButton>
-                <SchoolIcon />
-              </IconButton>
-            </NavLink>
-          </nav>
-        </Footer>
-      </Layout>
+        <AppFooter />
     </Layout>
   );
 }
