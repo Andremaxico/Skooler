@@ -13,16 +13,16 @@ import HomeIcon from '@mui/icons-material/Home';
 type PropsType = {}; 
 
 export const AppFooter: React.FC<PropsType> = ({}) => {
+  
+
 	return (
-		<div>
-			<Footer style={{ textAlign: 'center' }} className={classes.AppFooter}>
-          <nav className={classes.AppFooter__nav}>
-            <FooterLink icon={HomeIcon} to='/'/>
-            <FooterLink icon={SchoolIcon} to='/myschool'/>
-            <FooterLink icon={MessageIcon} to='/chat' />
-            <FooterLink icon={MessageIcon} to='/chat'/>
-          </nav>
-        </Footer>
-		</div>
+    <Footer style={{ textAlign: 'center' }} className={classes.AppFooter}>
+      <nav className={classes.AppFooter__nav}>
+        <FooterLink icon={HomeIcon} to='/'/>
+        <FooterLink icon={SchoolIcon} to='/myschool'/>
+        <FooterLink icon={MessageIcon} to='/chat' />
+        <FooterLink icon={MessageIcon} to='/chat'/>
+      </nav>
+    </Footer>
 	)
 }

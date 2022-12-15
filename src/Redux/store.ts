@@ -1,3 +1,4 @@
+import { streamReducer } from './stream/stream-reducer';
 import thunk from 'redux-thunk';
 import { configureStore } from '@reduxjs/toolkit';
 import chatReducer from './chat/reducer';
@@ -14,6 +15,7 @@ export const store = configureStore({
 		account: accountReducer,
 		users: usersReducer,
 		mySchool: schoolReducer,
+		stream: streamReducer,
 	} ,
 	devTools: process.env.NODE_ENV !== 'production',
 	middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk),

@@ -41,9 +41,10 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessage
 	const [isUsersFetching, setIsUsersFetching] = useState<boolean>(false);
 
 	const listRef = useRef<HTMLDivElement>(null);
-	//show delete message modal
+	
 	const dispatch = useAppDispatch();
 
+	//show delete message modal
 	const showDeleteConfirm = (messageId: string) => {
 		confirm({
 			title: 'Видалити повідомлення',
@@ -78,16 +79,16 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessage
 	});
 
 	//on scroll listener
-	useEffect(() => {
-		const handleScroll = () => {
-			console.log('onscroll');     
-		}
-		listRef.current?.addEventListener('scroll', handleScroll);
+	// useEffect(() => {
+	// 	const handleScroll = () => {
+	// 		console.log('onscroll');     
+	// 	}
+	// 	listRef.current?.addEventListener('scroll', handleScroll);
 
-		return () => {
-			listRef.current?.removeEventListener('scroll', handleScroll);
-		}
-	}, []);
+	// 	return () => {
+	// 		listRef.current?.removeEventListener('scroll', handleScroll);
+	// 	}
+	// }, []);
 
 	//sorting messages in groups writed by 1 user in row
 	//get unread messages count

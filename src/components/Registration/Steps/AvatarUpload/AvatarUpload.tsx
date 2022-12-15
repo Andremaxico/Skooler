@@ -9,7 +9,7 @@ import classes from './AvatarUpload.module.scss';
 import { sendMyCurrentAvatar } from '../../../../Redux/account/account-reducer';
 import { AppDispatchType, useAppDispatch } from '../../../../Redux/store';
 import { Modal } from '../../../../UI/Modal';
-import AvatarEdit from 'react-avatar-edit'
+import AvatarEdit from 'react-avatar-edit';
 import { SaveBtn } from '../../../../UI/SaveBtn';
 import { CloseBtn } from '../../../../UI/CloseBtn';
 import { dataURItoBlob } from '../../../../utils/helpers/converters';

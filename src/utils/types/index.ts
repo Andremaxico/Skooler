@@ -43,7 +43,16 @@ export type MessageDataType = {
 }
 export type MessagesDataType = MessageDataType[];
 
+//==============STREAM======================
+export type PostType = {
+	authorAvatarUrl: string,
+	authorFullname: string,
+	date: Date,
+	comments: Comment[],
+	
+}
 
+export type Comment = {}
 
 //ACCOUNT==============================
 export type AccountDataType = {
