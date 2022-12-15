@@ -31,7 +31,7 @@ import { ConsoleSqlOutlined } from '@ant-design/icons';
 import { Registration } from './components/Registration';
 import { createTheme, ThemeProvider } from '@mui/material';
 import { AppFooter } from './components/AppFooter';
-import { Stream } from '@mui/icons-material';
+import Stream from './components/Stream';
 
 //mui theme
 const theme = createTheme({
@@ -119,13 +119,13 @@ const App = () => {
             {networkError && <NetworkError message={networkError || ''} />}
             {isFetching || loading ? <Preloader /> :
               <Routes>
-                <Route path='/stream' element={<Stream />}/>
                 <Route path='/login' element={<Login />}/>
                 <Route path='/chat' element={<Chat />}/>
                 <Route path='/account' element={<Account />}>
                   <Route path=':userId'/>
                 </Route>
                 <Route path='/myschool' element={<MySchool />}/>
+                <Route path='/' element={<Stream />}/>
               </Routes>
             }
           </div>

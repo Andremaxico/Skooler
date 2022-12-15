@@ -52,7 +52,11 @@ export type PostType = {
 	
 }
 
-export type Comment = {}
+export type Comment = {
+	authorAvatarUrl: string,
+	authorFullname: string,
+	date: Date,
+}
 
 //ACCOUNT==============================
 export type AccountDataType = {
