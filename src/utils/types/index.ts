@@ -44,11 +44,31 @@ export type MessageDataType = {
 export type MessagesDataType = MessageDataType[];
 
 //==============STREAM======================
-export type PostType = {
-	authorAvatarUrl: string,
+export type QuestionCategoriesType = Array<
+	'Математика' |
+	'Історія' |
+	'Хімія' |
+	'Фізика' |
+	'Географія'|
+	'Біологія'|
+	'Інформатика'|
+	'Українська мова/література'|
+	'Англійська мова'|
+	'Німецька мова'|
+	'Французька мова' |
+	'Зарубіжна література'
+>;
+
+
+
+export type PostDataType = {
+	authorAvatarUrl: string | null,
 	authorFullname: string,
 	date: Date,
-	comments: Comment[],
+	text: string,
+	category: QuestionCategoriesType,
+	id: string,
+	comments?: Comment[],
 	
 }
 
@@ -56,6 +76,7 @@ export type Comment = {
 	authorAvatarUrl: string,
 	authorFullname: string,
 	date: Date,
+	id: string,  
 }
 
 //ACCOUNT==============================
