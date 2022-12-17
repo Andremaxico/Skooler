@@ -32,6 +32,7 @@ import { Registration } from './components/Registration';
 import { createTheme, ThemeProvider } from '@mui/material';
 import { AppFooter } from './components/AppFooter';
 import Stream from './components/Stream';
+import { NewPost } from './components/NewPost';
 
 //mui theme
 const theme = createTheme({
@@ -125,7 +126,8 @@ const App = () => {
                   <Route path=':userId'/>
                 </Route>
                 <Route path='/myschool' element={<MySchool />}/>
-                <Route path='/' element={<Stream />}/>
+                <Route path='/new-post' element={<NewPost />} />
+                <Route path='/' element={<Stream />} />
               </Routes>
             }
           </div>
