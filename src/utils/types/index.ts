@@ -1,7 +1,7 @@
 import * as moment from 'moment';
 import { PathRouteProps, LayoutRouteProps, IndexRouteProps } from 'react-router-dom';
 import { User } from 'firebase/auth';
-import { FieldValue, Timestamp } from 'firebase/firestore';
+import { FieldValue} from 'firebase/firestore';
 import { DatePickRef } from 'antd/lib/date-picker/generatePicker/interface';
 
 import { Value } from 'sass';
@@ -65,7 +65,7 @@ export type QuestionCategoriesType = Array<
 export type PostDataType = {
 	authorAvatarUrl: string | null,
 	authorFullname: string,
-	date: Date,
+	timestamp: FieldValue, 							//seconds
 	text: string,
 	category: QuestionCategoriesType,
 	id: string,
