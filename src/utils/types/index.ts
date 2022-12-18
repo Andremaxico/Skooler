@@ -69,6 +69,7 @@ export type PostDataType = {
 	text: string,
 	category: QuestionCategoriesType,
 	id: string,
+	stars: number,
 	comments?: Comment[],
 	
 }
@@ -100,10 +101,14 @@ export type ReceivedAccountDataType = {
 	name: string,
 	surname: string,
 	status: 'teacher' | 'schoolboy',
+	rating: 'Новачок' | 'Може підказати' | 'Можна спитати на контрольній' | 'Знає багато' | 'Ботанік',
 	birthDate: BirthDateObject, 
 	aboutMe: string | null,
 	avatarUrl?: string,
 	uid: string,
+	email: string,
+	password: string,
+
 }
 
 export type SchoolResultValueType = {

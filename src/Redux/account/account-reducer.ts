@@ -141,7 +141,8 @@ export const sendMyAccountData = (data: AccountDataType | null) => async (dispat
 		if(schoolData && data) {
 			accountData = {
 				...restData, school: schoolData, birthDate: birthDate,
-				avatarUrl: avatarUrl, uid: uid
+				avatarUrl: avatarUrl, uid: uid,
+				rating: 'Новачок',
 			}; 
 		}
 
