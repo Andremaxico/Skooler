@@ -60,26 +60,22 @@ export type QuestionCategoriesType = Array<
 	'Інше'
 >;
 
-
-
-export type PostDataType = {
+export type PostBaseType = {
 	authorAvatarUrl: string | null,
 	authorFullname: string,
-	timestamp: FieldValue, 							//seconds
+	authorId: string,
+	timestamp: object, 							//seconds
 	text: string,
-	category: QuestionCategoriesType,
 	id: string,
 	stars: number,
-	comments?: Comment[],
-	
 }
 
-export type Comment = {
-	authorAvatarUrl: string,
-	authorFullname: string,
-	date: Date,
-	id: string,  
+export type PostDataType = PostBaseType & {
+	comments: CommentType[],
+	category: QuestionCategoriesType,
 }
+
+export type CommentType = PostBaseType;
 
 //ACCOUNT==============================
 export type AccountDataType = {

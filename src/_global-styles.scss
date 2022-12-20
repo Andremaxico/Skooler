@@ -18,7 +18,7 @@ $lightGray: rgba($color: $gray, $alpha: 0.5);
   height: $h;
 }
 
-@mixin font-style($fz, $lh, $fw: 400, $col: $black) {
+@mixin font-style($fz, $lh, $fw: 40 0, $col: $black) {
     font-size: $fz;
     line-height: $lh;
     font-weight: $fw;
@@ -39,7 +39,7 @@ $lightGray: rgba($color: $gray, $alpha: 0.5);
 }
 //typographic
 @mixin bigText {
-  @include font-style(18px, 140%, 500);
+  @include font-style(18px, 140%);
 }
 @mixin text() {
   @include font-style(16px, 140%);
