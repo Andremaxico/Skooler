@@ -1,4 +1,4 @@
-import { authAPI } from './../../api/authApi';
+import { accountAPI } from './../../api/accountApi';
 import { AppDispatchType, RootStateType } from './../store';
 import { ThunkAction } from 'redux-thunk';
 import { AccountDataType, ReceivedAccountDataType, UserType, SchoolInfoType } from './../../utils/types/index';
@@ -25,6 +25,7 @@ export const schoolInfoReceived = createAction<SchoolInfoType>('account/SCHOOL_I
 export const isFetchingStatusChanged = createAction<boolean>('account/IS_FETCHING_STATUS_CHANGED');
 export const avatarUrlReceived = createAction<string>('account/AVATAR_IMAGE_RECEIVED');
 export const currMyAvatarUrlReceived = createAction<string>('auth/CURR_MY_AVATAR_URL_RECEIVED');
+export const newQuestionLiked = createAction<string>('account/NEW_QUESTION_LIKED');
 
 const initialState: AccountStateType = {
 	myAccountData: null,
@@ -70,6 +71,9 @@ const accountReducer = createReducer(initialState, (builder) => {
 		.addCase(currMyAvatarUrlReceived, (state, action) => {
 			state.currMyAvatarUrl = action.payload;
 		})
+		.addCase(newQuestionLiked, (state, action) => {
+			state.myAccountData?.liked.push(action.payload);
+		})
 		.addDefaultCase((state, action) => {});
 });
 
@@ -100,10 +104,10 @@ export const setMyAvatarUrl = (file: File | Blob) => async (dispatch: AppDispatc
 
 	if(uid) {
 		//send file to server
-		await authAPI.sendAvatar(file, uid);
+		await accountAPI.sendAvatar(file, uid);
 
 		//get avatar url 
-		const url = await authAPI.getAvatarUrl(uid);
+		const url = await accountAPI.getAvatarUrl(uid);
 
 		console.log('avatar url', url);
 
@@ -131,11 +135,11 @@ export const sendMyAccountData = (data: AccountDataType | null) => async (dispat
 
 		//send avatar file to server
 		if(avatar) {
-			await authAPI.sendAvatar(avatar, uid);
+			await accountAPI.sendAvatar(avatar, uid);
 		}
 
 		//get avatar url 
-		const avatarUrl = await authAPI.getAvatarUrl(uid);
+		const avatarUrl = await accountAPI.getAvatarUrl(uid);
 
 		//set new account data
 		if(schoolData && data) {
@@ -143,11 +147,12 @@ export const sendMyAccountData = (data: AccountDataType | null) => async (dispat
 				...restData, school: schoolData, birthDate: birthDate,
 				avatarUrl: avatarUrl, uid: uid,
 				rating: 'Новачок',
+				liked: [],
 			}; 
 		}
 
 		//server send account data
-		await authAPI.setMyAccountData(accountData, uid);
+		await accountAPI.setMyAccountData(accountData, uid);
 		if(loginData) {
 			//set data to state
 			dispatch(setMyAccount(loginData));
@@ -161,10 +166,19 @@ export const sendMyAccountData = (data: AccountDataType | null) => async (dispat
 export const sendMyCurrentAvatar = (file: File | Blob | undefined, uid: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
 	console.log('send avatar file', file);
 	if(file) {
-		await authAPI.sendAvatar(file, uid);
-		const avatarUrl = await authAPI.getAvatarUrl(uid);
+		await accountAPI.sendAvatar(file, uid);
+		const avatarUrl = await accountAPI.getAvatarUrl(uid);
 		dispatch(currMyAvatarUrlReceived(avatarUrl));
 	}
+}
+
+export const addQuestionToLiked = (id: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
+	const uid = getState().account.myAccountData?.uid || '';
+	const likedArr = getState().account.myAccountData?.liked || [];
+
+	await accountAPI.addQustionToLiked(id, uid, likedArr);
+	dispatch(newQuestionLiked(id));
+
 }
 
 export default accountReducer;

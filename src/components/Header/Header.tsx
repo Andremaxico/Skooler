@@ -9,6 +9,8 @@ import { schoolsAPI } from '../../api/schoolsApi';
 import { useSelector } from 'react-redux';
 import { selectMyLoginData } from '../../Redux/account/account-selectors';
 
+import logo from '../../assets/images/logo.png';
+
 const { Header } = Layout;
 
 type PropsType = {};
@@ -17,11 +19,15 @@ const AppHeader: React.FC<PropsType> = ({}) => {
 	const loginData = useSelector(selectMyLoginData);
 
 	return (
-		<Header className={classes.AppHeader}>
-			<div className={classes.logo}>Logo</div>
+		<header className={classes.AppHeader}>
+			<div className={classes.logo}>
+				<img src={logo} alt='Skooler'/>
+			</div>
 			{/* <AppMenu mode='horizontal' /> */}
-			<AccountInfo loginData={loginData}/>
-		</Header>
+			<div className={classes.accountLink}>
+				<AccountInfo loginData={loginData} />
+			</div>
+		</header>
 	)
 }
 

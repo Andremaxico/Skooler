@@ -5,7 +5,7 @@ import { AccountDataType, ReceivedAccountDataType, SchoolInfoType, SchoolSearchI
 import classes from './AccountForm.module.scss';
 import { searchSchool as searchSchools, sendMyAccountData } from '../../../Redux/account/account-reducer';
 import TextArea from 'antd/lib/input/TextArea';
-import { authAPI } from '../../../api/authApi';
+import { authAPI } from '../../../api/accountApi';
 import { useAppDispatch } from '../../../Redux/store';
 import moment from 'moment';
 import { InitialInput } from './InitialInput';

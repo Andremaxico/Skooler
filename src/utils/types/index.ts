@@ -104,7 +104,7 @@ export type ReceivedAccountDataType = {
 	uid: string,
 	email: string,
 	password: string,
-
+	liked: string[],
 }
 
 export type SchoolResultValueType = {
