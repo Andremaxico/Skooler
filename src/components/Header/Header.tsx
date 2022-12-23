@@ -20,9 +20,9 @@ const AppHeader: React.FC<PropsType> = ({}) => {
 
 	return (
 		<header className={classes.AppHeader}>
-			<div className={classes.logo}>
+			<NavLink to={'/'} className={classes.logo}>
 				<img src={logo} alt='Skooler'/>
-			</div>
+			</NavLink>
 			{/* <AppMenu mode='horizontal' /> */}
 			<div className={classes.accountLink}>
 				<AccountInfo loginData={loginData} />

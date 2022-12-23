@@ -6,6 +6,7 @@ import { createReducer, createAction, AnyAction } from '@reduxjs/toolkit';
 import { schoolsAPI } from '../../api/schoolsApi';
 import { usersAPI } from '../../api/usersApi';
 import { User } from 'firebase/auth';
+import { idText } from 'typescript';
 
 export type AccountStateType = {
 	myAccountData: ReceivedAccountDataType | null,
@@ -26,6 +27,7 @@ export const isFetchingStatusChanged = createAction<boolean>('account/IS_FETCHIN
 export const avatarUrlReceived = createAction<string>('account/AVATAR_IMAGE_RECEIVED');
 export const currMyAvatarUrlReceived = createAction<string>('auth/CURR_MY_AVATAR_URL_RECEIVED');
 export const newQuestionLiked = createAction<string>('account/NEW_QUESTION_LIKED');
+export const questionUnliked = createAction<string>('account/QESTION_UNLIKED');
 
 const initialState: AccountStateType = {
 	myAccountData: null,
@@ -73,6 +75,16 @@ const accountReducer = createReducer(initialState, (builder) => {
 		})
 		.addCase(newQuestionLiked, (state, action) => {
 			state.myAccountData?.liked.push(action.payload);
+		})
+		.addCase(questionUnliked, (state, action) => {
+			if(state.myAccountData) {
+				state.myAccountData = {
+					...state.myAccountData, 
+					liked: state.myAccountData?.liked.filter(id => (
+						id !== action.payload
+					))
+				}
+			}
 		})
 		.addDefaultCase((state, action) => {});
 });
@@ -173,11 +185,21 @@ export const sendMyCurrentAvatar = (file: File | Blob | undefined, uid: string) 
 }
 
 export const addQuestionToLiked = (id: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
+	dispatch(newQuestionLiked(id));
 	const uid = getState().account.myAccountData?.uid || '';
 	const likedArr = getState().account.myAccountData?.liked || [];
 
-	await accountAPI.addQustionToLiked(id, uid, likedArr);
-	dispatch(newQuestionLiked(id));
+	await accountAPI.addQuestionToLiked(id, uid, likedArr);
+
+}
+
+export const removeQuestionFromLiked = (id: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
+	dispatch(questionUnliked(id));
+
+	const uid = getState().account.myAccountData?.uid || '';
+	const likedArr = getState().account.myAccountData?.liked || [];
+
+	await accountAPI.removeQuestionFromLiked(id, uid, likedArr);
 
 }
 

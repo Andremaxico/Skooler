@@ -1,18 +1,14 @@
 import React, { useMemo, useRef, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form';
-import { Button, Col, DatePicker, Form, Input, Row, Select, Spin } from 'antd';
+import { Button, Col, DatePicker, Form, Row, Select, Spin } from 'antd';
 import { AccountDataType, ReceivedAccountDataType, SchoolInfoType, SchoolSearchItemType } from '../../../utils/types';
 import classes from './AccountForm.module.scss';
 import { searchSchool as searchSchools, sendMyAccountData } from '../../../Redux/account/account-reducer';
-import TextArea from 'antd/lib/input/TextArea';
-import { authAPI } from '../../../api/accountApi';
 import { useAppDispatch } from '../../../Redux/store';
 import moment from 'moment';
 import { InitialInput } from './InitialInput';
 import { AvatarUpload } from './AvatarUpload';
-import { UploadAvatarInfoType } from './AvatarUpload/AvatarUpload';
 import { addZero } from '../../../utils/helpers/formatters';
-import { sassNull } from 'sass';
 import { About } from '../../../UI/formControls/About';
 import { ClassSelect } from '../../../UI/formControls/ClassSelect';
 
