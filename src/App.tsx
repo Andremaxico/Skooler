@@ -1,3 +1,4 @@
+import React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import './nullstyle.scss';
 import "antd/dist/antd.css";
@@ -5,16 +6,12 @@ import classes from './App.module.scss';
 
 import AppHeader from './components/Header';
 import { HashRouter, NavLink, Route, Routes } from 'react-router-dom';
-import Login from './components/Login';
-import Chat from './components/Chat';
-
 
 import { Provider, useSelector } from 'react-redux';
 
 
 import Layout, { Content, Footer } from 'antd/lib/layout/layout';
 import { store, useAppDispatch } from './Redux/store';
-import Account from './components/Account';
 import { networkErrorStatusChanged } from './Redux/app/appReducer';
 import { loginDataReceived, setMyAccount } from './Redux/account/account-reducer';
 
@@ -25,7 +22,7 @@ import { Auth, createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
 import MySchool from './components/MySchool';
 
 import { Sidebar } from './components/Sidebar';
-import { selectNetworkError } from './Redux/app/appSelectors';
+import { selectFooterHeight, selectHeaderHeight, selectNetworkError } from './Redux/app/appSelectors';
 import { NetworkError } from './UI/NetworkError';
 import { ConsoleSqlOutlined } from '@ant-design/icons';
 import { Registration } from './components/Registration';
@@ -35,6 +32,8 @@ import Stream from './components/Stream';
 import { NewPost } from './components/NewPost';
 import { Post } from './components/Post';
 
+
+
 import { deepmerge } from '@mui/utils';
 import {
   useColorScheme,
@@ -43,6 +42,11 @@ import {
 } from '@mui/material/styles';
 import { extendTheme as extendJoyTheme } from '@mui/joy/styles';
 import { blue, grey } from '@mui/material/colors';
+import withSuspense from './utils/hoc/withSuspense';
+
+const Chat = React.lazy(() => import('./components/Chat'));
+const Login = React.lazy(() => import('./components/Login'))
+const Account = React.lazy(() => import('./components/Account'));
 
 //mui theme
 const muiTheme = createTheme({
@@ -118,6 +122,8 @@ const joyTheme = extendJoyTheme({
 // muiTheme will deeply merge to joyTheme.
 const theme = deepmerge(joyTheme, muiTheme);
 
+const SuspensedChat = withSuspense(Chat);
+
 const App = () => {
   const { auth } = useContext(FirebaseContext);
   const [ user, loading ] = useAuthState(auth as Auth);
@@ -127,6 +133,7 @@ const App = () => {
 
   const dispatch = useAppDispatch();
 
+  //internet check
   const offlineHandler = () => {
     dispatch(networkErrorStatusChanged(`Перевірте з'єднання з мережею`));
     console.log('browser is offline');
@@ -178,19 +185,33 @@ const App = () => {
     
   }, [user]);
 
+
+  //footer&header height for padding botton
+  const footerHeight = useSelector(selectFooterHeight);
+  const headerHeight = useSelector(selectHeaderHeight);
+
+  console.log('heights', footerHeight, headerHeight);
+
   if(loading) return <Preloader />
   if(!loading && !user) return <Registration />;
 
   return (
     <Layout>
         <AppHeader />
-        <Content className={classes.Content} style={{paddingTop: '64px'}}>
+        <Content 
+          className={classes.Content} 
+          style={{
+            paddingTop: `${headerHeight}px`, 
+            paddingBottom: `${footerHeight}px`,
+            height: `calc(100vh - (${headerHeight}px + ${footerHeight}px)`,
+          }}
+        >
           <div className="site-layout-content" style={{flex: '1 1 auto'}}>
             {networkError && <NetworkError message={networkError || ''} />}
             {isFetching || loading ? <Preloader /> :
               <Routes>
                 <Route path='/login' element={<Login />}/>
-                <Route path='/chat' element={<Chat />}/>
+                <Route path='/chat' element={<SuspensedChat />}/>
                 <Route path='/account' element={<Account />}>
                   <Route path=':userId'/>
                 </Route>

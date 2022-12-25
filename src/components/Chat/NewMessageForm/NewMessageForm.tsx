@@ -1,6 +1,6 @@
 import React, { ReactElement, useEffect, useRef, useState } from 'react';
 
-import { Button, Form } from 'antd';
+import SendIcon from '@mui/icons-material/Send';
 import TextArea from 'antd/lib/input/TextArea';
 import classes from './NewMessageForm.module.scss';
 import Preloader from '../../../UI/Preloader';
@@ -14,6 +14,8 @@ import { Controller, useForm } from 'react-hook-form';
 import { v1 } from 'uuid';
 import { useAppDispatch } from '../../../Redux/store';
 import { scrollElementToBottom } from '../../../utils/helpers/scrollElementToBottom';
+import { Button, FormControl, IconButton, Textarea } from '@mui/joy';
+import { message } from 'antd';
 
 type PropsType = {
 	authData: UserType | null,
@@ -34,13 +36,12 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 	const { control, formState: {errors}, handleSubmit, reset, setValue } = useForm<FieldValues>();
 	const [isSending, setIsSending] = useState<boolean>(false);
 
-	//ant design form(щоб показувати зарашнє значення коментара) & reset form
-	const [ form ] = Form.useForm();
+	//ant design form(щоб показувати зарашнє значення коментара) & reset formmessa
 
 	const accountData = useSelector(selectMyAccountData);
 
 	//for autofocus
-	const messageField = useRef<HTMLTextAreaElement>(null);
+	const messageField = useRef<HTMLDivElement>(null);
 
 	const dispatch = useAppDispatch();
 
@@ -63,13 +64,17 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 			setIsSending(false);
 		}
 
-		form.resetFields();
 		reset();
+		console.log('text content', messageField.current?.textContent);
+		if(messageField.current?.textContent) {
+			messageField.current.textContent = '';
+		}
 	};
 
+	//for edit
 	useEffect(() => {
 		//set for antd textarea
-		form.setFieldValue('message', currValue);
+		//form.setFieldValue('message', currValue);
 		//set focus on the message field
 		if(messageField.current && isMessageEdit) {
 			messageField.current.focus();
@@ -96,29 +101,30 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 	}
 
 	return (
-		<Form className={classes.NewMessageForm} onFinish={handleSubmit(onSubmit)} form={form}>
+		<form className={classes.NewMessageForm} onSubmit={handleSubmit(onSubmit)}>
 			<Controller
 				name='message'
 				control={control}
 				defaultValue={currValue}
-				render={({field: {onChange, value = 'h1h'}}) => (
-					<Form.Item
-						name={'message'}
-						initialValue={currValue}
-						dependencies={currValue ? [currValue] : undefined}
-					>
-						<TextArea 
-							showCount maxLength={100}  value={value} disabled={isSending}
-							onChange={onChange} className={classes.textareaWrap}
-							placeholder='Ваше повідомлення' defaultValue={currValue}
-							ref={messageField}
+				render={({field: {onChange, value}}) => (
+					<FormControl className={classes.textareaWrap} ref={messageField}>
+						<Textarea
+							value={value}
+							onChange={onChange} 
+							component={FormControl}
+							placeholder='Ваше повідомлення'
+							size='lg'
+							sx={{minWidth: '100%' }}
+							endDecorator={		
+								<IconButton color='primary' type='submit' className={classes.sendBtn}> 
+									<SendIcon />
+								</IconButton>
+							}
 						/>
-					</Form.Item>
+					</FormControl>
 				)} 
 			/>
-			<Button htmlType='submit' className={classes.sendBtn} type='primary'> Надіслати</Button>
-
-		</Form>
+		</form>
 	)
 });
 

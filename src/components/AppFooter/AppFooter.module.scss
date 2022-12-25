@@ -1,8 +1,13 @@
+@import '../../global-styles';
+
 .AppFooter {
 	position: fixed;
 	bottom: 0;
 	left: 0;
 	width: 100%;
+	padding: 12px 48px;
+	background-color: $grayBg;
+	z-index: 5;
 	&__nav {
 	  display: flex;
 	  justify-content: space-between;
