@@ -1,19 +1,21 @@
 import Icon, { HomeOutlined } from '@ant-design/icons';
 import type { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon';
-import { Button } from 'antd';
+
 import { Auth, getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import React, { useContext } from 'react';
 import { FirebaseContext } from '../..';
 import { UserType } from '../../utils/types';
 import classes from './Login.module.scss';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import Preloader from '../../UI/Preloader';
 import { GoogleIcon } from '../../UI/Icons';
 import { useAppDispatch } from '../../Redux/store';
 import { loginDataReceived, sendMyAccountData } from '../../Redux/account/account-reducer';
 import { useSelector } from 'react-redux';
 import { selectMyLoginData } from '../../Redux/account/account-selectors';
+import { Button } from '@mui/joy';
+import { Registration } from '../Registration';
 
 type PropsType = {}
 
@@ -39,11 +41,20 @@ const Login: React.FC<PropsType> = ({}) => {
 		setAccountData(user);
 	}
 
+	
+	const handleClick = () => {
+		console.log('handle click');
+		return <Registration />
+	}
+
 	return (
 		<div className={classes.Login}>
-			<Button block onClick={login} className={classes.loginBtn}>
+			<Button onClick={login} className={classes.loginBtn}>
 				Увійти 
 				<GoogleIcon className={classes.googleIcon}/>
+			</Button>
+			<Button onClick={handleClick} className={classes.registerBtn}>
+				Зареєструватися
 			</Button>
 		</div>
 	)

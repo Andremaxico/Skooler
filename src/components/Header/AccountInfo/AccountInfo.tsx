@@ -51,16 +51,12 @@ export const AccountInfo: React.FC<PropsType> = ({loginData}) => {
 		/>
 	 );
 
-	if(!loginData) {
-		return <NavLink to='/login' replace={true} className={classes.loginLink}>Login</NavLink>;
-	}
-
 	return (
 		<div className={classes.AccountInfo}>
 			<Link to='/account'>
 				<Avatar 
 					icon={<UserOutlined />} src={ 
-						accountData?.avatarUrl || loginData.photoURL
+						accountData?.avatarUrl || loginData?.photoURL
 					}
 					className={classes.avatar} 
 				/>

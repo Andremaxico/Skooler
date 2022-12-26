@@ -48,6 +48,19 @@ const Chat = React.lazy(() => import('./components/Chat'));
 const Login = React.lazy(() => import('./components/Login'))
 const Account = React.lazy(() => import('./components/Account'));
 
+const primaryCol = {
+  50: '#d0d6c9',
+  100: '#b0bba5',
+  200: '#909f81',
+  300: '#81916f',
+  400: '#61764b',
+  500: '#576a44',
+  600: '#4e5e3c',
+  700: '#445335',
+}
+
+console.log('blue color', blue);
+
 //mui theme
 const muiTheme = createTheme({
   palette: {
@@ -76,7 +89,7 @@ const joyTheme = extendJoyTheme({
     light: {
       palette: {
         primary: {
-          ...blue,
+          ...primaryCol,
           solidColor: 'var(--mui-palette-primary-contrastText)',
           solidBg: 'var(--mui-palette-primary-main)',
           solidHoverBg: 'var(--mui-palette-primary-dark)',
@@ -123,6 +136,8 @@ const joyTheme = extendJoyTheme({
 const theme = deepmerge(joyTheme, muiTheme);
 
 const SuspensedChat = withSuspense(Chat);
+const SuspensedLogin = withSuspense(Login);
+const SuspensedAccount = withSuspense(Account);
 
 const App = () => {
   const { auth } = useContext(FirebaseContext);
@@ -193,7 +208,7 @@ const App = () => {
   console.log('heights', footerHeight, headerHeight);
 
   if(loading) return <Preloader />
-  if(!loading && !user) return <Registration />;
+  //if(!loading && !user) return <Login />;
 
   return (
     <Layout>
@@ -208,11 +223,11 @@ const App = () => {
         >
           <div className="site-layout-content" style={{flex: '1 1 auto'}}>
             {networkError && <NetworkError message={networkError || ''} />}
-            {isFetching || loading ? <Preloader /> :
+            {isFetching || loading ? <Preloader /> : !loading && !user ? <Login /> :
               <Routes>
-                <Route path='/login' element={<Login />}/>
+                <Route path='/login' element={<SuspensedLogin />}/>
                 <Route path='/chat' element={<SuspensedChat />}/>
-                <Route path='/account' element={<Account />}>
+                <Route path='/account' element={<SuspensedAccount />}>
                   <Route path=':userId'/>
                 </Route>
                 <Route path='/post/:postId' element={<Post />} />
@@ -227,6 +242,7 @@ const App = () => {
     </Layout>
   );
 }
+
 
 const AppContainer = () => {
   return (

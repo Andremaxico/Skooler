@@ -42,6 +42,16 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 
 	//for autofocus
 	const messageField = useRef<HTMLDivElement>(null);
+	let textareaEl: HTMLTextAreaElement | null | undefined = null;
+
+	useEffect(() => {
+		if(messageField) {
+			//fignyaaaaaaaa // DELETE THISSSS! IS`S GIVNOCOD
+			textareaEl = messageField.current?.querySelector('textarea');
+		}
+	}, [messageField]);
+
+	console.log('message ref', messageField);
 
 	const dispatch = useAppDispatch();
 
@@ -65,10 +75,6 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 		}
 
 		reset();
-		console.log('text content', messageField.current?.textContent);
-		if(messageField.current?.textContent) {
-			messageField.current.textContent = '';
-		}
 	};
 
 	//for edit
@@ -76,8 +82,8 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 		//set for antd textarea
 		//form.setFieldValue('message', currValue);
 		//set focus on the message field
-		if(messageField.current && isMessageEdit) {
-			messageField.current.focus();
+		if(textareaEl && isMessageEdit) {
+			textareaEl.focus();
 		}
 		//set to react-hook-form value
 		setValue('message', currValue || '');
@@ -98,6 +104,7 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 
 		reset();
 		await dispatch(sendMessage(newMessageData));
+		if(textareaEl) textareaEl.value = '';
 	}
 
 	return (
@@ -107,13 +114,14 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 				control={control}
 				defaultValue={currValue}
 				render={({field: {onChange, value}}) => (
-					<FormControl className={classes.textareaWrap} ref={messageField}>
+					<FormControl className={classes.textareaWrap} >
 						<Textarea
 							value={value}
 							onChange={onChange} 
 							component={FormControl}
 							placeholder='Ваше повідомлення'
 							size='lg'
+							ref={messageField}
 							sx={{minWidth: '100%' }}
 							endDecorator={		
 								<IconButton color='primary' type='submit' className={classes.sendBtn}> 

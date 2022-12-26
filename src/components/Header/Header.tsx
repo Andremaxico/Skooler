@@ -34,7 +34,7 @@ const AppHeader: React.FC<PropsType> = ({}) => {
 			</NavLink>
 			{/* <AppMenu mode='horizontal' /> */}
 			<div className={classes.accountLink}>
-				<AccountInfo loginData={loginData} />
+				{loginData && <AccountInfo loginData={loginData} />}
 			</div>
 		</header>
 	)
