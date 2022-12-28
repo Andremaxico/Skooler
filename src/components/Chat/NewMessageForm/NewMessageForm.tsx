@@ -46,7 +46,9 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 
 	useEffect(() => {
 		if(messageField) {
-			//fignyaaaaaaaa // DELETE THISSSS! IS`S GIVNOCOD
+			//fignyaaaaaaaa 
+			// DELETE THISSSS! IS`S GIVNOCODE
+			//ale pobachymo
 			textareaEl = messageField.current?.querySelector('textarea');
 		}
 	}, [messageField]);

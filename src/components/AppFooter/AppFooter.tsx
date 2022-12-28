@@ -7,6 +7,7 @@ import { NavLink } from 'react-router-dom';
 //icons
 import SchoolIcon from '@mui/icons-material/School';
 import MessageIcon from '@mui/icons-material/Message';
+import ContactSupportIcon from '@mui/icons-material/ContactSupport';
 import { IconButton } from '@mui/material';
 import { FooterLink } from './FooterLink';
 import HomeIcon from '@mui/icons-material/Home';
@@ -29,6 +30,7 @@ export const AppFooter: React.FC<PropsType> = ({}) => {
       <nav className={classes.AppFooter__nav}>
         <FooterLink icon={HomeIcon} to='/'/>
         <FooterLink icon={SchoolIcon} to='/myschool'/>
+        <FooterLink icon={ContactSupportIcon} bigger to='/new-post'/>
         <FooterLink icon={MessageIcon} to='/chat' />
         <FooterLink icon={MessageIcon} to='/chat'/>
       </nav>

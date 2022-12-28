@@ -1,6 +1,13 @@
 @import '../../../global-styles';
 
 .link {
+	&._bigger {
+		.btn {
+			.icon {
+				font-size: 30px;
+			}
+		}
+	}
 	&._active {
 		.icon {
 			color: $primary;

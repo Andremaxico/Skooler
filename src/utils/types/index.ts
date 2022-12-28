@@ -26,7 +26,7 @@ export type ControllerFieldType = {
 	}
 }
 
-export type PathsType = '/chat' | '/login' | '/account' | '/myschool' | '/';
+export type PathsType = '/chat' | '/login' | '/account' | '/myschool' | '/' | '/new-post' | '/post';
 
 export type UsersWhoReadMessageType = Array<string | null>;
 

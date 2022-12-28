@@ -27,27 +27,29 @@ export const AppMenu: React.FC<PropsType> = ({mode}) => {
 		}
 	];
 
-	const navIcons: {[key in Partial<PathsType>]: React.ReactNode} = {
-		'/chat': <MessageOutlined />,
-		'/account': <UserOutlined />,
-		'/login': <div></div>,
-		'/myschool': <StudyIcon />,
-		'/': <div></div>
-	}
+	// const navIcons: {[key in Partial<PathsType>]: React.ReactNode} = {
+	// 	'/chat': <MessageOutlined />,
+	// 	'/account': <UserOutlined />,
+	// 	'/login': <div></div>,
+	// 	'/myschool': <StudyIcon />,
+	// 	'/': <div></div>,
+	// 	'/new-post': <div></div>
+	// }
 
-	const navItems = linksData.map(data => {
-		return getMenuItem(
-			<NavLink to={data.path} className={classes.link}>{data.text}</NavLink>,
-			data.path,
-			navIcons[data.path],
-		)
-	})
+	// const navItems = linksData.map(data => {
+	// 	return getMenuItem(
+	// 		<NavLink to={data.path} className={classes.link}>{data.text}</NavLink>,
+	// 		data.path,
+	// 		navIcons[data.path],
+	// 	)
+	// })
 
 	return (
-		<Menu
-			className={classes.AppMenu}
-			theme='dark' mode={mode as any} defaultSelectedKeys={[location.pathname]}
-			items={navItems} selectedKeys={[location.pathname]}
-		/>
+		// <Menu
+		// 	className={classes.AppMenu}
+		// 	theme='dark' mode={mode as any} defaultSelectedKeys={[location.pathname]}
+		// 	items={navItems} selectedKeys={[location.pathname]}
+		// />
+		<div>no working</div>
 	)
 }

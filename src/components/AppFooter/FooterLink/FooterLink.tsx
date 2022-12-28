@@ -8,12 +8,16 @@ import classes from './FooterLink.module.scss';
 type PropsType = {
 	icon: ElementType,
 	to: PathsType,
+	bigger?: boolean,
 };
 
-export const FooterLink: React.FC<PropsType> = ({icon: Icon, to}) => {
+export const FooterLink: React.FC<PropsType> = ({icon: Icon, to, bigger}) => {
+	//for shorter code
+	const baseClassname = bigger ? `${classes.link} ${classes._bigger}` : classes.link
+
 	return (
 		<NavLink className={({isActive}) => (
-			isActive ? `${classes._active} ${classes.link}` : classes.link
+			isActive ? `${classes._active} ${baseClassname}` : baseClassname
 		)} to={to} >
 			<IconButton className={classes.btn}>
 				<Icon className={classes.icon} />

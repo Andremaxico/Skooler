@@ -8,6 +8,7 @@
 		width: 32px;
 		height: 32px;
 		margin-right: 8px;
+		box-shadow: 3px 5px 22px -1px $gray;
 	}
 	.name {
 		margin: 0 4px 0 0;
@@ -15,7 +16,7 @@
 		color: #fff;
 	}
 	.moreBtn {
-		color: #fff;
+		color: $gray;
 	}
 }
 
