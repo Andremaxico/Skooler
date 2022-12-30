@@ -71,11 +71,13 @@ export type PostBaseType = {
 }
 
 export type PostDataType = PostBaseType & {
-	comments: CommentType[],
+	commentsCount: number,
 	category: QuestionCategoriesType,
 }
 
-export type CommentType = PostBaseType;
+export type CommentType = PostBaseType & {
+	isCorrect: boolean,
+};
 
 //ACCOUNT==============================
 export type AccountDataType = {

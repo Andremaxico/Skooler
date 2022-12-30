@@ -103,6 +103,7 @@ const joyTheme = extendJoyTheme({
             'rgba(var(--mui-palette-primary-mainChannel) / var(--mui-palette-action-hoverOpacity))',
           outlinedHoverBorder: 'var(--mui-palette-primary-main)',
           outlinedActiveBg: 'rgba(var(--mui-palette-primary-mainChannel) / 0.3)',
+      
         },
         neutral: {
           ...grey,
