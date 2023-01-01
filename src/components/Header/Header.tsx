@@ -43,7 +43,7 @@ const AppHeader: React.FC<PropsType> = ({}) => {
 			<div className={classes.buttons}>
 				{!isSearching ?
 					<button className={classes.btn} onClick={handleSearchBtnClick}>
-						<SearchIcon className={classes.icon}/>
+						<FilterListIcon className={classes.icon} />
 					</button>
 					:
 					<button className={classes.btn} onClick={handleCloseBtnClick}>
@@ -51,7 +51,7 @@ const AppHeader: React.FC<PropsType> = ({}) => {
 					</button>
 				}
 				<button className={classes.btn}>
-					<FilterListIcon className={classes.icon} />
+					<SearchIcon className={classes.icon} />
 				</button>
 			</div>
 			<NavLink to={'/'} className={classes.logo}>
