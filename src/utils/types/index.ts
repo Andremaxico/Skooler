@@ -73,6 +73,7 @@ export type PostBaseType = {
 export type PostDataType = PostBaseType & {
 	commentsCount: number,
 	category: QuestionCategoriesType,
+	isClosed: boolean,
 }
 
 export type CommentType = PostBaseType & {
