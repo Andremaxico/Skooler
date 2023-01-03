@@ -64,20 +64,21 @@ export type PostBaseType = {
 	authorAvatarUrl: string | null,
 	authorFullname: string,
 	authorId: string,
-	timestamp: object, 							//seconds
 	text: string,
 	id: string,
-	stars: number,
+	stars: number,	
 }
 
 export type PostDataType = PostBaseType & {
 	commentsCount: number,
 	category: QuestionCategoriesType,
 	isClosed: boolean,
+	createdAt: FieldValue, 							//seconds
 }
 
 export type CommentType = PostBaseType & {
 	isCorrect: boolean,
+	createdAt: FieldValue, 							//seconds
 };
 
 //ACCOUNT==============================

@@ -13,13 +13,15 @@ $black: rgb(51, 51, 51);
 $grayBg: #fefefe;
 $gray: rgb(177 177 177);
 $lightGray: rgba($color: $gray, $alpha: 0.5);
+$smBoxShadow: 3px 5px 22px -1px $gray;
+
 //mixins
 @mixin size($w, $h: $w) {
   width: $w;
   height: $h;
 }
 
-@mixin font-style($fz, $lh, $fw: 40 0, $col: $black) {
+@mixin font-style($fz, $lh, $fw: 400, $col: $black) {
     font-size: $fz;
     line-height: $lh;
     font-weight: $fw;
