@@ -64,6 +64,7 @@ export type PostBaseType = {
 	authorAvatarUrl: string | null,
 	authorFullname: string,
 	authorId: string,
+	authorRating: UserRatingsType,
 	text: string,
 	id: string,
 	stars: number,	
@@ -82,6 +83,16 @@ export type CommentType = PostBaseType & {
 };
 
 //ACCOUNT==============================
+export type UserRatingsType = 
+	'Ніхто' | //0
+	'Новачок' | //>1
+	'Може підказати' | //>10
+	'Можна списати' | //>30
+	'Знає багато' | //>50
+	'Ботанік' | //>75
+	'Легенда' | //>100
+	'Сенсей' 	//>150
+
 export type AccountDataType = {
 	class: string,
 	schoolId: number,
@@ -101,7 +112,7 @@ export type ReceivedAccountDataType = {
 	name: string,
 	surname: string,
 	status: 'teacher' | 'schoolboy',
-	rating: 'Новачок' | 'Може підказати' | 'Можна спитати на контрольній' | 'Знає багато' | 'Ботанік',
+	rating: UserRatingsType,
 	birthDate: BirthDateObject, 
 	aboutMe: string | null,
 	avatarUrl?: string,
@@ -109,6 +120,7 @@ export type ReceivedAccountDataType = {
 	email: string,
 	password: string,
 	liked: string[],
+	correctAnswersCount: number,
 }
 
 export type SchoolResultValueType = {

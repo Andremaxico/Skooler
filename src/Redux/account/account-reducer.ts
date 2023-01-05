@@ -1,7 +1,7 @@
 import { accountAPI } from './../../api/accountApi';
 import { AppDispatchType, RootStateType } from './../store';
 import { ThunkAction } from 'redux-thunk';
-import { AccountDataType, ReceivedAccountDataType, UserType, SchoolInfoType } from './../../utils/types/index';
+import { AccountDataType, ReceivedAccountDataType, UserType, SchoolInfoType, UserRatingsType } from './../../utils/types/index';
 import { createReducer, createAction, AnyAction } from '@reduxjs/toolkit';
 import { schoolsAPI } from '../../api/schoolsApi';
 import { usersAPI } from '../../api/usersApi';
@@ -158,8 +158,9 @@ export const sendMyAccountData = (data: AccountDataType | null) => async (dispat
 			accountData = {
 				...restData, school: schoolData, birthDate: birthDate,
 				avatarUrl: avatarUrl, uid: uid,
-				rating: 'Новачок',
+				rating: 'Ніхто',
 				liked: [],
+				correctAnswersCount: 0,
 			}; 
 		}
 
@@ -203,4 +204,34 @@ export const removeQuestionFromLiked = (id: string) => async (dispatch: AppDispa
 
 }
 
+export const userAnswerMarkedAsCorrect = (uid: string) => async (dispatch: AppDispatchType) => {
+	const userData = await usersAPI.getUserById(uid);
+	const userRating: UserRatingsType = userData ? userData.rating : 'Ніхто';
+	const prevCorrAnswersCount = userData ? userData.correctAnswersCount : 0;
+	console.log('user answer marked as correct', userRating, uid, prevCorrAnswersCount);
+
+	await usersAPI.userAnswerMarkedAsCorrect(uid, prevCorrAnswersCount);
+
+	//щоб змінювати рейинг залежно від кількості вірних відповідей
+	if(userRating) {
+		//insted of if else..if else
+		const currCount = prevCorrAnswersCount + 1;
+		//dependency by index
+		const checkingCountArray: number[] = [0, 10, 30, 50, 75, 100, 150];
+		const checkingRatingsArray: UserRatingsType[] = [
+			'Новачок', 'Може підказати', 'Можна списати', 'Знає багато', 'Ботанік', 'Легенда', 'Сенсей'
+		];
+
+		//cycle
+		for(let i = 0; i <= checkingCountArray.length; i++) {
+			console.log('start cycle, i:', i);
+			console.log(`data, currCount: ${currCount} ${checkingCountArray[i]}, userRating: ${userRating} ${checkingRatingsArray[i]}`);
+			if(currCount > checkingCountArray[i] && userRating !== checkingRatingsArray[i]) {
+				console.log('passed rating', checkingRatingsArray[i]);
+				usersAPI.updateUserRating(uid, checkingRatingsArray[i]);
+			} 
+		}
+	}
+}
+ 
 export default accountReducer;
