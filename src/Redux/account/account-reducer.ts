@@ -19,7 +19,7 @@ type _ThunkType = ThunkAction<void, AccountStateType, unknown, AnyAction>;
 
 
 //=========ACTIONS=========
-export const accountDataReceived = createAction<ReceivedAccountDataType | null>('account/SET_MY_ACCOUNT_DATA');
+export const myAccountDataReceived = createAction<ReceivedAccountDataType | null>('account/SET_MY_ACCOUNT_DATA');
 export const loginDataReceived = createAction<User | null>('account/LOGIN_DATA_RECEIVED');
 export const currUserAccountReceived = createAction<ReceivedAccountDataType | undefined>('account/CURR_USER_ACCOUNT_RECEIVED');
 export const schoolInfoReceived = createAction<SchoolInfoType>('account/SCHOOL_INFO_RECEIVED');
@@ -51,7 +51,7 @@ export type BirthDateObject = {
 
 const accountReducer = createReducer(initialState, (builder) => {
 	builder
-		.addCase(accountDataReceived, (state, action) => {
+		.addCase(myAccountDataReceived, (state, action) => {
 			state.myAccountData = action.payload;
 		})
 		.addCase(currUserAccountReceived, (state, action) => {
@@ -99,7 +99,7 @@ export const setMyAccount = (authData: UserType) => async (dispatch: AppDispatch
 	const data: ReceivedAccountDataType | undefined = await usersAPI.getUserById(authData.uid as string);
 
 	if(data) {
-		dispatch(accountDataReceived(data));
+		dispatch(myAccountDataReceived(data));
 	}
 	//dispatch(isFetchingStatusChanged(false));
 }
@@ -170,9 +170,19 @@ export const sendMyAccountData = (data: AccountDataType | null) => async (dispat
 			//set data to state
 			dispatch(setMyAccount(loginData));
 		}
+
+		//subscribe on changes
+		//subscribe for next times...
+		const accountSubscriber = (data: ReceivedAccountDataType)  => {
+			console.log('subscriber work');
+			dispatch(myAccountDataReceived(data));
+		}
+
+		accountAPI.subscribeOnChanges(uid, accountSubscriber);
 	}
 
 	dispatch(isFetchingStatusChanged(false));
+
 }
 
 

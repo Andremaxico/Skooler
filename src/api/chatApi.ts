@@ -25,9 +25,6 @@ const q = query(collection(firestore as Firestore, 'messages'), orderBy('created
 
 let unsubscribeFromMessages = () => {}; //nothing
 
-
-
-
 const chatAPI = {
 	async subscribe(subscriber: MessageSubscriberType) {
 		notifyFetchingSubscribers(true);
@@ -38,6 +35,7 @@ const chatAPI = {
 		querySnapshot.forEach((doc) => {
 			messages.push({...doc.data(), id: doc.id})
 		});
+
 		unsubscribeFromMessages = onSnapshot(q, 
 			(querySnapshot) => {
 				let messages: DocumentData = [];
@@ -59,22 +57,6 @@ const chatAPI = {
 
 		notifyMessagesSubscribers( messages as MessagesDataType );
 		notifyFetchingSubscribers(false);
-
-
-		unsubscribeFromMessages = onSnapshot(q, 
-			(querySnapshot) => {
-				let messages: DocumentData = [];
-		
-				querySnapshot.forEach((doc) => {
-					messages.push({...doc.data(), id: doc.id});
-				});
-		
-				notifyMessagesSubscribers(messages as MessagesDataType);
-			},
-			(error) => {
-				console.log('error' ,error.message);
-			}
-		);
 	},
 
 	async fetchingSubscribe(subscriber: FetchingSubscriberType) {

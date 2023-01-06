@@ -1,19 +1,18 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { AccountDataType } from '../../utils/types';
 import { InitialsFields } from './Steps/InitialsFields';
 import classes from './Registration.module.scss';
 import { InfoFields } from './Steps/InfoFields';
-import { SchoolFields, SchoolOptionType } from './Steps/SchoolFields';
+import { SchoolFields } from './Steps/SchoolFields';
 import { AppDispatchType, useAppDispatch } from '../../Redux/store';
-import { accountDataReceived, loginDataReceived, sendMyCurrentAvatar } from '../../Redux/account/account-reducer';
+import { loginDataReceived } from '../../Redux/account/account-reducer';
 import { LoginFields } from './Steps/LoginFields';
 import { AvatarUpload } from './Steps/AvatarUpload/AvatarUpload';
 import { useSelector } from 'react-redux';
-import { selectMyLoginData, selectMyUid } from '../../Redux/account/account-selectors';
+import { selectMyUid } from '../../Redux/account/account-selectors';
 import { FirebaseContext } from '../..';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { ErrorData } from '@firebase/util';
 
 type PropsType = {};
 

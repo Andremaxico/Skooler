@@ -7,7 +7,7 @@ import classes from './AccountInfo.module.scss';
 import { FirebaseContext } from '../../..';
 import { Auth, signOut } from 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { accountDataReceived, loginDataReceived } from '../../../Redux/account/account-reducer';
+import { myAccountDataReceived, loginDataReceived } from '../../../Redux/account/account-reducer';
 import { useAppDispatch } from '../../../Redux/store';
 import { useSelector } from 'react-redux';
 import { selectMyAccountData } from '../../../Redux/account/account-selectors';
@@ -27,7 +27,7 @@ export const AccountInfo: React.FC<PropsType> = ({loginData}) => {
 			signOut(auth);
 		}
 		dispatch(loginDataReceived(null));
-		dispatch(accountDataReceived(null));
+		dispatch(myAccountDataReceived(null));
 	}
 
 	//contex menu items fo arrow more btn
