@@ -219,7 +219,6 @@ const App = () => {
           style={{
             paddingTop: `${headerHeight}px`, 
             paddingBottom: `${footerHeight}px`,
-            height: `calc(100vh - (${headerHeight}px + ${footerHeight}px)`,
           }}
         >
           <div className="site-layout-content" style={{flex: '1 1 auto'}}>
