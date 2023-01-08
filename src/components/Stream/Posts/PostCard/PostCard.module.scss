@@ -1,0 +1,47 @@
+@import '../../../../nullstyle.scss';
+@import '../../../../global-styles';
+
+
+.PostCard {
+	margin-bottom: 12px;
+	// padding-bottom: 12px;
+	// border-bottom: 1px solid $lightGray;
+	&:last-child {
+		margin-bottom: 0;
+	}
+	.buttons {
+		display: flex;
+		justify-content: space-between;
+		margin-bottom: 12px;
+		@include text;
+		.btn {
+			@include row-align;
+			color: $gray;
+			&._liked {
+				color: gold;
+				.number {
+					color: gold;
+				}
+			}
+			.number {
+				@include center-align;
+				@include text;
+				margin-right: 4px;
+				color: $gray;
+			}
+			.icon {
+				font-size: 24px;
+				@include size(23px);
+			}
+		}
+	}
+	&._closed {
+		.commentBtn {
+			color: $success;
+			.number {
+				color: $success;
+			}
+		}
+	}
+	.comments {}
+}

@@ -1,0 +1,1 @@
+export { AddingPostStatus } from './AddingPostStatus';

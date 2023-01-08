@@ -1,0 +1,25 @@
+@import '../../../global-styles';
+
+.NewAnswer {
+	margin-bottom: 12px;
+	padding-top: 12px;
+	border-top: 1px solid $gray;
+	.top {
+		@include row-align;
+		justify-content: space-between;
+		margin-bottom: 12px;
+		.title {
+			@include smallTitle;
+		}
+		.cancelBtn {}
+	}
+	.form {
+		.textarea {
+			.endDecorator {
+				@include row-align;
+				justify-content: flex-end;
+				.submitBtn {}
+			}
+		}
+	}
+}

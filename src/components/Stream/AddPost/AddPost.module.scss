@@ -1,0 +1,12 @@
+@import '../../../global-styles';
+
+.AddPost {
+	position: absolute;
+	bottom: 15px;
+	right: 15px;
+	.btn {
+		.icon {
+			font-size: 32px;
+		}
+	}
+}

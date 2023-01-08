@@ -1,0 +1,32 @@
+@import '../../Stream/Posts/PostCard/PostCard.module.scss';
+
+.Answer {
+	margin-bottom: 12px;
+	transition: 0.1s;
+	&:last-child {
+		margin-bottom: 0;
+	}
+	.buttons {
+		@include row-align;
+		justify-content: space-between;
+		margin-bottom: 12px;
+		.correctMark {
+			.icon {
+				font-size: 20px;
+				color: $success;
+			}
+		}
+		.btn {
+			@include row-align;
+			color: $gray;
+			.number {
+
+			}
+			.icon {
+				margin-right: 4px;   
+				font-size: 20px;
+			}
+			.text {}
+		}
+	}
+}  

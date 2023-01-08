@@ -1,0 +1,31 @@
+@import '../../global-styles';
+
+.NewPost {
+	padding: 15px 20px;
+	height: 100%;
+	@include column-align;
+	justify-content: center;
+	.title {
+		@include smallTitle;
+	}
+	.form {
+		@include column-align;
+		.textarea {
+			margin-bottom: 16px;
+			width: 100%;
+		}
+		.select {
+			width: 100%;
+			margin-bottom: 24px;
+		}
+		.buttons {
+			display: flex;
+			justify-content: flex-end;
+
+			.cancelBtn {
+				margin-right: 16px;
+			}
+			.submitBtn {}
+		}
+	}
+}
