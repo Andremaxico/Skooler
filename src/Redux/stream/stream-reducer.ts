@@ -188,6 +188,7 @@ export const streamReducer = createReducer(inititalState, (builder) => {
 		})
 		.addCase(postRemoved, (state, action) => {
 			if(state.posts) {
+				console.log('post removed redux');
 				state.posts = state.posts.filter(data => data.id !== action.payload);
 			}
 		})
@@ -238,6 +239,9 @@ export const removeStarFromQuestion = (id: string) => async (dispatch: AppDispat
 
 export const addNewAnswer = (questionId: string, data: CommentType) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
 	dispatch(answerAddingStatusChanged('loading'));
+	//+1 to number of comments in question doc
+	streamAPI.increaceCommentsCount(questionId);
+	//add doc to question>comments collection
 	await streamAPI.addNewAnswer(questionId, data);
 	dispatch(newAnswerAdded(questionId, data));
 	dispatch(answerAddingStatusChanged('success'));
@@ -249,6 +253,9 @@ export const addNewAnswer = (questionId: string, data: CommentType) => async (di
 } 
 
 export const deleteAnswer = (qId: string, aId: string) => async (dispatch: AppDispatchType) => {
+	//-1 to number of comments in question doc
+	streamAPI.decreaceCommentsCount(qId);
+	//remove doc from question>comments collection
 	await streamAPI.deleteAnswer(qId, aId);
 	dispatch(answerDeleted(qId, aId));
 }

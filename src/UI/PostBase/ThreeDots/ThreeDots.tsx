@@ -1,4 +1,4 @@
-import React, { Ref, RefObject } from 'react';
+import React, { Ref, RefObject, useState } from 'react';
 import classes from './ThreeDots.module.scss';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
@@ -6,6 +6,7 @@ import MenuItem from '@mui/material/MenuItem';
 import PopupState, { bindTrigger, bindMenu, Props } from 'material-ui-popup-state';
 import { useAppDispatch } from '../../../Redux/store';
 import { deleteAnswer, deleteQuestion} from '../../../Redux/stream/stream-reducer';
+import { DeleteConfirmModal } from '../DeleteConfirmModal';
 
 type PropsType = {
 	qId: string,
@@ -14,7 +15,13 @@ type PropsType = {
 };
 
 export const ThreeDots = React.forwardRef<HTMLDivElement, PropsType>(({qId, menuRef, answerQId}, ref) => {
+	const [isDeleteConfirmShowing, setIsDeleteConfirmShowing] = useState<boolean>(true);
+
 	const dispatch = useAppDispatch();
+
+	const openConfirmDeleteModal = () => {
+		setIsDeleteConfirmShowing(true);
+	}
 
 	const deleteQ = () => {
 		if(answerQId) {
@@ -27,6 +34,10 @@ export const ThreeDots = React.forwardRef<HTMLDivElement, PropsType>(({qId, menu
 		
 	}
 
+	const closeDeleteConfirm = () => {
+		setIsDeleteConfirmShowing(false);
+	}
+ 
 	return (
 		<div className={classes.ThreeDots} ref={ref} id='dots-wrapper'>
 			<PopupState variant="popover" popupId="demo-popup-menu">
@@ -35,7 +46,7 @@ export const ThreeDots = React.forwardRef<HTMLDivElement, PropsType>(({qId, menu
 						<button {...bindTrigger(popupState)}>
 							<div className={classes.dot}></div>
 						</button>
-						<Menu {...bindMenu(popupState)} ref={menuRef} id='actions-menu'>
+						<Menu {...bindMenu(popupState)} onClose={closeDeleteConfirm} ref={menuRef} id='actions-menu'>
 							<MenuItem onClick={() => {
 								popupState.close();
 								changeQ();
@@ -43,12 +54,16 @@ export const ThreeDots = React.forwardRef<HTMLDivElement, PropsType>(({qId, menu
 
 							<MenuItem onClick={() => {
 								popupState.close();
-								deleteQ();
+								openConfirmDeleteModal();
 							}} className={classes.deleteBtn}>Видалити</MenuItem>
 						</Menu>
 					</React.Fragment>
 				)}
 			</PopupState>
+			<DeleteConfirmModal 
+				isShow={isDeleteConfirmShowing} 
+				deleteP={deleteQ} 
+				cancel={closeDeleteConfirm}/>
 		</div>
 	)
 })

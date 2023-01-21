@@ -70,13 +70,9 @@ export const streamAPI =  {
 		});
 	},
 
-	async addNewAnswer(questionId: string, data: CommentType) {
-		//add answer to collection
-		const newAnswerRef = doc(firestore, 'questions', questionId, 'comments', data.id);
-		await setDoc(newAnswerRef, data);
-
+	async increaceCommentsCount(qId: string) {
 		//increase comments count
-		const questionRef = doc(firestore, 'questions', questionId);
+		const questionRef = doc(firestore, 'questions', qId);
 		const questionDoc = await getDoc(questionRef);
 		if(questionDoc.exists()) {
 			const prevCommentsCount = questionDoc.data().commentsCount;
@@ -85,6 +81,12 @@ export const streamAPI =  {
 				commentsCount: prevCommentsCount + 1,
 			})
 		}
+	},
+
+	async addNewAnswer(questionId: string, data: CommentType) {
+		//add answer to collection
+		const newAnswerRef = doc(firestore, 'questions', questionId, 'comments', data.id);
+		await setDoc(newAnswerRef, data);
 	},
 
 	async getPostsByQuery(queryStr: string, category: QuestionCategoriesType) {
@@ -154,7 +156,6 @@ export const streamAPI =  {
 
 	async deleteQuestion(qId: string) {
 		const questionRef = doc(firestore, 'questions', qId);
-
 		await deleteDoc(questionRef);
 	},
 
@@ -162,5 +163,18 @@ export const streamAPI =  {
 		const answerRef = doc(firestore, 'questions', qId, 'comments', aId);
 
 		await deleteDoc(answerRef);
+	},
+
+	async decreaceCommentsCount(qId: string) {
+		//decrease comments count
+		const questionRef = doc(firestore, 'questions', qId);
+		const questionDoc = await getDoc(questionRef);
+		if(questionDoc.exists()) {
+			const prevCommentsCount = questionDoc.data().commentsCount;
+
+			await updateDoc(questionRef, {
+				commentsCount: prevCommentsCount + 1,
+			})
+		}
 	}
 }
