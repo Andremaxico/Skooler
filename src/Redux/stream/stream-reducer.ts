@@ -18,12 +18,11 @@ export const answerMarkedAsCorrect = createAction<string>('stream_ANSWER_MARKED_
 export const searchedPostsReceived = createAction<null | PostDataType[]>('stream/SEARCHED_POSTS_RECEIVED');
 export const currStreamScrollValueChanged = createAction<number>('stream/CURR_STREAM_SCROLL_VALUE_CHANGED');
 export const questionMarkedAsClosed = createAction<string>('stream/QUESTION_MARKED_AS_CLOSED');
-export const postAddingStatusChanged = createAction<PostAddingStatusType>('stream/POST_ADDING_STATUS_CHANGED');
-export const answerAddingStatusChanged = createAction<PostAddingStatusType>('stream/ANSWER_ADDING_STATUS_CHANGED');
 export const postChanged = createAction<PostDataType>('stream/POST_CHANGED');  
 export const postRemoved = createAction<string>('stream/POST_REMOVED');
 export const questionChanged = createAction<PostDataType>('stream/QUESTION_CHANGED');
 export const answerChanged = createAction<CommentType>('stream/ANSWER_CHANGED');
+export const userActionStatusChanged = createAction<ActionStatusType | null>('stream/USER_ACTION_STATUS_CHANGED');
 
 export const newAnswerAdded = createAction('stream/NEW_ANSWER_ADDED', (questionId: string, data: CommentType) => ({
 	payload: {
@@ -38,7 +37,11 @@ export const answerDeleted = createAction('stream/ANSWER_DELETED', (qId: string,
 	}
 }));
 
-export type PostAddingStatusType = 'loading' | 'success' | 'error' | null;
+export type UserActionsType = 
+	'post_adding' | 'post_deleting' | 'post_changing' | 
+	'answer_adding' | 'answer_deleting' | 'post_changing'
+;
+export type ActionStatusType = UserActionsType & 'loading' | 'success' | 'error';
 
 type StateType = {
 	posts: PostDataType[] | null,
@@ -48,8 +51,7 @@ type StateType = {
 	currPostAnswers: null | CommentType[],
 	searchedPosts: null | PostDataType[],
 	currStreamScrollValue: number,
-	postAddingStatus: PostAddingStatusType,
-	answerAddingStatus: PostAddingStatusType,
+	userActionStatus: ActionStatusType | null,
 };
 const inititalState: StateType = {
 	posts: null,
@@ -73,8 +75,7 @@ const inititalState: StateType = {
 	currPostAnswers: null,
 	searchedPosts: null,
 	currStreamScrollValue: 0,
-	postAddingStatus: null,
-	answerAddingStatus: null,
+	userActionStatus: null,
 };
 
 export const streamReducer = createReducer(inititalState, (builder) => {
@@ -174,12 +175,6 @@ export const streamReducer = createReducer(inititalState, (builder) => {
 			if(state.openPostData) {
 				state.openPostData.isClosed = true;
 			}
-		})
-		.addCase(postAddingStatusChanged, (state, action) => {
-			state.postAddingStatus = action.payload;
-		})
-		.addCase(answerAddingStatusChanged, (state, action) => {
-			state.answerAddingStatus = action.payload;
 		})
 		.addCase(postChanged, (state, action) => {
 			if(state.posts) {

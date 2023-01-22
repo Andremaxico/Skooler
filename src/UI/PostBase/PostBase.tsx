@@ -59,7 +59,13 @@ export const PostBase: React.FC<PropsType> = ({data, category, onClick, answerQI
 					</div>
 				</div>
 				{isHower ? 
-					<ThreeDots answerQId={answerQId} qId={data.id} ref={dotsRef} menuRef={menuRef}/>
+					<ThreeDots 
+						answerQId={answerQId} 
+						qId={data.id} 
+						ref={dotsRef} 
+						menuRef={menuRef}
+						postText={data.text}
+					/>
 				: category && <div className={classes.category}>{category}</div>}
 			</div>
 			<p className={cn(classes.text, isTextCutted ? classes._cutted : '')}>{text}</p>

@@ -13,7 +13,7 @@ import classes from './Post.module.scss';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { selectFooterHeight } from '../../Redux/app/appSelectors';
 import Preloader from '../../UI/Preloader';
-import { AddingPostStatus } from '../../UI/AddingPostStatus';
+import { ActionStatus } from '../../UI/ActionStatus';
 
 type PropsType = {
 
@@ -74,7 +74,7 @@ export const Post: React.FC<PropsType> = ({}) => {
 
 	return (
 		<section className={classes.Post}>
-			<AddingPostStatus successText='Відповідь успішно додана' status={answerAddingStatus} />
+			<ActionStatus successText='Відповідь успішно додана' status={answerAddingStatus} />
 			{data && <button className={classes.returnBtn} onClick={returnToMain} style={{bottom: `${footerHeight ? footerHeight : 0 + 28}px`}}>
 				<ArrowBackIcon className={classes.icon}/>
 			</button>}

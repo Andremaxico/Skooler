@@ -36,3 +36,7 @@ export const selectPostAddingStatus = (state: RootStateType) => {
 export const selectAnswerAddingStatus = (state: RootStateType) => {
 	return state.stream.answerAddingStatus;
 }
+
+export const selectActionStatus = (state: RootStateType) => {
+	return state.stream.actionStatus;
+}

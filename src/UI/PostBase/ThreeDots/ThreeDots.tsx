@@ -13,9 +13,10 @@ type PropsType = {
 	qId: string,
 	menuRef: RefObject<HTMLDivElement>,
 	answerQId?: string,
+	postText: string,
 };
 
-export const ThreeDots = React.forwardRef<HTMLDivElement, PropsType>(({qId, menuRef, answerQId}, ref) => {
+export const ThreeDots = React.forwardRef<HTMLDivElement, PropsType>(({qId, menuRef, answerQId, postText}, ref) => {
 	const [isDeleteConfirmShowing, setIsDeleteConfirmShowing] = useState<boolean>(false);
 	const [isEditPostModalShowing, setIsEditPostModalShowing] = useState<boolean>(false);
 
@@ -83,6 +84,8 @@ export const ThreeDots = React.forwardRef<HTMLDivElement, PropsType>(({qId, menu
 				isShow={isEditPostModalShowing}
 				changeP={changePost}
 				cancel={closeEditPostModal}
+				prevText={postText}
+				target={answerQId ? 'відповідь' : 'питання'}
 			/>
 		</div>
 	)

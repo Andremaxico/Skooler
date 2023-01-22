@@ -9,7 +9,7 @@ import { PostCard } from './PostCard';
 import Preloader from '../../../UI/Preloader';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { NavLink } from 'react-router-dom';
-import { AddingPostStatus } from '../../../UI/AddingPostStatus';
+import { ActionStatus } from '../../../UI/ActionStatus';
 
 type PropsType = {
 	isLoading: boolean,
@@ -81,9 +81,9 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 	return (
 		<div ref={postsRef} className={classes.Posts}>
 			{postAddingStatus ? 
-				<AddingPostStatus status={postAddingStatus} successText='Питання устпішно додано'/>
+				<ActionStatus status={postAddingStatus} successText='Питання устпішно додано'/>
 			: answerAddingStatus && 
-				<AddingPostStatus status={answerAddingStatus} successText='Відповідь успішно додана' />
+				<ActionStatus status={answerAddingStatus} successText='Відповідь успішно додана' />
 			}
 			{searchedPosts && searchedPosts.length > 0 ?
 				<>
