@@ -5,8 +5,9 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import PopupState, { bindTrigger, bindMenu, Props } from 'material-ui-popup-state';
 import { useAppDispatch } from '../../../Redux/store';
-import { deleteAnswer, deleteQuestion} from '../../../Redux/stream/stream-reducer';
+import { deleteAnswer, deleteQuestion, editAnswer, editQuestion} from '../../../Redux/stream/stream-reducer';
 import { DeleteConfirmModal } from '../DeleteConfirmModal';
+import { ChangePostModal } from '../ChangePostModal';
 
 type PropsType = {
 	qId: string,
@@ -15,27 +16,40 @@ type PropsType = {
 };
 
 export const ThreeDots = React.forwardRef<HTMLDivElement, PropsType>(({qId, menuRef, answerQId}, ref) => {
-	const [isDeleteConfirmShowing, setIsDeleteConfirmShowing] = useState<boolean>(true);
+	const [isDeleteConfirmShowing, setIsDeleteConfirmShowing] = useState<boolean>(false);
+	const [isEditPostModalShowing, setIsEditPostModalShowing] = useState<boolean>(false);
 
 	const dispatch = useAppDispatch();
 
 	const openConfirmDeleteModal = () => {
 		setIsDeleteConfirmShowing(true);
 	}
+	const openEditPostModal = () => {
+		setIsEditPostModalShowing(true);
+	}
 
-	const deleteQ = () => {
+	const closeDeleteConfirm = () => {
+		setIsDeleteConfirmShowing(false);
+	}
+	const closeEditPostModal = () => {
+		setIsEditPostModalShowing(false);
+	}
+
+	const deletePost = () => {
 		if(answerQId) {
 			dispatch(deleteAnswer(answerQId, qId))
 		} else {
 			dispatch(deleteQuestion(qId));
 		}
+		closeDeleteConfirm();
 	}
-	const changeQ = () => {
-		
-	}
-
-	const closeDeleteConfirm = () => {
-		setIsDeleteConfirmShowing(false);
+	const changePost = (text: string) => {
+		if(answerQId) {
+			dispatch(editAnswer(qId, text))
+		} else {
+			dispatch(editQuestion(qId, text));
+		}
+		closeEditPostModal();
 	}
  
 	return (
@@ -49,8 +63,8 @@ export const ThreeDots = React.forwardRef<HTMLDivElement, PropsType>(({qId, menu
 						<Menu {...bindMenu(popupState)} onClose={closeDeleteConfirm} ref={menuRef} id='actions-menu'>
 							<MenuItem onClick={() => {
 								popupState.close();
-								changeQ();
-							}} className={classes.changeBtn}>Змінити</MenuItem>
+								openEditPostModal();
+							}} className={classes.changeBtn}>Редагувати</MenuItem>
 
 							<MenuItem onClick={() => {
 								popupState.close();
@@ -62,8 +76,14 @@ export const ThreeDots = React.forwardRef<HTMLDivElement, PropsType>(({qId, menu
 			</PopupState>
 			<DeleteConfirmModal 
 				isShow={isDeleteConfirmShowing} 
-				deleteP={deleteQ} 
-				cancel={closeDeleteConfirm}/>
+				deleteP={deletePost} 
+				cancel={closeDeleteConfirm}
+			/>
+			<ChangePostModal 
+				isShow={isEditPostModalShowing}
+				changeP={changePost}
+				cancel={closeEditPostModal}
+			/>
 		</div>
 	)
 })

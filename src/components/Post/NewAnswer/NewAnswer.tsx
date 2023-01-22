@@ -38,6 +38,7 @@ export const NewAnswer: React.FC<PropsType> = ({cancelAnswer, questionId}) => {
 				stars: 0,
 				isCorrect: false,
 				authorRating: myAccountData.rating,
+				parentQId: questionId,
 			}
 	
 			dispatch(addNewAnswer(questionId, sendData));

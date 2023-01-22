@@ -29,6 +29,15 @@ export const streamAPI =  {
 		return nextPosts as PostDataType[];
 	},
 
+	async editPost(data: PostDataType, newText: string) {
+		const changingPost = doc(firestore, 'questions', data.id);
+
+		await updateDoc(changingPost, {
+			...data,
+			text: newText,
+		})
+	},
+
 	async addNewPost(data: PostDataType) {
 		console.log('new post data', data);
 		if(data) {
@@ -89,6 +98,14 @@ export const streamAPI =  {
 		await setDoc(newAnswerRef, data);
 	},
 
+	async editAnswer(data: CommentType, newText: string) {
+		const changingAnswer = doc(firestore, 'questions', data.parentQId, 'comments', data.id);
+
+		await updateDoc(changingAnswer, {
+			...data,
+			text: newText,
+		})
+	},
 	async getPostsByQuery(queryStr: string, category: QuestionCategoriesType) {
 		const postsRef = collection(firestore, 'questions');
 		const postsQ = query(postsRef, where('category', '==', category));
@@ -100,8 +117,6 @@ export const streamAPI =  {
 				if(doc.data().text.includes(queryStr)) posts.push(doc.data());
 			}
 		});
-
-		console.log('found posts', posts);
 
 		return posts as PostDataType[];
 	},

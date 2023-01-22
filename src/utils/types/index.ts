@@ -74,12 +74,13 @@ export type PostDataType = PostBaseType & {
 	commentsCount: number,
 	category: QuestionCategoriesType,
 	isClosed: boolean,
-	createdAt: FieldValue, 							//seconds
+	createdAt: FieldValue,
 }
 
 export type CommentType = PostBaseType & {
 	isCorrect: boolean,
-	createdAt: FieldValue, 							//seconds
+	createdAt: FieldValue,
+	parentQId: string, 							
 };
 
 //ACCOUNT==============================

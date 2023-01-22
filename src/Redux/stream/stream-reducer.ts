@@ -22,6 +22,8 @@ export const postAddingStatusChanged = createAction<PostAddingStatusType>('strea
 export const answerAddingStatusChanged = createAction<PostAddingStatusType>('stream/ANSWER_ADDING_STATUS_CHANGED');
 export const postChanged = createAction<PostDataType>('stream/POST_CHANGED');  
 export const postRemoved = createAction<string>('stream/POST_REMOVED');
+export const questionChanged = createAction<PostDataType>('stream/QUESTION_CHANGED');
+export const answerChanged = createAction<CommentType>('stream/ANSWER_CHANGED');
 
 export const newAnswerAdded = createAction('stream/NEW_ANSWER_ADDED', (questionId: string, data: CommentType) => ({
 	payload: {
@@ -192,6 +194,22 @@ export const streamReducer = createReducer(inititalState, (builder) => {
 				state.posts = state.posts.filter(data => data.id !== action.payload);
 			}
 		})
+		.addCase(questionChanged, (state, action) => {
+			if(state.posts) {
+				const [changedPost] = state.posts.filter(data => data.id === action.payload.id);
+				if(changedPost) {
+					changedPost.text = action.payload.text;
+				}
+			}
+		})
+		.addCase(answerChanged, (state, action) => {
+			if(state.currPostAnswers) {
+				const [changedAnswer] = state.currPostAnswers.filter(data => data.id === action.payload.id);
+				if(changedAnswer) {
+					changedAnswer.text = action.payload.text;
+				}
+			}
+		})
 		.addDefaultCase(() => {})
 });
 
@@ -226,6 +244,17 @@ export const deleteQuestion = (qId: string) => async (dispatch: AppDispatchType)
 	dispatch(postRemoved(qId));
 }
 
+export const editQuestion = (qId: string, newText: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
+	const data = getState().stream.posts?.filter(data => data.id === qId);
+	if(data && data[0]) {
+		await streamAPI.editPost(data[0], newText);
+		dispatch(questionChanged({
+			...data[0],
+			text: newText
+		}));
+	}
+}
+
 export const addStarToQuestion = (id: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
 	dispatch(newPostLiked(id));
 	await streamAPI.addStarToQuestion(id);
@@ -258,6 +287,17 @@ export const deleteAnswer = (qId: string, aId: string) => async (dispatch: AppDi
 	//remove doc from question>comments collection
 	await streamAPI.deleteAnswer(qId, aId);
 	dispatch(answerDeleted(qId, aId));
+}
+
+export const editAnswer = (aId: string, newText: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
+	const data = getState().stream.currPostAnswers?.filter(data => data.id === aId);
+	if(data && data[0]) {
+		await streamAPI.editAnswer(data[0], newText);
+		dispatch(answerChanged({
+			...data[0],
+			text: newText,
+		}));
+	}
 }
 
 export const getOpenPostData = (postId: string) => async(dispatch: AppDispatchType) => {
