@@ -22,7 +22,7 @@ export const postChanged = createAction<PostDataType>('stream/POST_CHANGED');
 export const postRemoved = createAction<string>('stream/POST_REMOVED');
 export const questionChanged = createAction<PostDataType>('stream/QUESTION_CHANGED');
 export const answerChanged = createAction<CommentType>('stream/ANSWER_CHANGED');
-export const userActionStatusChanged = createAction<ActionStatusType | null>('stream/USER_ACTION_STATUS_CHANGED');
+export const userActionStatusChanged = createAction<UserActionType | null>('stream/USER_ACTION_STATUS_CHANGED');
 
 export const newAnswerAdded = createAction('stream/NEW_ANSWER_ADDED', (questionId: string, data: CommentType) => ({
 	payload: {
@@ -37,11 +37,16 @@ export const answerDeleted = createAction('stream/ANSWER_DELETED', (qId: string,
 	}
 }));
 
-export type UserActionsType = 
-	'post_adding' | 'post_deleting' | 'post_changing' | 
-	'answer_adding' | 'answer_deleting' | 'post_changing'
+export type UserActionTargetType = 
+	'post_adding' | 'post_deleting' | string | 
+	'answer_adding' | 'answer_deleting'
 ;
-export type ActionStatusType = UserActionsType & 'loading' | 'success' | 'error';
+
+export type UserActionStatusType = 'loading' | 'success' | 'error';
+export type UserActionType = {
+	target: UserActionTargetType,
+	status: UserActionStatusType,
+}
 
 type StateType = {
 	posts: PostDataType[] | null,
@@ -50,8 +55,8 @@ type StateType = {
 	isSearchShowing: boolean,
 	currPostAnswers: null | CommentType[],
 	searchedPosts: null | PostDataType[],
-	currStreamScrollValue: number,
-	userActionStatus: ActionStatusType | null,
+	currStreamScrollValue: number, 
+	userActionStatus: UserActionType | null,
 };
 const inititalState: StateType = {
 	posts: null,
@@ -205,6 +210,9 @@ export const streamReducer = createReducer(inititalState, (builder) => {
 				}
 			}
 		})
+		.addCase(userActionStatusChanged, (state, action) => {
+			state.userActionStatus = action.payload;
+		})
 		.addDefaultCase(() => {})
 });
 
@@ -215,36 +223,81 @@ export const getNextPosts = (pageNum: number) => async (dispatch: AppDispatchTyp
 	dispatch(nextPostsReceived(nextPosts));	
 }
 
-
-export const sendNewPost = (data: PostDataType) => async (dispatch: AppDispatchType) => {
-	dispatch(postAddingStatusChanged('loading'));
+export const sendNewPost = (data: PostDataType) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
+	dispatch(userActionStatusChanged({
+		status: 'loading',
+		target: 'post_adding'
+	}));
 	await streamAPI.addNewPost(data);
-	dispatch(postAddingStatusChanged('success'));
+	dispatch(userActionStatusChanged({
+		status: 'success',
+		target: 'post_adding'
+	}));
 
 	setTimeout(() => {
-		dispatch(postAddingStatusChanged(null));
+		dispatch(userActionStatusChanged(null));
 	}, 1000);
 
 	//subscribe on post changes
 	const postSubscriber = (data: PostDataType) => {
-		console.log('subscriber', data);
 		dispatch(postChanged(data));
+
+		//for currentopen post update
+		const openPostData = getState().stream.openPostData;
+		if(openPostData?.id === data.id) {
+			dispatch(openPostDataReceived(data));
+		}
 	}
 
 	streamAPI.subscribeOnChanges(data.id, postSubscriber);
 }
 
 export const deleteQuestion = (qId: string) => async (dispatch: AppDispatchType) => {
+	//show loader to user
+	dispatch(userActionStatusChanged({
+		target: 'post_deleting',
+		status: 'loading',
+	}));
 	await streamAPI.deleteQuestion(qId);
+
+	//show success to user
+	dispatch(userActionStatusChanged({
+		target: 'post_deleting',
+		status: 'success',
+	}));
+
+	//remove post from redux(local)
 	dispatch(postRemoved(qId));
+
+	setTimeout(() => {
+		dispatch(userActionStatusChanged(null));
+	}, 1000);
 }
 
 export const editQuestion = (qId: string, newText: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
-	const data = getState().stream.posts?.filter(data => data.id === qId);
-	if(data && data[0]) {
-		await streamAPI.editPost(data[0], newText);
+	const [foundPostData] = getState().stream.posts?.filter(data => data.id === qId) || [];
+	const openPostdata = getState().stream.openPostData;
+
+	console.log('datas', foundPostData, openPostdata);
+
+	if(foundPostData || openPostdata?.id === qId) {
+		const data = foundPostData || openPostdata;
+
+		//show loader
+		dispatch(userActionStatusChanged({
+			target: qId,
+			status: 'loading',
+		}));
+
+		//send new text to server
+		await streamAPI.editPost(data, newText);
+
+		//hide loader
+		dispatch(userActionStatusChanged(null));
+
+		//update text data(local)
 		dispatch(questionChanged({
-			...data[0],
+			...data,
 			text: newText
 		}));
 	}
@@ -262,32 +315,73 @@ export const removeStarFromQuestion = (id: string) => async (dispatch: AppDispat
 } 
 
 export const addNewAnswer = (questionId: string, data: CommentType) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
-	dispatch(answerAddingStatusChanged('loading'));
+	dispatch(userActionStatusChanged({
+		status: 'loading',
+		target: 'answer_adding'
+	}));
 	//+1 to number of comments in question doc
 	streamAPI.increaceCommentsCount(questionId);
 	//add doc to question>comments collection
 	await streamAPI.addNewAnswer(questionId, data);
+	//show succes to user
+	dispatch(userActionStatusChanged({
+		status: 'success',
+		target: 'answer_adding'
+	}));
+	//add new answer to state
 	dispatch(newAnswerAdded(questionId, data));
-	dispatch(answerAddingStatusChanged('success'));
 
 	//hide block with success text
 	setTimeout(() => {
-		dispatch(answerAddingStatusChanged(null));
+		dispatch(userActionStatusChanged(null));
 	}, 1000)
 } 
 
 export const deleteAnswer = (qId: string, aId: string) => async (dispatch: AppDispatchType) => {
+	dispatch(userActionStatusChanged({
+		target: 'answer_deleting',
+		status: 'loading',
+	}));
+
 	//-1 to number of comments in question doc
 	streamAPI.decreaceCommentsCount(qId);
+
 	//remove doc from question>comments collection
 	await streamAPI.deleteAnswer(qId, aId);
+
+	//set loader to success
+	dispatch(userActionStatusChanged({
+		target: 'answer_deleting',
+		status: 'success',
+	}));
+
+	//remove answer from redux(local)
 	dispatch(answerDeleted(qId, aId));
+
+	setTimeout(() => {
+		dispatch(userActionStatusChanged(null));
+	}, 1000);
 }
 
 export const editAnswer = (aId: string, newText: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
 	const data = getState().stream.currPostAnswers?.filter(data => data.id === aId);
+	
+
 	if(data && data[0]) {
+		//loader instead of old text
+		dispatch(userActionStatusChanged({
+			status: 'loading',
+			target: aId,
+		}));
+
+
+		//send new answer text to server
 		await streamAPI.editAnswer(data[0], newText);
+
+		//show new text insted of loader 
+		dispatch(userActionStatusChanged(null));
+
+		//change answer in redux(local)
 		dispatch(answerChanged({
 			...data[0],
 			text: newText,

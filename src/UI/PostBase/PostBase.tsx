@@ -1,5 +1,5 @@
 
-import { Avatar } from '@mui/joy';
+import { Avatar, CircularProgress } from '@mui/joy';
 import React, { MouseEvent, useRef, useState } from 'react';
 import { PostBaseType, QuestionCategoriesType } from '../../utils/types';
 import classes from './PostBase.module.scss';
@@ -8,6 +8,8 @@ import { PostDate } from '../PostDate';
 import { useSelector } from 'react-redux';
 import { selectMyAccountData } from '../../Redux/account/account-selectors';
 import { ThreeDots } from './ThreeDots';
+import { selectUserActionStatus } from '../../Redux/stream/stream-selectors';
+import { ActionStatus } from '../ActionStatus';
 //need default avatar
 
 type PropsType = {
@@ -22,6 +24,9 @@ export const PostBase: React.FC<PropsType> = ({data, category, onClick, answerQI
 
 	const dotsRef = useRef<HTMLDivElement>(null); 
 	const menuRef = useRef<HTMLDivElement>(null);
+
+	//for showing loader insted of text
+	const userAction = useSelector(selectUserActionStatus);
 
 	const handleClick = (e: React.MouseEvent) => {
 		const target = e.target as Element;
@@ -68,7 +73,12 @@ export const PostBase: React.FC<PropsType> = ({data, category, onClick, answerQI
 					/>
 				: category && <div className={classes.category}>{category}</div>}
 			</div>
-			<p className={cn(classes.text, isTextCutted ? classes._cutted : '')}>{text}</p>
+			<p className={cn(classes.text, isTextCutted ? classes._cutted : '')}>
+				{userAction?.target === data.id ?
+					<CircularProgress className={classes.icon} size={'sm'} />
+				: text
+				}
+			</p>
 		</div>
 	)
 }

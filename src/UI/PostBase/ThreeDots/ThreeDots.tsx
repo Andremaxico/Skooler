@@ -1,13 +1,14 @@
-import React, { Ref, RefObject, useState } from 'react';
+import React, { Ref, RefObject, useRef, useState } from 'react';
 import classes from './ThreeDots.module.scss';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import PopupState, { bindTrigger, bindMenu, Props } from 'material-ui-popup-state';
+import PopupState, { bindTrigger, bindMenu, Props, bindPopover } from 'material-ui-popup-state';
 import { useAppDispatch } from '../../../Redux/store';
 import { deleteAnswer, deleteQuestion, editAnswer, editQuestion} from '../../../Redux/stream/stream-reducer';
 import { DeleteConfirmModal } from '../DeleteConfirmModal';
 import { ChangePostModal } from '../ChangePostModal';
+import Popover from '@mui/material/Popover';
 
 type PropsType = {
 	qId: string,
@@ -19,6 +20,8 @@ type PropsType = {
 export const ThreeDots = React.forwardRef<HTMLDivElement, PropsType>(({qId, menuRef, answerQId, postText}, ref) => {
 	const [isDeleteConfirmShowing, setIsDeleteConfirmShowing] = useState<boolean>(false);
 	const [isEditPostModalShowing, setIsEditPostModalShowing] = useState<boolean>(false);
+
+	//const [isPopupShowing, setIsPopupShowing] = useState<>(false);
 
 	const dispatch = useAppDispatch();
 
@@ -53,6 +56,16 @@ export const ThreeDots = React.forwardRef<HTMLDivElement, PropsType>(({qId, menu
 		closeEditPostModal();
 	}
  
+	// const handlePopoverClick = (e: React.MouseEvent) =>{
+	// 	const target = e.target as Element;
+	// 	const isClickedOnMenu = target === menuRef.current;
+
+	// 	if(!isClickedOnMenu) {
+	// 		popupState.close();
+	// 	}
+	// }
+
+
 	return (
 		<div className={classes.ThreeDots} ref={ref} id='dots-wrapper'>
 			<PopupState variant="popover" popupId="demo-popup-menu">
@@ -61,17 +74,38 @@ export const ThreeDots = React.forwardRef<HTMLDivElement, PropsType>(({qId, menu
 						<button {...bindTrigger(popupState)}>
 							<div className={classes.dot}></div>
 						</button>
-						<Menu {...bindMenu(popupState)} onClose={closeDeleteConfirm} ref={menuRef} id='actions-menu'>
-							<MenuItem onClick={() => {
-								popupState.close();
-								openEditPostModal();
-							}} className={classes.changeBtn}>Редагувати</MenuItem>
+						<Popover
+							{...bindPopover(popupState)}
 
-							<MenuItem onClick={() => {
-								popupState.close();
-								openConfirmDeleteModal();
-							}} className={classes.deleteBtn}>Видалити</MenuItem>
-						</Menu>
+							onClick={(e: React.MouseEvent) =>{
+								const target = e.target as Element;
+								const isClickedOnMenu = target === menuRef.current;
+						
+								if(!isClickedOnMenu) {
+									popupState.close();
+								}
+							}}
+							anchorOrigin={{
+								vertical: 'bottom',
+								horizontal: 'center',
+							}}
+							transformOrigin={{
+								vertical: 'top',
+								horizontal: 'center',
+							}}
+						>
+							<Menu {...bindMenu(popupState)} onClose={closeDeleteConfirm} ref={menuRef} id='actions-menu'>
+								<MenuItem onClick={() => {
+									popupState.close();
+									openEditPostModal();
+								}} className={classes.changeBtn}>Редагувати</MenuItem>
+
+								<MenuItem onClick={() => {
+									popupState.close();
+									openConfirmDeleteModal();
+								}} className={classes.deleteBtn}>Видалити</MenuItem>
+							</Menu>
+						</Popover>
 					</React.Fragment>
 				)}
 			</PopupState>

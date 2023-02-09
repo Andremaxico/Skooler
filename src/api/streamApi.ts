@@ -188,7 +188,7 @@ export const streamAPI =  {
 			const prevCommentsCount = questionDoc.data().commentsCount;
 
 			await updateDoc(questionRef, {
-				commentsCount: prevCommentsCount + 1,
+				commentsCount: prevCommentsCount - 1,
 			})
 		}
 	}

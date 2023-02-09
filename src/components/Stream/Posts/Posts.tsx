@@ -4,12 +4,11 @@ import classes from './Posts.module.scss';
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from '../../../Redux/store';
 import { currPostAnswersReceived, currStreamScrollValueChanged, getNextPosts, searchedPostsReceived } from '../../../Redux/stream/stream-reducer';
-import { selectAnswerAddingStatus, selectCurrStreamScrollValue, selectIsSearchShowing, selectPostAddingStatus, selectPosts, selectSearchedPosts } from '../../../Redux/stream/stream-selectors';
+import { selectCurrStreamScrollValue, selectIsSearchShowing, selectPosts, selectSearchedPosts, selectUserActionStatus } from '../../../Redux/stream/stream-selectors';
 import { PostCard } from './PostCard';
 import Preloader from '../../../UI/Preloader';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { NavLink } from 'react-router-dom';
-import { ActionStatus } from '../../../UI/ActionStatus';
 
 type PropsType = {
 	isLoading: boolean,
@@ -23,8 +22,6 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 	const searchedPosts = useSelector(selectSearchedPosts);
 	const isSearching = useSelector(selectIsSearchShowing);
 	const savedScrollValue = useSelector(selectCurrStreamScrollValue);
-	const postAddingStatus = useSelector(selectPostAddingStatus);
-	const answerAddingStatus = useSelector(selectAnswerAddingStatus);
 
 	const dispatch = useAppDispatch();
 
@@ -76,15 +73,9 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 	}, [])
 
 	if(isLoading) return <Preloader />;
-	
 
 	return (
 		<div ref={postsRef} className={classes.Posts}>
-			{postAddingStatus ? 
-				<ActionStatus status={postAddingStatus} successText='Питання устпішно додано'/>
-			: answerAddingStatus && 
-				<ActionStatus status={answerAddingStatus} successText='Відповідь успішно додана' />
-			}
 			{searchedPosts && searchedPosts.length > 0 ?
 				<>
 					<div className={classes.returnBtn}>

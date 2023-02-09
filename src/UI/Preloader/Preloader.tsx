@@ -1,6 +1,5 @@
 import React from 'react'
-import classNamees from './Preloader.module.scss';
-import preloader from '../../assets/images/preloader.gif'
+import preloader from '../../assets/images/book-loader.gif'
 import classes from './Preloader.module.scss';
 
 type PropsType = {
@@ -11,17 +10,16 @@ type PropsType = {
 
 //hehehey it`s a testaasdfdfSADSSSDSDJDJK;KL;;;;;;;;HELLLO WORLD HOW ARE YOU? i``M FINE
 
+const Paper = () => {
+	return <li></li>
+}
+
 const Preloader: React.FC<PropsType> = ({width = 50, height = width}) => {
+	const n = 18;
+
 	return (
-		<div className={classNamees.Preloader}>
-			<div className={classes.pencil} style={{width: width, height: height}}>
-				<div className={classes.pencil__ballPoint}></div>
-				<div className={classes.pencil__cap}></div>
-				<div className={classes.pencil__capBase}></div>
-				<div className={classes.pencil__middle}></div>
-				<div className={classes.pencil__eraser}></div>
-			</div>
-			<div className={classes.line}></div>
+		<div className={classes.Preloader}>
+			<div className={classes.clockLoader}></div>
 		</div>
 	)
 }

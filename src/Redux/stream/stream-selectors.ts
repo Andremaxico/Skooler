@@ -29,14 +29,6 @@ export const selectCurrStreamScrollValue = (state: RootStateType) => {
 	return state.stream.currStreamScrollValue;
 }
 
-export const selectPostAddingStatus = (state: RootStateType) => {
-	return state.stream.postAddingStatus;
-}
-
-export const selectAnswerAddingStatus = (state: RootStateType) => {
-	return state.stream.answerAddingStatus;
-}
-
-export const selectActionStatus = (state: RootStateType) => {
-	return state.stream.actionStatus;
+export const selectUserActionStatus = (state: RootStateType) => {
+	return state.stream.userActionStatus;
 }

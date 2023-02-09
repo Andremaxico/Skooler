@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { selectMyAccountData } from '../../Redux/account/account-selectors';
 import { useAppDispatch } from '../../Redux/store';
 import { currPostAnswersReceived, getNextPosts, getOpenPostData, getPostAnswers } from '../../Redux/stream/stream-reducer';
-import { selectAnswerAddingStatus, selectCurrPostAnswers, selectOpenPostData, selectPosts } from '../../Redux/stream/stream-selectors';
+import { selectCurrPostAnswers, selectOpenPostData, selectPosts, selectUserActionStatus } from '../../Redux/stream/stream-selectors';
 import { PostDataType } from '../../utils/types';
 import { PostCard } from '../Stream/Posts/PostCard';
 import { Answer } from './Answer';
@@ -20,9 +20,8 @@ type PropsType = {
 }
 
 export const Post: React.FC<PropsType> = ({}) => {
-	const [isFetchingAnswers, setIsFetchingAnswers] = useState<boolean>(false);
+	const [isFetching, setIsFetching] = useState<boolean>(true);
 
-	const answerAddingStatus = useSelector(selectAnswerAddingStatus);
 	const data = useSelector(selectOpenPostData);
 	const answers = useSelector(selectCurrPostAnswers);
 	const footerHeight = useSelector(selectFooterHeight);
@@ -36,8 +35,11 @@ export const Post: React.FC<PropsType> = ({}) => {
 		navigate('/');
 	}
 	console.log('params', params.postId, 'data', data);
+	console.log('is fetching: ', isFetching);
+
 	//get from server if no in posts
 	if(!data && params.postId) {
+		//get post by id -> set redux -> selector in component
 		dispatch(getOpenPostData(params.postId));
 	}
 
@@ -49,12 +51,13 @@ export const Post: React.FC<PropsType> = ({}) => {
 		}
 	}, [])
 
+	//get answers
 	useEffect(() => {
 		const fetchAnswers = async () => {
-			if(data) {
-				setIsFetchingAnswers(true);
-				await dispatch(getPostAnswers(data.id));
-				setIsFetchingAnswers(false);
+			if(!answers && params.postId) {
+				setIsFetching(true);
+				await dispatch(getPostAnswers(params.postId));
+				setIsFetching(false);
 			}
 		}
 		fetchAnswers();
@@ -70,11 +73,10 @@ export const Post: React.FC<PropsType> = ({}) => {
 	const myAccountdata = useSelector(selectMyAccountData);
 	const isForAskedUser = data?.authorId === myAccountdata?.uid;
 
-	if(!postData) return <div>Loading</div>
+	if(!postData) return <Preloader />
 
 	return (
 		<section className={classes.Post}>
-			<ActionStatus successText='Відповідь успішно додана' status={answerAddingStatus} />
 			{data && <button className={classes.returnBtn} onClick={returnToMain} style={{bottom: `${footerHeight ? footerHeight : 0 + 28}px`}}>
 				<ArrowBackIcon className={classes.icon}/>
 			</button>}
@@ -92,9 +94,9 @@ export const Post: React.FC<PropsType> = ({}) => {
 							questionId={postData.id}
 						/>
 					))
-				: isFetchingAnswers ? 
-					<Preloader />
-				:
+				: 
+					isFetching ? <Preloader />
+				: 
 					<div className={classes.noAnswers}>
 						Поки що ніхто не знає відповіді...
 					</div>

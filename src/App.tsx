@@ -43,6 +43,8 @@ import {
 import { extendTheme as extendJoyTheme } from '@mui/joy/styles';
 import { blue, grey } from '@mui/material/colors';
 import withSuspense from './utils/hoc/withSuspense';
+import { selectUserActionStatus } from './Redux/stream/stream-selectors';
+import { ActionStatus } from './UI/ActionStatus';
 
 const Chat = React.lazy(() => import('./components/Chat'));
 const Login = React.lazy(() => import('./components/Login'))
@@ -146,6 +148,7 @@ const App = () => {
 
   const [isFetching, setIsFetching] = useState<boolean>(loading);
   const networkError = useSelector(selectNetworkError);
+  const userAction = useSelector(selectUserActionStatus);
 
   const dispatch = useAppDispatch();
 
@@ -209,8 +212,8 @@ const App = () => {
   console.log('heights', footerHeight, headerHeight);
 
   if(loading) return <Preloader />
-  //if(!loading && !user) return <Login />;
-
+  //if(!loading && !user) return <Login />; 
+  
   return (
     <Layout>
         <AppHeader />
@@ -235,6 +238,18 @@ const App = () => {
                 <Route path='/new-post' element={<NewPost />} />
                 <Route path='/' element={<Stream />} />
               </Routes>
+            }
+            {userAction?.target === 'post_adding' &&
+                <ActionStatus status={userAction.status} successText='Питання успішно додано'/>
+              || 
+              userAction?.target === 'answer_adding' && 
+                <ActionStatus status={userAction.status} successText='Відповідь успішно додана' />
+              ||
+              userAction?.target === 'post_deleting' &&
+                <ActionStatus status={userAction.status} successText='Питання видалено'/>
+              ||
+              userAction?.target === 'answer_deleting' &&
+                <ActionStatus status={userAction.status} successText='Відповідь видалено'/>
             }
           </div>
         </Content>
