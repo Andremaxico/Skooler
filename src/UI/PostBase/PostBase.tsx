@@ -79,6 +79,7 @@ export const PostBase: React.FC<PropsType> = ({data, category, onClick, answerQI
 				: text
 				}
 			</p>
+			{data.isEdited && <p className={classes.editedMark}>(Змінено)</p>}
 		</div>
 	)
 }

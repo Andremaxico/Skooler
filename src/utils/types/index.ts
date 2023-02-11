@@ -68,6 +68,7 @@ export type PostBaseType = {
 	text: string,
 	id: string,
 	stars: number,	
+	isEdited: boolean,
 }
 
 export type PostDataType = PostBaseType & {

@@ -45,6 +45,9 @@ export const Post: React.FC<PropsType> = ({}) => {
 
 	//need empty dependency for clear work
 	useEffect(() => {
+
+		
+
 		//clear answers
 		return () => {
 			dispatch(currPostAnswersReceived(null));

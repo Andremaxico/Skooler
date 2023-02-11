@@ -51,6 +51,7 @@ export const NewPost: React.FC<PropsType> = ({}) => {
 			commentsCount: 0,
 			isClosed: false,
 			authorRating: myAccountData?.rating || 'Ніхто',
+			isEdited: false,
 		}
 		//send question
 		dispatch(sendNewPost(newPostData));

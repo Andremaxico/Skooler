@@ -14,11 +14,12 @@ export const postUnliked = createAction<string>('stream/POST_UNLIKED');
 export const searchShowingStatusChanged = createAction<boolean>('stream/SEARCH_SHOWING_STATUS_CHANGED');
 export const currPostAnswersReceived = createAction<CommentType[] | null>('stream/CURR_POST_ANSWERS_RECEIVED');
 export const newCurrPostAnswerReceived = createAction<CommentType>('stream/NEW_CURR_POSST_ANSWER_RECEIVED');
-export const answerMarkedAsCorrect = createAction<string>('stream_ANSWER_MARKED_AS_CORRECT')
+export const answerMarkedAsCorrect = createAction<string>('stream_ANSWER_MARKED_AS_CORRECT');
+export const answerUnMarkedAsCorrect = createAction<string>('stream_ANSWER_UNMARKED_AS_CORRECT')
 export const searchedPostsReceived = createAction<null | PostDataType[]>('stream/SEARCHED_POSTS_RECEIVED');
 export const currStreamScrollValueChanged = createAction<number>('stream/CURR_STREAM_SCROLL_VALUE_CHANGED');
 export const questionMarkedAsClosed = createAction<string>('stream/QUESTION_MARKED_AS_CLOSED');
-export const postChanged = createAction<PostDataType>('stream/POST_CHANGED');  
+export const questionUnMarkedAsClosed = createAction<string>('stream/QUESTION_UNMARKED_AS_CLOSED');
 export const postRemoved = createAction<string>('stream/POST_REMOVED');
 export const questionChanged = createAction<PostDataType>('stream/QUESTION_CHANGED');
 export const answerChanged = createAction<CommentType>('stream/ANSWER_CHANGED');
@@ -165,6 +166,13 @@ export const streamReducer = createReducer(inititalState, (builder) => {
 				if(markedAnswer) markedAnswer.isCorrect = true;
 			}
 		})
+		.addCase(answerUnMarkedAsCorrect, (state, action) => {
+
+			if(state.currPostAnswers) {
+				const [markedAnswer] = state.currPostAnswers.filter(data => data.id === action.payload);
+				if(markedAnswer) markedAnswer.isCorrect = false;
+			}
+		})
 		.addCase(searchedPostsReceived, (state, action) => {
 			state.searchedPosts = action.payload;
 		})
@@ -181,11 +189,14 @@ export const streamReducer = createReducer(inititalState, (builder) => {
 				state.openPostData.isClosed = true;
 			}
 		})
-		.addCase(postChanged, (state, action) => {
+		.addCase(questionUnMarkedAsClosed, (state, action) => {
 			if(state.posts) {
-				const changedPost = state.posts.filter(data => data.id === action.payload.id);
-				console.log('changed post', changedPost);
-				if(changedPost) changedPost[0] = action.payload;
+				const [markedPost] =	state.posts.filter(data => data.id === action.payload);
+				markedPost.isClosed = false;
+			}
+
+			if(state.openPostData) {
+				state.openPostData.isClosed = false;
 			}
 		})
 		.addCase(postRemoved, (state, action) => {
@@ -195,11 +206,20 @@ export const streamReducer = createReducer(inititalState, (builder) => {
 			}
 		})
 		.addCase(questionChanged, (state, action) => {
+			const currOpenPostId = state.openPostData?.id;
+
+			console.log('post changed');
+			console.log('curr open post data', currOpenPostId);
 			if(state.posts) {
-				const [changedPost] = state.posts.filter(data => data.id === action.payload.id);
+				const [changedPost] = state.posts.filter(data => data.id === action.payload.id) || [];
+				console.log('changed post', changedPost);
 				if(changedPost) {
 					changedPost.text = action.payload.text;
 				}
+			}
+
+			if(currOpenPostId === action.payload.id) {
+				state.openPostData = action.payload;
 			}
 		})
 		.addCase(answerChanged, (state, action) => {
@@ -237,19 +257,6 @@ export const sendNewPost = (data: PostDataType) => async (dispatch: AppDispatchT
 	setTimeout(() => {
 		dispatch(userActionStatusChanged(null));
 	}, 1000);
-
-	//subscribe on post changes
-	const postSubscriber = (data: PostDataType) => {
-		dispatch(postChanged(data));
-
-		//for currentopen post update
-		const openPostData = getState().stream.openPostData;
-		if(openPostData?.id === data.id) {
-			dispatch(openPostDataReceived(data));
-		}
-	}
-
-	streamAPI.subscribeOnChanges(data.id, postSubscriber);
 }
 
 export const deleteQuestion = (qId: string) => async (dispatch: AppDispatchType) => {
@@ -298,7 +305,8 @@ export const editQuestion = (qId: string, newText: string) => async (dispatch: A
 		//update text data(local)
 		dispatch(questionChanged({
 			...data,
-			text: newText
+			text: newText,
+			isEdited: true,
 		}));
 	}
 }
@@ -385,6 +393,7 @@ export const editAnswer = (aId: string, newText: string) => async (dispatch: App
 		dispatch(answerChanged({
 			...data[0],
 			text: newText,
+			isEdited: true,
 		}));
 	}
 }
@@ -417,3 +426,10 @@ export const addClosedQuestionMark = (qId: string) => async (dispatch: AppDispat
 
 	await streamAPI.markQuestionAsClosed(qId);
 }
+
+export const removeClosedQuestionMark = (qId: string) => async (dispatch: AppDispatchType) => {
+	dispatch(questionUnMarkedAsClosed(qId));
+
+	await streamAPI.unmarkQuestionAsClosed(qId);
+}
+

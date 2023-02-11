@@ -35,6 +35,7 @@ export const streamAPI =  {
 		await updateDoc(changingPost, {
 			...data,
 			text: newText,
+			isEdited: true,
 		})
 	},
 
@@ -104,6 +105,7 @@ export const streamAPI =  {
 		await updateDoc(changingAnswer, {
 			...data,
 			text: newText,
+			isEdited: true,
 		})
 	},
 	async getPostsByQuery(queryStr: string, category: QuestionCategoriesType) {
@@ -153,7 +155,7 @@ export const streamAPI =  {
 		})
 	},
 
-	async subscribeOnChanges(qId: string, subscriber: (data: PostDataType) => void) {
+	async subscribeOnPostChanges(qId: string, subscriber: (data: PostDataType) => void) {
 		const questionRef = doc(firestore, 'questions', qId);
 
 		unsubscribeFromChanges[qId] = onSnapshot(questionRef, 
@@ -167,6 +169,10 @@ export const streamAPI =  {
 				if(updatedPost) subscriber(updatedPost);
 			}
 		);
+	},
+
+	async unsubscribeFromPostChanges() {
+
 	},
 
 	async deleteQuestion(qId: string) {
