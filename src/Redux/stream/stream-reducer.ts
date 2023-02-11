@@ -167,7 +167,6 @@ export const streamReducer = createReducer(inititalState, (builder) => {
 			}
 		})
 		.addCase(answerUnMarkedAsCorrect, (state, action) => {
-
 			if(state.currPostAnswers) {
 				const [markedAnswer] = state.currPostAnswers.filter(data => data.id === action.payload);
 				if(markedAnswer) markedAnswer.isCorrect = false;
@@ -345,7 +344,7 @@ export const addNewAnswer = (questionId: string, data: CommentType) => async (di
 	}, 1000)
 } 
 
-export const deleteAnswer = (qId: string, aId: string) => async (dispatch: AppDispatchType) => {
+export const deleteAnswer = (qId: string, aId: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
 	dispatch(userActionStatusChanged({
 		target: 'answer_deleting',
 		status: 'loading',
@@ -369,6 +368,14 @@ export const deleteAnswer = (qId: string, aId: string) => async (dispatch: AppDi
 	setTimeout(() => {
 		dispatch(userActionStatusChanged(null));
 	}, 1000);
+
+	//delete closed mark from question if answer was correct
+	const questionAnotherCorrectAnswers = (await streamAPI.getPostAnswers(qId)).filter(ans => ans.id !== aId && ans.isCorrect);
+
+	console.log('another correct answers', questionAnotherCorrectAnswers);
+
+	if(questionAnotherCorrectAnswers.length < 1) dispatch(removeClosedQuestionMark(qId));
+
 }
 
 export const editAnswer = (aId: string, newText: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
@@ -415,6 +422,11 @@ export const addCorrentAnswerMark = (qId: string, aId: string) => (dispatch: App
 	streamAPI.addCorrentAnswerMark(qId, aId);
 }
 
+export const removeCorrentAnswerMark = (qId: string, aId: string) => (dispatch: AppDispatchType) => {
+	dispatch(answerUnMarkedAsCorrect(aId));
+	streamAPI.removeCorrentAnswerMark(qId, aId);
+}
+
 export const getPostAnswers = (postId: string) => async (dispatch: AppDispatchType) => {
 	const answers = await streamAPI.getPostAnswers(postId);
 
@@ -426,6 +438,7 @@ export const addClosedQuestionMark = (qId: string) => async (dispatch: AppDispat
 
 	await streamAPI.markQuestionAsClosed(qId);
 }
+
 
 export const removeClosedQuestionMark = (qId: string) => async (dispatch: AppDispatchType) => {
 	dispatch(questionUnMarkedAsClosed(qId));

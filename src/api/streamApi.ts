@@ -147,11 +147,27 @@ export const streamAPI =  {
 		})
 	},
 
+	async removeCorrentAnswerMark(qId: string, aId: string) {
+		const answerRef = doc(firestore, 'questions', qId, 'comments', aId);
+
+		await updateDoc(answerRef, {
+			isCorrect: false,
+		})
+	},
+
 	async markQuestionAsClosed(qId: string) {
 		const questionRef = doc(firestore, 'questions', qId);
 
 		await updateDoc(questionRef, {
 			isClosed: true,
+		})
+	},
+
+	async unmarkQuestionAsClosed(qId: string) {
+		const questionRef = doc(firestore, 'questions', qId);
+
+		await updateDoc(questionRef, {
+			isClosed: false,
 		})
 	},
 
