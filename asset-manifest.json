@@ -1,11 +1,11 @@
 {
   "files": {
-    "main.css": "/Skooler/static/css/main.4c4de7db.css",
-    "main.js": "/Skooler/static/js/main.06b97706.js",
+    "main.css": "/Skooler/static/css/main.6ecfcc31.css",
+    "main.js": "/Skooler/static/js/main.6856ef65.js",
     "static/css/535.f071967e.chunk.css": "/Skooler/static/css/535.f071967e.chunk.css",
-    "static/js/535.05ae589d.chunk.js": "/Skooler/static/js/535.05ae589d.chunk.js",
+    "static/js/535.ecb1a1b8.chunk.js": "/Skooler/static/js/535.ecb1a1b8.chunk.js",
     "static/css/519.a4f7ff9c.chunk.css": "/Skooler/static/css/519.a4f7ff9c.chunk.css",
-    "static/js/519.aa1b6b36.chunk.js": "/Skooler/static/js/519.aa1b6b36.chunk.js",
+    "static/js/519.1afa36fa.chunk.js": "/Skooler/static/js/519.1afa36fa.chunk.js",
     "static/css/986.b34cd0d0.chunk.css": "/Skooler/static/css/986.b34cd0d0.chunk.css",
     "static/js/986.166c37ca.chunk.js": "/Skooler/static/js/986.166c37ca.chunk.js",
     "static/js/0.65e8434d.chunk.js": "/Skooler/static/js/0.65e8434d.chunk.js",
@@ -15,12 +15,12 @@
     "static/media/logo.png": "/Skooler/static/media/logo.246264a81004e9c11dc3.png",
     "static/media/birthday-icon.png": "/Skooler/static/media/birthday-icon.e6683ac2612f057cb23a.png",
     "index.html": "/Skooler/index.html",
-    "main.4c4de7db.css.map": "/Skooler/static/css/main.4c4de7db.css.map",
-    "main.06b97706.js.map": "/Skooler/static/js/main.06b97706.js.map",
+    "main.6ecfcc31.css.map": "/Skooler/static/css/main.6ecfcc31.css.map",
+    "main.6856ef65.js.map": "/Skooler/static/js/main.6856ef65.js.map",
     "535.f071967e.chunk.css.map": "/Skooler/static/css/535.f071967e.chunk.css.map",
-    "535.05ae589d.chunk.js.map": "/Skooler/static/js/535.05ae589d.chunk.js.map",
+    "535.ecb1a1b8.chunk.js.map": "/Skooler/static/js/535.ecb1a1b8.chunk.js.map",
     "519.a4f7ff9c.chunk.css.map": "/Skooler/static/css/519.a4f7ff9c.chunk.css.map",
-    "519.aa1b6b36.chunk.js.map": "/Skooler/static/js/519.aa1b6b36.chunk.js.map",
+    "519.1afa36fa.chunk.js.map": "/Skooler/static/js/519.1afa36fa.chunk.js.map",
     "986.b34cd0d0.chunk.css.map": "/Skooler/static/css/986.b34cd0d0.chunk.css.map",
     "986.166c37ca.chunk.js.map": "/Skooler/static/js/986.166c37ca.chunk.js.map",
     "0.65e8434d.chunk.js.map": "/Skooler/static/js/0.65e8434d.chunk.js.map",
@@ -29,7 +29,7 @@
     "831.a40c4924.chunk.js.map": "/Skooler/static/js/831.a40c4924.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.4c4de7db.css",
-    "static/js/main.06b97706.js"
+    "static/css/main.6ecfcc31.css",
+    "static/js/main.6856ef65.js"
   ]
 }
