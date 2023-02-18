@@ -22,6 +22,9 @@ type PropsType = {
 export const PostBase: React.FC<PropsType> = ({data, category, onClick, answerQId}) => {
 	const [isHower, setIsHower] = useState<boolean>(true);
 
+
+
+
 	const dotsRef = useRef<HTMLDivElement>(null); 
 	const menuRef = useRef<HTMLDivElement>(null);
 
@@ -42,7 +45,6 @@ export const PostBase: React.FC<PropsType> = ({data, category, onClick, answerQI
 	const myAccountData = useSelector(selectMyAccountData);
 
 	const isShowingForOwner = myAccountData?.uid === data.authorId;
-	
 
 	const { authorAvatarUrl, authorFullname, text} = data;
 
@@ -58,20 +60,22 @@ export const PostBase: React.FC<PropsType> = ({data, category, onClick, answerQI
 			<div className={classes.top}>
 				<div className={classes.author}>
 					<Avatar className={classes.avatar} src={authorAvatarUrl || undefined}/>
-					<div className={classes.info}>
+					<div className={classes.authorInfo}>
 						<p className={classes.name}>{authorFullname}</p>
 						<p className={classes.rating}>{data.authorRating}</p>
 					</div>
 				</div>
-				{isHower ? 
+				<div className={classes.info}>
+					{category && <div className={classes.category}>{category}</div>}
 					<ThreeDots 
 						answerQId={answerQId} 
 						qId={data.id} 
 						ref={dotsRef} 
 						menuRef={menuRef}
 						postText={data.text}
+						isForOwner={isShowingForOwner}
 					/>
-				: category && <div className={classes.category}>{category}</div>}
+				</div>
 			</div>
 			<p className={cn(classes.text, isTextCutted ? classes._cutted : '')}>
 				{userAction?.target === data.id ?

@@ -14,9 +14,16 @@
 		justify-content: space-between;
 		margin-bottom: 12px;
 		@include text;
+		.stats {
+			@include row-align;
+		}
 		.btn {
 			@include row-align;
+			margin-right: 4px;
 			color: $gray;
+			&:last-child {
+				margin-right: 0;
+			}
 			&._liked {
 				color: gold;
 				.number {
@@ -34,9 +41,14 @@
 				@include size(23px);
 			}
 		}
+		.addCommentBtn {
+			@include smallText;
+			color: $gray;
+			font-style: italic;
+		}
 	}
 	&._closed {
-		.commentBtn {
+		.commentsCount {
 			color: $success;
 			.number {
 				color: $success;

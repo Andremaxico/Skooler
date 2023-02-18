@@ -23,3 +23,7 @@ export const selectMyUid = (state: RootStateType) => {
 export const selectCurrAvatarUrl = (state: RootStateType) => {
 	return state.account.currMyAvatarUrl;
 }
+
+export const selectAuthedStatus = (state: RootStateType) => {
+	return state.account.isAuthed;
+}

@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import classes from './Account.module.scss';
 import { Navigate, useParams } from 'react-router-dom';
 import { setAnotherUserAccount, setMyAccount } from '../../Redux/account/account-reducer';
-import { selectAccountIsFetching, selectCurrUserAccountData, selectMyAccountData, selectMyLoginData } from '../../Redux/account/account-selectors';
+import { selectAccountIsFetching, selectAuthedStatus, selectCurrUserAccountData, selectMyAccountData, selectMyLoginData } from '../../Redux/account/account-selectors';
 import { useAppDispatch } from '../../Redux/store';
 import Preloader from '../../UI/Preloader';
 import { AccountBody } from './AccountBody';
@@ -19,8 +19,8 @@ const Account: React.FC<PropsType> = ({}) => {
 	const myAccountData = useSelector(selectMyAccountData);
 	const currUserAccountData = useSelector(selectCurrUserAccountData);
 
-	const authData = useSelector(selectMyLoginData);
 	const isFetching = useSelector(selectAccountIsFetching);
+	const isAuthed = useSelector(selectAuthedStatus);
 
 	const { userId } = useParams();
 
@@ -48,7 +48,7 @@ const Account: React.FC<PropsType> = ({}) => {
 
 	console.log('is fetching', isFetching);
 
-	if(!authData) return <Navigate to='/login' replace={true}/>
+	if(!isAuthed) return <Navigate to='/login' replace={true}/>
 	if(isFetching && isLoading) return <Preloader />;
 
 	return (

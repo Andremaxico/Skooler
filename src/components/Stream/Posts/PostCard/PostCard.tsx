@@ -5,6 +5,7 @@ import classes from './PostCard.module.scss';
 //icons
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 import GradeIcon from '@mui/icons-material/Grade';
+import LoginIcon from '@mui/icons-material/Login';
 import { useNavigate } from 'react-router-dom';
 import { addStarToQuestion, openPostDataReceived, removeStarFromQuestion } from '../../../../Redux/stream/stream-reducer';
 import { useAppDispatch } from '../../../../Redux/store';
@@ -12,11 +13,12 @@ import { PostDataType } from '../../../../utils/types';
 import { PostBase } from '../../../../UI/PostBase/PostBase';
 import { addQuestionToLiked, removeQuestionFromLiked } from '../../../../Redux/account/account-reducer';
 import { useSelector } from 'react-redux';
-import { selectMyAccountData } from '../../../../Redux/account/account-selectors';
+import { selectAuthedStatus, selectMyAccountData } from '../../../../Redux/account/account-selectors';
 import cn from 'classnames';
 import { selectCurrPostAnswers } from '../../../../Redux/stream/stream-selectors';
 import { NewAnswer } from '../../../Post/NewAnswer';
 import { PostDate } from '../../../../UI/PostDate';
+import { LoginLink } from '../../../../UI/LoginLink';
 
 //need default avatar
 
@@ -42,6 +44,7 @@ export const PostCard: React.FC<PropsType> = ({data, isOpen, answeringQuestionId
 	const commentBtnRef = useRef<HTMLButtonElement>(null);
 
 	const myAccountData = useSelector(selectMyAccountData); 
+	const isAuthed = useSelector(selectAuthedStatus);
 
 	const isLiked = myAccountData?.liked?.includes(data.id) || false;
 
@@ -94,18 +97,25 @@ export const PostCard: React.FC<PropsType> = ({data, isOpen, answeringQuestionId
 		<section className={cn(classes.PostCard, isClosed ? classes._closed : '')}>    
 			<PostBase data={{...baseData, text: cuttedText}} category={category} onClick={!isOpen ? handleClick : undefined}/>
 			<div className={classes.buttons}>
-				<button 
-					className={cn(classes.btn, isLiked ? classes._liked : '')} 
-					onClick={likeQuestion}
-					ref={starBtnRef}
-					disabled={isLiking}
-				>
-					<p className={classes.number}>{data.stars}</p>
-					<GradeIcon className={classes.icon}/>
-				</button>
-				<button className={cn(classes.btn, classes.commentBtn)} onClick={handleCommentBtnClick} ref={commentBtnRef}>
-					<p className={classes.number}>{commentsCount || 0}</p>
-					<QuestionAnswerIcon className={cn(classes.icon)}/>
+				{isAuthed ? <div className={classes.stats}>
+					<button 
+						className={cn(classes.btn, isLiked ? classes._liked : '')} 
+						onClick={likeQuestion}
+						ref={starBtnRef}
+						disabled={isLiking}
+					>
+						<p className={classes.number}>{data.stars}</p>
+						<GradeIcon className={classes.icon}/>
+					</button>
+					<button className={cn(classes.btn, classes.commentsCount)}>
+						<p className={classes.number}>{commentsCount || 0}</p>
+						<QuestionAnswerIcon className={cn(classes.icon)}/>
+					</button>
+				</div> :
+					<LoginLink component={LoginIcon}  />
+				}
+				<button className={classes.addCommentBtn} onClick={handleCommentBtnClick} ref={commentBtnRef}>
+					{isAuthed ? 'Відповісти' : 'Увійдіть, щоб відповісти'}
 				</button>
 			</div>
 			{isAnswerAdding && isAnsweringQuestion && <NewAnswer 

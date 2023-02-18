@@ -14,6 +14,7 @@ export type AccountStateType = {
 	currUserAccount: ReceivedAccountDataType | null | undefined,
 	isFetching: boolean,
 	currMyAvatarUrl: string | null,
+	isAuthed: boolean,
 }
 type _ThunkType = ThunkAction<void, AccountStateType, unknown, AnyAction>;
 
@@ -28,6 +29,7 @@ export const avatarUrlReceived = createAction<string>('account/AVATAR_IMAGE_RECE
 export const currMyAvatarUrlReceived = createAction<string>('auth/CURR_MY_AVATAR_URL_RECEIVED');
 export const newQuestionLiked = createAction<string>('account/NEW_QUESTION_LIKED');
 export const questionUnliked = createAction<string>('account/QESTION_UNLIKED');
+export const authStatusChanged = createAction<boolean>('account/AUTH_STATUS_CHANGED');
 
 const initialState: AccountStateType = {
 	myAccountData: null,
@@ -35,6 +37,7 @@ const initialState: AccountStateType = {
 	currUserAccount: null,
 	isFetching: false,
 	currMyAvatarUrl: null,
+	isAuthed: false,
 }
 
 //uses in ReceivedAccountDataType
@@ -86,6 +89,9 @@ const accountReducer = createReducer(initialState, (builder) => {
 				}
 			}
 		})
+		.addCase(authStatusChanged, (state, action) => {
+			state.isAuthed = action.payload;
+		})
 		.addDefaultCase((state, action) => {});
 });
 
@@ -100,6 +106,7 @@ export const setMyAccount = (authData: UserType) => async (dispatch: AppDispatch
 
 	if(data) {
 		dispatch(myAccountDataReceived(data));
+		dispatch(authStatusChanged(true));
 	}
 	//dispatch(isFetchingStatusChanged(false));
 }
@@ -132,8 +139,6 @@ export const sendMyAccountData = (data: AccountDataType | null) => async (dispat
 	dispatch(isFetchingStatusChanged(true));
 	const uid = getState().account.myLoginData?.uid;
 	const loginData = getState().account.myLoginData;
-
-	console.log('send my account data');
 
 	if(uid && data) {
 		let accountData: ReceivedAccountDataType | null = null;
@@ -218,7 +223,6 @@ export const userAnswerMarkedAsCorrect = (uid: string) => async (dispatch: AppDi
 	const userData = await usersAPI.getUserById(uid);
 	const userRating: UserRatingsType = userData ? userData.rating : 'Ніхто';
 	const prevCorrAnswersCount = userData ? userData.correctAnswersCount : 0;
-	console.log('user answer marked as correct', userRating, uid, prevCorrAnswersCount);
 
 	await usersAPI.userAnswerMarkedAsCorrect(uid, prevCorrAnswersCount);
 
@@ -229,19 +233,22 @@ export const userAnswerMarkedAsCorrect = (uid: string) => async (dispatch: AppDi
 		//dependency by index
 		const checkingCountArray: number[] = [0, 10, 30, 50, 75, 100, 150];
 		const checkingRatingsArray: UserRatingsType[] = [
-			'Новачок', 'Може підказати', 'Можна списати', 'Знає багато', 'Ботанік', 'Легенда', 'Сенсей'
+			'Новачок', 
+			'Може підказати', 
+			'Можна списати', 
+			'Знає багато', 
+			'Ботанік', 
+			'Легенда', 
+			'Сенсей'
 		];
 
 		//cycle
 		for(let i = 0; i <= checkingCountArray.length; i++) {
-			console.log('start cycle, i:', i);
-			console.log(`data, currCount: ${currCount} ${checkingCountArray[i]}, userRating: ${userRating} ${checkingRatingsArray[i]}`);
 			if(currCount > checkingCountArray[i] && userRating !== checkingRatingsArray[i]) {
-				console.log('passed rating', checkingRatingsArray[i]);
 				usersAPI.updateUserRating(uid, checkingRatingsArray[i]);
-			} 
+			}
 		}
 	}
 }
- 
+
 export default accountReducer;

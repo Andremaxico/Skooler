@@ -15,9 +15,10 @@ type PropsType = {
 	menuRef: RefObject<HTMLDivElement>,
 	answerQId?: string,
 	postText: string,
+	isForOwner: boolean,
 };
 
-export const ThreeDots = React.forwardRef<HTMLDivElement, PropsType>(({qId, menuRef, answerQId, postText}, ref) => {
+export const ThreeDots = React.forwardRef<HTMLDivElement, PropsType>(({qId, menuRef, answerQId, postText, isForOwner}, ref) => {
 	const [isDeleteConfirmShowing, setIsDeleteConfirmShowing] = useState<boolean>(false);
 	const [isEditPostModalShowing, setIsEditPostModalShowing] = useState<boolean>(false);
 
@@ -95,15 +96,23 @@ export const ThreeDots = React.forwardRef<HTMLDivElement, PropsType>(({qId, menu
 							}}
 						>
 							<Menu {...bindMenu(popupState)} onClose={closeDeleteConfirm} ref={menuRef} id='actions-menu'>
-								<MenuItem onClick={() => {
-									popupState.close();
-									openEditPostModal();
-								}} className={classes.changeBtn}>Редагувати</MenuItem>
+								{isForOwner && 
+									<>
+										<MenuItem onClick={() => {
+											popupState.close();
+											openEditPostModal();
+										}} className={classes.changeBtn}>Редагувати</MenuItem>
+										<MenuItem onClick={() => {
+											popupState.close();
+											openConfirmDeleteModal();
+										}} className={classes.deleteBtn}>Видалити</MenuItem>
+									</>
+								}
 
 								<MenuItem onClick={() => {
-									popupState.close();
-									openConfirmDeleteModal();
-								}} className={classes.deleteBtn}>Видалити</MenuItem>
+									// popupState.close();
+									// openConfirmDeleteModal();
+								}} className={classes.deleteBtn}>Заглушка</MenuItem>
 							</Menu>
 						</Popover>
 					</React.Fragment>

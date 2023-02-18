@@ -1,12 +1,7 @@
-import { MessageOutlined, UserOutlined } from '@ant-design/icons';
-import { Menu } from 'antd';
 import { MenuMode } from 'antd/lib/menu';
 import React from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
-import { StudyIcon } from '../../../UI/Icons/Icons';
-import { getMenuItem } from '../../../utils/helpers/getMenuItem';
-import { LinkDataType, PathsType } from '../../../utils/types';
-import classes from './AppMenu.module.scss';
+import { useLocation } from 'react-router-dom';
+import { LinkDataType } from '../../../utils/types';
 
 type PropsType = {
 	mode?: MenuMode,

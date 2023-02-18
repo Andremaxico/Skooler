@@ -14,9 +14,10 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { selectFooterHeight } from '../../Redux/app/appSelectors';
 import Preloader from '../../UI/Preloader';
 import { ActionStatus } from '../../UI/ActionStatus';
+import { NoAnswers } from './NoAnswers';
 
 type PropsType = {
-
+ 
 }
 
 export const Post: React.FC<PropsType> = ({}) => {
@@ -45,9 +46,6 @@ export const Post: React.FC<PropsType> = ({}) => {
 
 	//need empty dependency for clear work
 	useEffect(() => {
-
-		
-
 		//clear answers
 		return () => {
 			dispatch(currPostAnswersReceived(null));
@@ -100,9 +98,7 @@ export const Post: React.FC<PropsType> = ({}) => {
 				: 
 					isFetching ? <Preloader />
 				: 
-					<div className={classes.noAnswers}>
-						Поки що ніхто не знає відповіді...
-					</div>
+					<NoAnswers />
 				}
 			</div>
 		</section>

@@ -9,6 +9,7 @@ import { PostCard } from './PostCard';
 import Preloader from '../../../UI/Preloader';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { NavLink } from 'react-router-dom';
+import { NoResults } from './NoResults';
 
 type PropsType = {
 	isLoading: boolean,
@@ -17,6 +18,7 @@ type PropsType = {
 export const Posts: React.FC<PropsType> = ({isLoading}) => {
 	const [page, setPage] = useState<number>(1);
 	const [openedAnswerFormQId, setOpenedAnswerFormQId] = useState<string | null>(null);
+	const [isPostsFetching, setIsPostsFetching] = useState<boolean>(false);
 
 	const posts = useSelector(selectPosts);
 	const searchedPosts = useSelector(selectSearchedPosts);
@@ -27,6 +29,7 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 
 	const postsRef = useRef<HTMLDivElement>(null);
 
+	//run after back from search
 	const reloadStream = () => {
 		dispatch(searchedPostsReceived(null));
 
@@ -36,10 +39,21 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 			console.log('scroll top ', postsRef.current.scrollTop, postsRef);
 		}
 	}
+
 	//=============GET POSTS.===========	
 	useEffect(() => {
-		//set newPosts
-		dispatch(getNextPosts(page));
+		//if first posts -> loader
+		if(page === 1) {
+			const getFirstPosts = async () => {
+				setIsPostsFetching(true);
+				await dispatch(getNextPosts(page));
+				setIsPostsFetching(false);
+			}
+			getFirstPosts();
+		} else {
+			//set newPosts
+			dispatch(getNextPosts(page));
+		}
 	}, [page]);
 
 	//==========SAVE SCROLL VALUE WHEN SEARCHING FORM VISIBILITY STATUS CHANGING========
@@ -72,7 +86,7 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 		}
 	}, [])
 
-	if(isLoading) return <Preloader />;
+	if(isLoading || isPostsFetching) return <Preloader />;
 
 	return (
 		<div ref={postsRef} className={classes.Posts}>
@@ -98,12 +112,7 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 					/>
 				))
 			: searchedPosts && searchedPosts?.length < 1 ?
-				<div className={classes.noQuestions}>
-					<button className={classes.btn} onClick={reloadStream}>
-						<ArrowBackIcon className={classes.icon}/>
-					</button>
-					<p className={classes.text}>Нічого не знайдено</p>
-				</div>
+				<NoResults reloadStream={reloadStream} />
 			: <div>Питань немає взагалі</div>
 			}
 		</div>

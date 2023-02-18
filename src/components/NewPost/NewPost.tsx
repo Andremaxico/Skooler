@@ -36,14 +36,16 @@ export const NewPost: React.FC<PropsType> = ({}) => {
 		navigate('/');
 	}
 
+
 	const onSubmit = (data: FieldsType) => {
 		console.log('subit data', data);
+		const timestamp = serverTimestamp();
 
 		const newPostData: PostDataType = {
 			id: v4(),
 			authorAvatarUrl: myAccountData?.avatarUrl || null,
 			authorFullname: `${myAccountData?.surname} ${myAccountData?.name}`,
-			createdAt: serverTimestamp(),
+			createdAt: timestamp,
 			text: data.text,
 			category: data.category,
 			stars: 0,

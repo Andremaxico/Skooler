@@ -11,7 +11,7 @@
 			.avatar {
 				margin-right: 4px;
 			}
-			.info {
+			.authorInfo {
 				@include column-align;
 				.name {
 					margin-bottom: 4px;
@@ -26,10 +26,15 @@
 				}
 			} 
 		}
-		.category {
-			@include text;
-			text-align: right;
-			color: $gray;
+		.info {
+			@include row-align;
+			.category {
+				@include text;
+				margin-right: 8px;  
+				text-align: right;
+				color: $gray;
+			}
+			//three dots...
 		}
 	}
 	.text {

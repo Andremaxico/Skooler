@@ -18,8 +18,6 @@ export const PostDate: React.FC<PropsType> = ({createdAt, closed}) => {
 		'Вересня', 'Жовтня', 'Листопада', 'Грудня', 
 	];
 
-	console.log('ms date', msDate);
-
 	const publishDate = msDate ? new Date(msDate) : new Date();
 	const stringDate = `${publishDate.getDate()} ${monthes[publishDate.getMonth()].toLowerCase()} ${publishDate.getFullYear()}`;
 
