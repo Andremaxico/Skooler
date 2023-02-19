@@ -241,9 +241,6 @@ export const getNextPosts = (pageNum: number) => async (dispatch: AppDispatchTyp
 }
 
 export const sendNewPost = (data: PostDataType) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
-	let posts = getState().stream.posts;
-
-
 	dispatch(userActionStatusChanged({
 		status: 'loading',
 		target: 'post_adding'
@@ -252,7 +249,7 @@ export const sendNewPost = (data: PostDataType) => async (dispatch: AppDispatchT
 	await streamAPI.addNewPost(data);
 
 	const postChangedSubscriber = (updatedData: PostDataType) => {
-		posts = getState().stream.posts;
+		const posts = getState().stream.posts;
 		console.log('subscriber', updatedData);
 
 		if(updatedData.createdAt !== null && posts) {
@@ -347,17 +344,40 @@ export const addNewAnswer = (questionId: string, data: CommentType) => async (di
 		status: 'loading',
 		target: 'answer_adding'
 	}));
+
 	//+1 to number of comments in question doc
 	streamAPI.increaceCommentsCount(questionId);
+
+
 	//add doc to question>comments collection
 	await streamAPI.addNewAnswer(questionId, data);
+
+	const answerChangedSubscriber = (updatedData: CommentType) => {
+		const currOpenPostAnswers = getState().stream.currPostAnswers;
+		console.log('answer subscriber', updatedData);
+
+		if(updatedData.createdAt !== null && currOpenPostAnswers) {
+			const isAnswerAdded = currOpenPostAnswers.filter(data => data.id === updatedData.id).length > 0;
+
+			console.log('isAnswerAdded', isAnswerAdded);
+
+			if(!isAnswerAdded) {
+				//add new answer to state
+				dispatch(newAnswerAdded(questionId, updatedData));
+
+			} else if (isAnswerAdded) {
+				dispatch(answerChanged(updatedData));
+			}
+		}	
+	}
+
+	await streamAPI.subscribeOnAnswerChanges(data.parentQId, data.id, answerChangedSubscriber);
+
 	//show succes to user
 	dispatch(userActionStatusChanged({
 		status: 'success',
 		target: 'answer_adding'
 	}));
-	//add new answer to state
-	dispatch(newAnswerAdded(questionId, data));
 
 	//hide block with success text
 	setTimeout(() => {
@@ -459,7 +479,6 @@ export const addClosedQuestionMark = (qId: string) => async (dispatch: AppDispat
 
 	await streamAPI.markQuestionAsClosed(qId);
 }
-
 
 export const removeClosedQuestionMark = (qId: string) => async (dispatch: AppDispatchType) => {
 	dispatch(questionUnMarkedAsClosed(qId));

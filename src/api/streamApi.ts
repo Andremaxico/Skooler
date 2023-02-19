@@ -6,7 +6,8 @@ import { PostDataType } from "../utils/types";
 import { once } from 'lodash';
 import { orderByChild } from 'firebase/database';
 
-let unsubscribeFromChanges: {[key: string]: Function} = {};
+let unsubscribeFromQChanges: {[key: string]: Function} = {};
+let unsubscribeFromAnChanges: {[key: string]: Function} = {};
 
 export const streamAPI =  {
 	async getPosts(nextPageNum: number) {
@@ -45,15 +46,6 @@ export const streamAPI =  {
 		if(data) {
 			await setDoc(doc(firestore, 'questions', data.id), {
 				...data
-			});
-
-			const ref = doc(firestore, 'questions', data.id);
-
-			const unsub = onSnapshot(ref, (doc) => {
-				const data = doc.data();
-				if(data) {
-					console.log('createadAt:', data.createdAt);
-				}
 			});
 		}
 	},
@@ -185,21 +177,35 @@ export const streamAPI =  {
 	async subscribeOnPostChanges(qId: string, subscriber: (data: PostDataType) => void) {
 		const questionRef = doc(firestore, 'questions', qId);
 
-		unsubscribeFromChanges[qId] = onSnapshot(questionRef, 
+		unsubscribeFromQChanges[qId] = onSnapshot(questionRef, 
 			(querySnap) => {
 				let updatedPost: PostDataType | null = null;
 
 				if(querySnap.exists()) updatedPost = querySnap.data() as PostDataType; 
-
-				console.log('updated post', updatedPost);
 
 				if(updatedPost) subscriber(updatedPost);
 			}
 		);
 	},
 
+	async subscribeOnAnswerChanges(qId: string, aId: string, subscriber: (data: CommentType) => void) {
+		const answerRef = doc(firestore, 'questions', qId, 'comments', aId);
+
+		unsubscribeFromAnChanges[qId] = onSnapshot(answerRef, 
+			(querySnap) => {
+				let updatedAnswer: CommentType | null = null;
+
+				if(querySnap.exists()) updatedAnswer = querySnap.data() as CommentType; 
+
+				console.log('updated answer', updatedAnswer);
+
+				if(updatedAnswer) subscriber(updatedAnswer);
+			}
+		);
+	},
+
 	async unsubscribeFromPostChanges() {
-		
+
 	},
 
 	async deleteQuestion(qId: string) {

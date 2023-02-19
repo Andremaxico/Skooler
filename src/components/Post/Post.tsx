@@ -33,8 +33,6 @@ export const Post: React.FC<PropsType> = ({}) => {
 	const returnToMain = () => {
 		navigate('/');
 	}
-	console.log('params', params.postId, 'data', data);
-	console.log('is fetching: ', isFetching);
 
 	//get from server if no in posts
 	if(!data && params.postId) {
