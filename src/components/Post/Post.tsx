@@ -3,17 +3,15 @@ import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { selectMyAccountData } from '../../Redux/account/account-selectors';
 import { useAppDispatch } from '../../Redux/store';
-import { currPostAnswersReceived, getNextPosts, getOpenPostData, getPostAnswers } from '../../Redux/stream/stream-reducer';
-import { selectCurrPostAnswers, selectOpenPostData, selectPosts, selectUserActionStatus } from '../../Redux/stream/stream-selectors';
+import { currPostAnswersReceived, getOpenPostData, getPostAnswers } from '../../Redux/stream/stream-reducer';
+import { selectCurrPostAnswers, selectOpenPostData } from '../../Redux/stream/stream-selectors';
 import { PostDataType } from '../../utils/types';
 import { PostCard } from '../Stream/Posts/PostCard';
 import { Answer } from './Answer';
-import { NewAnswer } from './NewAnswer';
 import classes from './Post.module.scss';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { selectFooterHeight } from '../../Redux/app/appSelectors';
 import Preloader from '../../UI/Preloader';
-import { ActionStatus } from '../../UI/ActionStatus';
 import { NoAnswers } from './NoAnswers';
 
 type PropsType = {
@@ -96,7 +94,10 @@ export const Post: React.FC<PropsType> = ({}) => {
 						/>
 					))
 				: 
-					isFetching ? <Preloader />
+					isFetching ? 
+					<div className={classes.loaderWrap}>
+						<Preloader />
+					</div>
 				: 
 					<NoAnswers />
 				}

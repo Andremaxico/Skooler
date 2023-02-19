@@ -2,9 +2,13 @@
 
 .Post {
 	position: relative;
-	padding-top: 16px;
+	@include column-align;
+	min-height: 100%;
 	.comments {
 		position: relative;
+		.loaderWrap {
+			margin-top : 120px;
+		}
 	}
 	.returnBtn {
 		position: fixed;

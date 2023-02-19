@@ -87,7 +87,7 @@ const inititalState: StateType = {
 export const streamReducer = createReducer(inititalState, (builder) => {
 	builder 
 		.addCase(nextPostsReceived, (state, action) => {
-			state.posts =  action.payload;  
+			state.posts = action.payload;  
 		})
 		.addCase(newPostReceived, (state, action) => {
 			state.posts?.unshift(action.payload);
@@ -207,11 +207,9 @@ export const streamReducer = createReducer(inititalState, (builder) => {
 		.addCase(questionChanged, (state, action) => {
 			const currOpenPostId = state.openPostData?.id;
 
-			console.log('post changed');
-			console.log('curr open post data', currOpenPostId);
 			if(state.posts) {
 				const [changedPost] = state.posts.filter(data => data.id === action.payload.id) || [];
-				console.log('changed post', changedPost);
+
 				if(changedPost) {
 					changedPost.text = action.payload.text;
 				}
@@ -243,14 +241,37 @@ export const getNextPosts = (pageNum: number) => async (dispatch: AppDispatchTyp
 }
 
 export const sendNewPost = (data: PostDataType) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
+	let posts = getState().stream.posts;
+
+
 	dispatch(userActionStatusChanged({
 		status: 'loading',
 		target: 'post_adding'
 	}));
+
 	await streamAPI.addNewPost(data);
+
+	const postChangedSubscriber = (updatedData: PostDataType) => {
+		posts = getState().stream.posts;
+		console.log('subscriber', updatedData);
+
+		if(updatedData.createdAt !== null && posts) {
+			const isPostAdded = posts.filter(data => data.id === updatedData.id).length > 0;
+
+			if(!isPostAdded) {
+				dispatch(newPostReceived(updatedData));
+
+			} else if (isPostAdded) {
+				dispatch(questionChanged(updatedData));
+			}
+		}	
+	}
+
+	await streamAPI.subscribeOnPostChanges(data.id, postChangedSubscriber);
+
 	dispatch(userActionStatusChanged({
 		status: 'success',
-		target: 'post_adding'
+		target: 'post_adding'  
 	}));
 
 	setTimeout(() => {

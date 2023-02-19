@@ -9,7 +9,7 @@ import { v4 } from 'uuid';
 import { selectMyAccountData } from '../../Redux/account/account-selectors';
 import { sendNewPost } from '../../Redux/stream/stream-reducer';
 import { useNavigate } from 'react-router-dom';
-import { serverTimestamp } from 'firebase/firestore';
+import { FieldValue, serverTimestamp } from 'firebase/firestore';
 import Textarea from '@mui/joy/Textarea';
 import FormHelperText from '@mui/joy/FormHelperText';
 import { Button, FormControl } from '@mui/joy';
@@ -30,7 +30,7 @@ export const NewPost: React.FC<PropsType> = ({}) => {
 	const dispatch = useAppDispatch();
 	
 	const navigate = useNavigate();
-	//redirect to mai page
+	//redirect to main   page
 	const cancel = () => {
 		reset();
 		navigate('/');
@@ -39,13 +39,12 @@ export const NewPost: React.FC<PropsType> = ({}) => {
 
 	const onSubmit = (data: FieldsType) => {
 		console.log('subit data', data);
-		const timestamp = serverTimestamp();
 
 		const newPostData: PostDataType = {
 			id: v4(),
 			authorAvatarUrl: myAccountData?.avatarUrl || null,
 			authorFullname: `${myAccountData?.surname} ${myAccountData?.name}`,
-			createdAt: timestamp,
+			createdAt: serverTimestamp(),
 			text: data.text,
 			category: data.category,
 			stars: 0,
@@ -55,6 +54,7 @@ export const NewPost: React.FC<PropsType> = ({}) => {
 			authorRating: myAccountData?.rating || 'Ніхто',
 			isEdited: false,
 		}
+
 		//send question
 		dispatch(sendNewPost(newPostData));
 

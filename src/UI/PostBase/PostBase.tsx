@@ -36,8 +36,6 @@ export const PostBase: React.FC<PropsType> = ({data, category, onClick, answerQI
 		const closestTarget = target.closest('div#dots-wrapper') || target.closest('#actions-menu');
 
 		const isClickedOnDots = closestTarget !== null ? closestTarget === dotsRef.current || closestTarget === menuRef.current : false;
-		console.log('isClikedOnDots', isClickedOnDots, 'target', closestTarget, 'ref', dotsRef.current, menuRef.current);
-		console.log('check conditions', closestTarget === dotsRef.current, closestTarget === menuRef.current);
 		
 		if(!isClickedOnDots && onClick) onClick(e);
 	}

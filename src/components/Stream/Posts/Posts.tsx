@@ -43,16 +43,18 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 	//=============GET POSTS.===========	
 	useEffect(() => {
 		//if first posts -> loader
-		if(page === 1) {
-			const getFirstPosts = async () => {
-				setIsPostsFetching(true);
-				await dispatch(getNextPosts(page));
-				setIsPostsFetching(false);
+		if(!posts) {
+			if(page === 1) {
+				const getFirstPosts = async () => {
+					setIsPostsFetching(true);
+					await dispatch(getNextPosts(page));
+					setIsPostsFetching(false);
+				}
+				getFirstPosts();
+			} else {
+				//set newPosts
+				dispatch(getNextPosts(page));
 			}
-			getFirstPosts();
-		} else {
-			//set newPosts
-			dispatch(getNextPosts(page));
 		}
 	}, [page]);
 
@@ -75,7 +77,7 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 		}
 	}
 
-	//========SCROLL EVENT LISTENER
+	//========SCROLL EVENT LISTENER===============
 	useEffect(() => {
 		if(posts?.length || 0 > 10) {
 			postsRef.current?.addEventListener('scroll', handleScroll);

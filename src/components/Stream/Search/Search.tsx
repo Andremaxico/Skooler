@@ -43,10 +43,10 @@ export const Search: React.FC<PropsType> = ({setIsLoading}) => {
 	}, [fieldWrapRef]);
 	
 	useEffect(() => {
-		if(inputEl) {
+		if(inputEl && isShow) {
 			inputEl.focus();
 		}
-	}, []);
+	}, [inputEl, isShow]);
 
 	useEffect(() => {
 		if(!isShow) {

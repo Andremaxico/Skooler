@@ -103,10 +103,6 @@ const App = () => {
   const footerHeight = useSelector(selectFooterHeight) || 0;
   const headerHeight = useSelector(selectHeaderHeight) || 0;
 
-  console.log('heights', footerHeight, headerHeight);
-
-  console.log('loading', loading);
-
   if(loading) return <Preloader />
   //if(!loading && !user) return <Login />; 
   

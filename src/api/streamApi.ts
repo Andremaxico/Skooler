@@ -14,6 +14,8 @@ export const streamAPI =  {
 		const postsLimit = 10;
 		const startAfterNum = postsLimit * (nextPageNum - 1);
 
+		console.log('get posts--------------');
+
 		const nextPostsQ = query(postsRef, orderBy('createdAt', 'desc'));
 
 		const nextPostsSnap = await getDocs(nextPostsQ);
@@ -40,10 +42,18 @@ export const streamAPI =  {
 	},
 
 	async addNewPost(data: PostDataType) {
-		console.log('new post data', data);
 		if(data) {
 			await setDoc(doc(firestore, 'questions', data.id), {
 				...data
+			});
+
+			const ref = doc(firestore, 'questions', data.id);
+
+			const unsub = onSnapshot(ref, (doc) => {
+				const data = doc.data();
+				if(data) {
+					console.log('createadAt:', data.createdAt);
+				}
 			});
 		}
 	},
@@ -108,6 +118,7 @@ export const streamAPI =  {
 			isEdited: true,
 		})
 	},
+
 	async getPostsByQuery(queryStr: string, category: QuestionCategoriesType) {
 		const postsRef = collection(firestore, 'questions');
 		const postsQ = query(postsRef, where('category', '==', category));
@@ -188,7 +199,7 @@ export const streamAPI =  {
 	},
 
 	async unsubscribeFromPostChanges() {
-
+		
 	},
 
 	async deleteQuestion(qId: string) {
