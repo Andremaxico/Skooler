@@ -1,6 +1,10 @@
 @import '../../../global-styles';
 
 .link {
+	@include center-align;
+	& + & {
+		margin-left: 16px;
+	}
 	&._bigger {
 		.btn {
 			.icon {
@@ -10,7 +14,8 @@
 		}
 	}
 	&._active {
-		.icon {
+		.icon,
+		.btn .icon {
 			color: $primary;
 		}
 	}

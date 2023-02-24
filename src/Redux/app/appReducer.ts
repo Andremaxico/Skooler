@@ -7,12 +7,15 @@ export const networkErrorStatusChanged = createAction<string | null>('app/NETWOR
 export const isLoadingStatusChanged = createAction<boolean>('app/LOADING_STATUS_CHANGED');
 export const footerHeightReceived = createAction<number>('app/FOOTER_HEIGHT_RECEIVED');
 export const headerHeightReceived = createAction<number>('app/HEADER_HEIGHT_RECEIVED');
+export const prevPageChanged = createAction<string>('app/PREV_PAGE_CHANGED');
+
 //==================	REDUCER===================
 type AppStateType = {
 	networkError: string | null,
 	isLoading: boolean,
 	footerHeight: number | null,
 	headerHeight: number | null,
+	prevPage: string | null,
 };
 
 const initialState: AppStateType = {
@@ -20,6 +23,7 @@ const initialState: AppStateType = {
 	isLoading: false,
 	footerHeight: null,
 	headerHeight: null,
+	prevPage: null,
 };
 
 export const appReducer = createReducer(initialState, (builder) => {
@@ -35,6 +39,9 @@ export const appReducer = createReducer(initialState, (builder) => {
 		})
 		.addCase(headerHeightReceived, (state, action) => {
 			state.headerHeight = action.payload;
+		})
+		.addCase(prevPageChanged, (state, action) => {
+			state.prevPage = action.payload;
 		})
 		.addDefaultCase((state, action) => {})
 });

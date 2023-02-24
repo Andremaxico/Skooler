@@ -32,3 +32,7 @@ export const selectCurrStreamScrollValue = (state: RootStateType) => {
 export const selectUserActionStatus = (state: RootStateType) => {
 	return state.stream.userActionStatus;
 }
+
+export const selectlastVisiblePost = (state: RootStateType) => {
+	return state.stream.lastVisiblePost;
+}

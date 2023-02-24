@@ -11,3 +11,7 @@ export const selectFooterHeight = (state: RootStateType) => {
 export const selectHeaderHeight = (state: RootStateType) => {
 	return state.app.headerHeight;
 }
+
+export const selectPrevPage = (state: RootStateType) => {
+	return state.app.prevPage;
+}

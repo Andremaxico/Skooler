@@ -1,7 +1,11 @@
 @import '../../../global-styles';
 
 .Posts {
-	height: 100%;
+	overflow-y: auto;
+	box-sizing: border-box;
+	&::-webkit-scrollbar {
+		display: none;
+	}
 	.noQuestions {
 		@include text;
 		color: $gray;

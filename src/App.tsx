@@ -5,14 +5,14 @@ import "antd/dist/antd.css";
 import classes from './App.module.scss';
 
 import AppHeader from './components/Header';
-import { HashRouter, Route, Routes } from 'react-router-dom';
+import { HashRouter, Route, Routes, useLocation } from 'react-router-dom';
 
 import { Provider, useSelector } from 'react-redux';
 
 
 import Layout, { Content } from 'antd/lib/layout/layout';
 import { store, useAppDispatch } from './Redux/store';
-import { networkErrorStatusChanged } from './Redux/app/appReducer';
+import { networkErrorStatusChanged, prevPageChanged } from './Redux/app/appReducer';
 import { loginDataReceived, setMyAccount } from './Redux/account/account-reducer';
 
 import Preloader from './UI/Preloader';
@@ -49,9 +49,9 @@ const App = () => {
   const { auth } = useContext(FirebaseContext);
   const [ user, loading ] = useAuthState(auth as Auth);
 
-  const [isFetching, setIsFetching] = useState<boolean>(false);
+  const [isFetching, setIsFetching] = useState<boolean>(loading);
   const networkError = useSelector(selectNetworkError);
-  const userAction = useSelector(selectUserActionStatus);
+  const userAction = useSelector(selectUserActionStatus); 
 
   const dispatch = useAppDispatch();
 
@@ -88,10 +88,13 @@ const App = () => {
 
   //get login data 
   useEffect(() => {
+    console.log('user', user);
+
     const getLoginData = async () => {
       if(user) {
         dispatch(loginDataReceived({...user}));
         await dispatch(setMyAccount(user));	
+        setIsFetching(false);
       }
     }
     getLoginData();
@@ -103,9 +106,22 @@ const App = () => {
   const footerHeight = useSelector(selectFooterHeight) || 0;
   const headerHeight = useSelector(selectHeaderHeight) || 0;
 
-  if(loading) return <Preloader />
+
+  //change prev page in state
+  const location = useLocation();
+
+  const [prevLocation, setPrevLocation] = useState<string>(location.pathname)
+
+  useEffect(() => {
+    console.log('prevLocation', prevLocation, location);
+    dispatch(prevPageChanged(prevLocation));
+
+    //update location
+    setPrevLocation(location.pathname);
+  }, [location]);
+
+  if(isFetching) return <Preloader />
   //if(!loading && !user) return <Login />; 
-  
   return (
     <Layout>
         <AppHeader />

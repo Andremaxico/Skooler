@@ -4,26 +4,30 @@ import classes from './Posts.module.scss';
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from '../../../Redux/store';
 import { currPostAnswersReceived, currStreamScrollValueChanged, getNextPosts, searchedPostsReceived } from '../../../Redux/stream/stream-reducer';
-import { selectCurrStreamScrollValue, selectIsSearchShowing, selectPosts, selectSearchedPosts, selectUserActionStatus } from '../../../Redux/stream/stream-selectors';
+import { selectCurrStreamScrollValue, selectIsSearchShowing, selectlastVisiblePost, selectPosts, selectSearchedPosts, selectUserActionStatus } from '../../../Redux/stream/stream-selectors';
 import { PostCard } from './PostCard';
 import Preloader from '../../../UI/Preloader';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { NavLink } from 'react-router-dom';
 import { NoResults } from './NoResults';
+import { selectFooterHeight, selectHeaderHeight } from '../../../Redux/app/appSelectors';
 
 type PropsType = {
 	isLoading: boolean,
 };
 
 export const Posts: React.FC<PropsType> = ({isLoading}) => {
-	const [page, setPage] = useState<number>(1);
 	const [openedAnswerFormQId, setOpenedAnswerFormQId] = useState<string | null>(null);
 	const [isPostsFetching, setIsPostsFetching] = useState<boolean>(false);
 
+	const lastVisiblePost = useSelector(selectlastVisiblePost);
 	const posts = useSelector(selectPosts);
 	const searchedPosts = useSelector(selectSearchedPosts);
 	const isSearching = useSelector(selectIsSearchShowing);
 	const savedScrollValue = useSelector(selectCurrStreamScrollValue);
+
+	const footerHeight = useSelector(selectFooterHeight) || 0;
+	const headerHeight = useSelector(selectHeaderHeight) || 0;
 
 	const dispatch = useAppDispatch();
 
@@ -44,19 +48,20 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 	useEffect(() => {
 		//if first posts -> loader
 		if(!posts) {
-			if(page === 1) {
+			//if last vivisble post in not setted -> get firest posts and show loader
+			if(lastVisiblePost !== null) {
 				const getFirstPosts = async () => {
 					setIsPostsFetching(true);
-					await dispatch(getNextPosts(page));
+					await dispatch(getNextPosts());
 					setIsPostsFetching(false);
 				}
 				getFirstPosts();
 			} else {
 				//set newPosts
-				dispatch(getNextPosts(page));
+				dispatch(getNextPosts());
 			}
 		}
-	}, [page]);
+	}, [lastVisiblePost]);
 
 	//==========SAVE SCROLL VALUE WHEN SEARCHING FORM VISIBILITY STATUS CHANGING========
 	useEffect(() => {  
@@ -68,30 +73,28 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 	}, [isSearching]);
 
 	const handleScroll = () => {
-		const scrollToBottom = (postsRef.current?.scrollHeight || 0) - (postsRef.current?.scrollTop || 0);
-		
-		//if end => load next posts
-		if(scrollToBottom < 50) {
-			//set next posts page
-			setPage((currPage) => currPage + 1);
+		const triggerHeight = (postsRef.current?.scrollTop || 0) + (postsRef.current?.offsetHeight || 0);
+
+		if(triggerHeight >= (postsRef.current?.scrollHeight || 0) - 10) {
+			dispatch(getNextPosts());
 		}
 	}
 
-	//========SCROLL EVENT LISTENER===============
 	useEffect(() => {
-		if(posts?.length || 0 > 10) {
-			postsRef.current?.addEventListener('scroll', handleScroll);
+		if(posts && posts.length >= 10 && postsRef.current) {
+			console.log('add event listener');
+			postsRef.current.addEventListener('scroll', handleScroll);
 
 			return () => {
 				postsRef.current?.removeEventListener('scroll', handleScroll);
 			}
 		}
-	}, [])
+	}, [postsRef.current, posts])
 
 	if(isLoading || isPostsFetching) return <Preloader />;
 
 	return (
-		<div ref={postsRef} className={classes.Posts}>
+		<div ref={postsRef} className={classes.Posts} style={{height: `calc(100vh - ${footerHeight + headerHeight + 32}px)`}}>
 			{searchedPosts && searchedPosts.length > 0 ?
 				<>
 					<div className={classes.returnBtn}>

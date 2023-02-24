@@ -1,35 +1,60 @@
-
 import { CommentType, QuestionCategoriesType } from './../utils/types/index';
-import { addDoc, collection, deleteDoc, doc, DocumentData, endAt, getDoc, getDocs, limit, onSnapshot, orderBy, query, setDoc, startAfter, startAt, updateDoc, where } from "firebase/firestore"
+import { addDoc, collection, deleteDoc, doc, DocumentData, endAt, getDoc, getDocs, getFirestore, limit, onSnapshot, orderBy, Query, query, QuerySnapshot, setDoc, startAfter, startAt, updateDoc, where } from "firebase/firestore"
 import { firestore } from "../firebase/firebaseApi"
 import { PostDataType } from "../utils/types";
 import { once } from 'lodash';
 import { orderByChild } from 'firebase/database';
+import { lime } from '@mui/material/colors';
 
 let unsubscribeFromQChanges: {[key: string]: Function} = {};
 let unsubscribeFromAnChanges: {[key: string]: Function} = {};
 
+let documentSnapshots: QuerySnapshot<DocumentData> | null = null;
+
 export const streamAPI =  {
-	async getPosts(nextPageNum: number) {
+	async getPosts(lastVisiblePost: PostDataType | null) {
 		const postsRef = collection(firestore, 'questions');
 		const postsLimit = 10;
-		const startAfterNum = postsLimit * (nextPageNum - 1);
+		let nextPosts: DocumentData[] = [];
 
 		console.log('get posts--------------');
 
-		const nextPostsQ = query(postsRef, orderBy('createdAt', 'desc'));
+		// Query the first page of docs
+		const first = query(collection(firestore, "questions"), orderBy("createdAt"), limit(25));
+		documentSnapshots = await getDocs(first);
 
-		const nextPostsSnap = await getDocs(nextPostsQ);
+		// Get the last visible document
+		const lastVisible = documentSnapshots.docs[documentSnapshots.docs.length-1];
+		console.log("last", lastVisible);
 
-		let nextPosts: DocumentData[] = [];
-			
-		nextPostsSnap.forEach(doc => {
-			if(doc.exists()) {
-				nextPosts.push(doc.data());
-			}
-		});
+		// Construct a new query starting at this document,
+		// get the next 25 cities.
+		if(lastVisiblePost) {
+			console.log('last visible post isnot null');
+			const next = query(collection(firestore, "questions"),
+				orderBy("createdAt", 'desc'),
+				startAfter(lastVisible),
+				limit(10));
+			documentSnapshots = await getDocs(next);  
 
-		return nextPosts as PostDataType[];
+		} else {
+			// Query the first page of docs
+			const first = query(collection(firestore, "questions"), orderBy("createdAt", 'desc'), limit(10));
+			documentSnapshots = await getDocs(first);
+		}
+   
+		if(documentSnapshots) {
+			documentSnapshots.forEach(doc => {
+				console.log('foreach posts');
+				if(doc.exists()) {
+					nextPosts.push(doc.data());
+				}
+			});
+
+			console.log('next posts', nextPosts);
+
+			return nextPosts as PostDataType[];
+		}
 	},
 
 	async editPost(data: PostDataType, newText: string) {

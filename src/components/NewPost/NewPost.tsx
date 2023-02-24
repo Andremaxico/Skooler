@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 import classes from './NewPost.module.scss';
@@ -36,6 +36,8 @@ export const NewPost: React.FC<PropsType> = ({}) => {
 		navigate('/');
 	}
 
+	//if not authed -> redirect to login page
+	if(!myAccountData) navigate('/login');
 
 	const onSubmit = (data: FieldsType) => {
 		console.log('subit data', data);

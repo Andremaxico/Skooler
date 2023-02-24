@@ -24,6 +24,7 @@ export const postRemoved = createAction<string>('stream/POST_REMOVED');
 export const questionChanged = createAction<PostDataType>('stream/QUESTION_CHANGED');
 export const answerChanged = createAction<CommentType>('stream/ANSWER_CHANGED');
 export const userActionStatusChanged = createAction<UserActionType | null>('stream/USER_ACTION_STATUS_CHANGED');
+export const lastVisiblePostChanged = createAction<PostDataType>('stream/LATEST_DOC_CHANGED');
 
 export const newAnswerAdded = createAction('stream/NEW_ANSWER_ADDED', (questionId: string, data: CommentType) => ({
 	payload: {
@@ -58,6 +59,7 @@ type StateType = {
 	searchedPosts: null | PostDataType[],
 	currStreamScrollValue: number, 
 	userActionStatus: UserActionType | null,
+	lastVisiblePost: null | PostDataType,
 };
 const inititalState: StateType = {
 	posts: null,
@@ -82,12 +84,17 @@ const inititalState: StateType = {
 	searchedPosts: null,
 	currStreamScrollValue: 0,
 	userActionStatus: null,
+	lastVisiblePost: null,
 };
 
 export const streamReducer = createReducer(inititalState, (builder) => {
 	builder 
 		.addCase(nextPostsReceived, (state, action) => {
-			state.posts = action.payload;  
+			if(state.posts === null) {
+				state.posts = action.payload;  
+			} else {
+				state.posts.push(...action.payload);
+			}
 		})
 		.addCase(newPostReceived, (state, action) => {
 			state.posts?.unshift(action.payload);
@@ -230,14 +237,26 @@ export const streamReducer = createReducer(inititalState, (builder) => {
 		.addCase(userActionStatusChanged, (state, action) => {
 			state.userActionStatus = action.payload;
 		})
+		.addCase(lastVisiblePostChanged, (state, action) => {
+			state.lastVisiblePost = action.payload;
+		})
 		.addDefaultCase(() => {})
 });
 
 
 //==========================THUNKS========================
-export const getNextPosts = (pageNum: number) => async (dispatch: AppDispatchType ) => {
-	const nextPosts = await streamAPI.getPosts(pageNum);
-	dispatch(nextPostsReceived(nextPosts));	
+export const getNextPosts = () => async (dispatch: AppDispatchType, getState: () => RootStateType ) => {
+	const lastVisiblePost = getState().stream.lastVisiblePost;
+
+	console.log('lastVisiblePost', lastVisiblePost);
+
+	const nextPosts = await streamAPI.getPosts(lastVisiblePost);
+	if(nextPosts) {
+		const lastPost = nextPosts[nextPosts.length - 1];
+
+		dispatch(lastVisiblePostChanged(lastPost));
+		dispatch(nextPostsReceived(nextPosts));	
+	}
 }
 
 export const sendNewPost = (data: PostDataType) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
@@ -357,20 +376,21 @@ export const addNewAnswer = (questionId: string, data: CommentType) => async (di
 		console.log('answer subscriber', updatedData);
 
 		if(updatedData.createdAt !== null && currOpenPostAnswers) {
+			//added -> change, not added -> add
 			const isAnswerAdded = currOpenPostAnswers.filter(data => data.id === updatedData.id).length > 0;
-
-			console.log('isAnswerAdded', isAnswerAdded);
 
 			if(!isAnswerAdded) {
 				//add new answer to state
 				dispatch(newAnswerAdded(questionId, updatedData));
 
 			} else if (isAnswerAdded) {
+				//change ready answer
 				dispatch(answerChanged(updatedData));
 			}
 		}	
 	}
 
+	//subscribe on changes on server
 	await streamAPI.subscribeOnAnswerChanges(data.parentQId, data.id, answerChangedSubscriber);
 
 	//show succes to user
@@ -485,4 +505,3 @@ export const removeClosedQuestionMark = (qId: string) => async (dispatch: AppDis
 
 	await streamAPI.unmarkQuestionAsClosed(qId);
 }
-
