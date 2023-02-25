@@ -2,7 +2,15 @@
 
 .NewMessageForm {
 	@include column-align;
+	position: fixed;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+	padding: 6px 12px;
+
 	align-items: flex-end;
+	background-color: #fff;
+	z-index: 2;
 	.textareaWrap {
 		margin-bottom: 12px;
 		width: 100%;

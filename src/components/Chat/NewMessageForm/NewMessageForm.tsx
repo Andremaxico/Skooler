@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useRef, useState } from 'react';
+import React, { FocusEvent, ReactElement, useEffect, useRef, useState } from 'react';
 
 import SendIcon from '@mui/icons-material/Send';
 import TextArea from 'antd/lib/input/TextArea';
@@ -16,6 +16,7 @@ import { useAppDispatch } from '../../../Redux/store';
 import { scrollElementToBottom } from '../../../utils/helpers/scrollElementToBottom';
 import { Button, FormControl, IconButton, Textarea } from '@mui/joy';
 import { message } from 'antd';
+import { footerHeightReceived } from '../../../Redux/app/appReducer';
 
 type PropsType = {
 	authData: UserType | null,
@@ -35,6 +36,7 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 	//react-hook-form
 	const { control, formState: {errors}, handleSubmit, reset, setValue } = useForm<FieldValues>();
 	const [isSending, setIsSending] = useState<boolean>(false);
+	const [isFocused, setIsFocused] = useState<boolean>(false);
 
 	//ant design form(щоб показувати зарашнє значення коментара) & reset formmessa
 
@@ -42,8 +44,11 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 
 	//for autofocus
 	const messageField = useRef<HTMLDivElement>(null);
+	const formRef = useRef<HTMLFormElement>(null);
+
 	let textareaEl: HTMLTextAreaElement | null | undefined = null;
 
+	//set textarea element
 	useEffect(() => {
 		if(messageField) {
 			//fignyaaaaaaaa 
@@ -91,6 +96,7 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 		setValue('message', currValue || '');
 	}, [currValue]);
 
+	//send message to thunk
 	const addMessage = async (newMessage: string) => {
 		const newMessageData: MessageDataType = {
 			uid: authData?.uid || 'undefined',
@@ -109,23 +115,46 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 		if(textareaEl) textareaEl.value = '';
 	}
 
+	//form instaead of footer
+	useEffect(() => {
+		if(formRef.current) {
+			const formHeight = formRef.current.offsetHeight;
+
+			console.log('formHeight', formHeight);
+
+			dispatch(footerHeightReceived(formHeight));
+		}
+	}, []);
+ 
+	const focusEventHandler: React.FocusEventHandler<HTMLTextAreaElement> = (e: FocusEvent)  => {
+		
+	}
+
 	return (
-		<form className={classes.NewMessageForm} onSubmit={handleSubmit(onSubmit)}>
+		<form className={classes.NewMessageForm} onSubmit={handleSubmit(onSubmit)} ref={formRef}>
 			<Controller
 				name='message'
 				control={control}
+				rules={{
+					minLength: {value: 1, message: 'Напишіть повідомлення!'},
+					maxLength: {value: 600, message: 'Повідомлення надто довге'},
+					required: 'Напишіть повідомлення!'
+				}}
 				defaultValue={currValue}
 				render={({field: {onChange, value}}) => (
 					<FormControl className={classes.textareaWrap} >
 						<Textarea
 							value={value}
+							// error={!!errors.message && isFocused}
+							// onFocus={() => setIsFocused(true)}
+							// onBlur={() => setIsFocused(false)}
 							onChange={onChange} 
 							component={FormControl}
 							placeholder='Ваше повідомлення'
 							size='lg'
 							ref={messageField}
 							sx={{minWidth: '100%' }}
-							endDecorator={		
+							endDecorator={ !errors.message &&		
 								<IconButton color='primary' type='submit' className={classes.sendBtn}> 
 									<SendIcon />
 								</IconButton>

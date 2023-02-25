@@ -1,22 +1,16 @@
 @import '../../../../global-styles';
 
+$textColor: $black;
+
+
 .Message {
 	position: relative;
 	@include row-align;
 	margin-bottom: 12px;
+	min-width: 106px; //publicate time + changed text
 	width: 100%;
 	&:last-child {
 		margin-bottom: 0;
-	}
-	&._my {
-		justify-content: flex-end;
-		.avatar {
-			left: calc(100% + 8px); ///message body + margin
-			transform: translateX(0);
-		}
-		.messageBody {
-			background-color: orange;
-		}
 	}
 	.avatar {
 		position: absolute;
@@ -29,16 +23,19 @@
 		padding: 9px 7px 10px;
 		max-width: 60%;
 		border-radius: 5px;
-		background-color: $mainCol;
+		background-color: rgba($color: $lightGray, $alpha: 0.25);
+		//  border: 1px solid $primary;
 		.username {
 			@include smallText;
-			color: rgba($color: #fff, $alpha: 0.6)
+			font-weight: 500;
+			color: $black;
 		}
 		.text {
 			@include text;
+			text-align: left;
 			word-wrap: break-word;
 			margin-bottom: 6px;
-			color: #fff;
+			color: $black;
 		}
 	}
 
@@ -47,19 +44,37 @@
 		justify-content: flex-end;
 		.createDate {
 			margin: 0 4px 0 0;
-			color: rgba($color: #fff, $alpha: 0.5);
+			color: rgba($color: $black, $alpha: 0.5);
 		}
 		.receivedStatus {
 			margin: 0;
 			.icon {
-				color: #fff;
+				color: $black;
 			}
 		}
 		.edited {
 			margin: 0 0 0 4px;
 			@include smallText;
 			font-style: italic;
-			color: rgba($color: #fff, $alpha: 0.5);
+			color: rgba($color: $black, $alpha: 1);
+		}
+	}
+
+	&._my {
+		justify-content: flex-end;
+		.avatar {
+			left: calc(100% + 8px); ///message body + margin
+			transform: translateX(0);
+		}
+		.messageBody {
+			background-color: $primary;
+		}
+		.username, 
+		.text, 
+		.createDate, 
+		.receivedStatus .icon, 
+		.edited {
+			color: #fff;
 		}
 	}
 }

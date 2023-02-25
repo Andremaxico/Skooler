@@ -8,7 +8,7 @@
 	overflow-y: auto;
 
 	.messagesDate {
-		margin: 20px 0;
+		margin: 20px 0 20px -24px; //-24 - half from 48px`s padding
 		text-align: center;
 	}
 

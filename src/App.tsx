@@ -89,16 +89,15 @@ const App = () => {
   //get login data 
   useEffect(() => {
     console.log('user', user);
-
+    setIsFetching(false);
     const getLoginData = async () => {
       if(user) {
         dispatch(loginDataReceived({...user}));
         await dispatch(setMyAccount(user));	
-        setIsFetching(false);
       }
     }
     getLoginData();
-    
+    setIsFetching(false);
   }, [user]);
 
 
@@ -123,7 +122,7 @@ const App = () => {
   if(isFetching) return <Preloader />
   //if(!loading && !user) return <Login />; 
   return (
-    <Layout>
+    <div className={classes.App}>
         <AppHeader />
         <Content 
           className={classes.Content} 
@@ -162,8 +161,8 @@ const App = () => {
             }
           </div>
         </Content>
-        <AppFooter />
-    </Layout>
+        {location.pathname !== '/chat' && <AppFooter />}
+    </div>
   );
 }
 

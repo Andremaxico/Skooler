@@ -18,7 +18,6 @@ import { ReadMessageUser } from '../../../UI/ReadMessageUser';
 import ListSubheader from '@mui/material/ListSubheader';
 import { Link } from 'react-router-dom';
 import { MessagesGroup } from './MessagesGroup';
-import { MessagesGroupMetadataType } from './MessagesGroup/MessagesGroup';
 
 type PropsType = {
 	setEditMessageData: (data: EditMessageDataType) => void, 
@@ -26,6 +25,14 @@ type PropsType = {
 }
 
 type FormattedMessagesType = {[key: string]: MessageDataType[]};
+export type MessagesGroupMetadataType = {
+	isMy: boolean,
+	avatarData?: {
+		photoUrl: string | null | undefined,
+		uid: string,
+	}
+}
+
 type MessagesGroupType = {
 	messages: JSX.Element[],
 	metadata: MessagesGroupMetadataType,
@@ -65,6 +72,8 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessage
 	//sorting messages on groups by create date
 	const sortedMessages: FormattedMessagesType = {};
 
+
+	//here we sort messages in groups with keys - dates
 	messagesData?.forEach((messageData: MessageDataType) => {
 		//@ts-ignore
 		const createMilisecs = messageData.createdAt?.seconds * 1000;
@@ -90,7 +99,6 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessage
 	// 	}
 	// }, []);
 
-	//sorting messages in groups writed by 1 user in row
 	//get unread messages count
 	const unreadCount = messagesData?.filter((data: MessageDataType) => {
 		if(data.usersWhoRead) {
@@ -99,6 +107,7 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessage
 		return false;
 	}).length;
 
+	//sorting messages in groups writed by 1 user in row
 	let messagesList: JSX.Element[] | null = null;
 
 	//set messages list
