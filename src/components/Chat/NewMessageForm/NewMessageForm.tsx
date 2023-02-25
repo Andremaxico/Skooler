@@ -34,9 +34,11 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 	authData, isMessageEdit, currValue, updateMessage, scrollBottomBtn
 }): ReactElement<any, any> => {
 	//react-hook-form
-	const { control, formState: {errors}, handleSubmit, reset, setValue } = useForm<FieldValues>();
+	const { control, formState: {errors, isValid}, handleSubmit, reset, setValue, trigger, watch } = useForm<FieldValues>();
 	const [isSending, setIsSending] = useState<boolean>(false);
 	const [isFocused, setIsFocused] = useState<boolean>(false);
+	const [isFirstlyOpened, setIsFirstlyOpened] = useState<boolean>(true);
+	const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
 	//ant design form(щоб показувати зарашнє значення коментара) & reset formmessa
 
@@ -58,12 +60,14 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 		}
 	}, [messageField]);
 
+	console.log('is valid', isValid);
 	console.log('message ref', messageField);
 
 	const dispatch = useAppDispatch();
 
 	const onSubmit = async (data: FieldValues) => {
 		console.log('submit data', data);
+		if(!isSubmitted) setIsSubmitted(true);
 	 	if(!isMessageEdit) {
 			setIsSending(true);
 			await addMessage(data.message);
@@ -81,7 +85,9 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 			setIsSending(false);
 		}
 
-		reset();
+		//reset
+		if(textareaEl) textareaEl.value = '';
+		setValue('message', '', {shouldValidate: true});
 	};
 
 	//for edit
@@ -125,10 +131,18 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 			dispatch(footerHeightReceived(formHeight));
 		}
 	}, []);
- 
-	const focusEventHandler: React.FocusEventHandler<HTMLTextAreaElement> = (e: FocusEvent)  => {
-		
-	}
+
+	//trigger message field for start validation
+	useEffect(() => {
+		if(!isSubmitted) {
+			console.log('trigger');
+			trigger('message');
+		}
+	}, [watch('message')]);
+
+	console.log('errors', errors.message);   
+	console.log('condition', isFirstlyOpened ? !isFirstlyOpened : !errors.message );
+	console.log('value:', watch('message'));
 
 	return (
 		<form className={classes.NewMessageForm} onSubmit={handleSubmit(onSubmit)} ref={formRef}>
@@ -136,9 +150,9 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 				name='message'
 				control={control}
 				rules={{
+					required: 'Напишіть повідомлення!',
 					minLength: {value: 1, message: 'Напишіть повідомлення!'},
 					maxLength: {value: 600, message: 'Повідомлення надто довге'},
-					required: 'Напишіть повідомлення!'
 				}}
 				defaultValue={currValue}
 				render={({field: {onChange, value}}) => (
@@ -146,15 +160,19 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 						<Textarea
 							value={value}
 							// error={!!errors.message && isFocused}
-							// onFocus={() => setIsFocused(true)}
+							//onFocus={() => setIsFirstlyOpened(false)}
 							// onBlur={() => setIsFocused(false)}
-							onChange={onChange} 
+							defaultValue={currValue}
+							onChange={(e) => {
+								onChange(e);
+								if(isFirstlyOpened) setIsFirstlyOpened(false);
+							}} 
 							component={FormControl}
 							placeholder='Ваше повідомлення'
 							size='lg'
 							ref={messageField}
 							sx={{minWidth: '100%' }}
-							endDecorator={ !errors.message &&		
+							endDecorator={ (isFirstlyOpened ? !isFirstlyOpened : !errors.message) &&		
 								<IconButton color='primary' type='submit' className={classes.sendBtn}> 
 									<SendIcon />
 								</IconButton>
