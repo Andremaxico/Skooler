@@ -1,6 +1,6 @@
 import { Avatar, Dropdown, Menu, Typography } from 'antd';
 import { CheckCircleOutlined, UserOutlined } from '@ant-design/icons';
-import React from 'react'
+import React, { useEffect } from 'react'
 import { MessageDataType, UsersWhoReadMessageType } from '../../../../utils/types';
 import classes from './Message.module.scss';
 import { Link } from 'react-router-dom';
@@ -22,9 +22,9 @@ type PropsType = {
 	openInfoModal: (usersWHoRead: UsersWhoReadMessageType) => void,
 };
 
-const Message: React.FC<PropsType> = ({
+const Message= React.forwardRef<HTMLDivElement, PropsType>(({
 	messageData, myAccountId, showDeleteConfirm, setEditMessageData, openInfoModal, isShort
-}) => {
+}, ref) => {
 	const { text, photoUrl, uid, id, usersWhoRead, createdAt, displayName, received, edited} = messageData;
 
 	//intersection observer hook
@@ -82,7 +82,7 @@ const Message: React.FC<PropsType> = ({
 					/>
 			</Link>} */}
 			<Dropdown overlay={contextMenu} trigger={['contextMenu', 'click']}>
-				<div className={classes.messageBody}>
+				<div className={classes.messageBody} ref={ref}>
 					{!isShort && !isMy && <h5 className={classes.username}>{displayName}</h5>}
 					<p className={classes.text}>{text}</p>
 					<div className={classes.info}>
@@ -100,6 +100,6 @@ const Message: React.FC<PropsType> = ({
 			</Dropdown>
 		</div>
 	)
-}
+});
 
 export default Message

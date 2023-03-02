@@ -1,11 +1,12 @@
 import { FieldValue } from 'firebase/firestore';
 import React, { useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { useSelector } from 'react-redux';
-import { selectMyLoginData } from '../../../Redux/account/account-selectors';
+import { renderToStaticMarkup } from "react-dom/server"
+import { selectMyAccountData, selectMyLoginData } from '../../../Redux/account/account-selectors';
 import { selectCurrMessageWhoReadList, selectIsMessagesFetching, selectMessages } from '../../../Redux/chat/selectors'; 
 import Preloader from '../../../UI/Preloader';
 import { ScrollBottomBtn } from '../../../UI/ScrollBottomBtn';
-import { MessageDataType, ReceivedAccountDataType, UsersWhoReadMessageType } from '../../../utils/types';
+import { MessageDataType, MessagesDataType, ReceivedAccountDataType, UsersWhoReadMessageType } from '../../../utils/types';
 import Message from './Message';
 import classes from './Messages.module.scss';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
@@ -13,7 +14,7 @@ import confirm from 'antd/lib/modal/confirm';
 import { useAppDispatch } from '../../../Redux/store';
 import { deleteMessage, setCurrMessageWhoReadList } from '../../../Redux/chat/reducer';
 import { EditMessageDataType } from '../Chat';
-import { Avatar, Modal } from 'antd';
+import { Avatar, message, Modal } from 'antd';
 import { ReadMessageUser } from '../../../UI/ReadMessageUser';
 import ListSubheader from '@mui/material/ListSubheader';
 import { Link } from 'react-router-dom';
@@ -21,6 +22,7 @@ import { MessagesGroup } from './MessagesGroup';
 
 type PropsType = {
 	setEditMessageData: (data: EditMessageDataType) => void, 
+	messagesData: MessageDataType[],
 	//ref: React.RefObject<HTMLButtonElement>,
 }
 
@@ -38,17 +40,20 @@ type MessagesGroupType = {
 	metadata: MessagesGroupMetadataType,
 }
 
-const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessageData}, ref) => {
-	const messagesData = useSelector(selectMessages);
+const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessageData, messagesData}, ref) => {
 	const isFetching = useSelector(selectIsMessagesFetching);
-	const loginData = useSelector(selectMyLoginData);
+	const myAccountData = useSelector(selectMyAccountData);
+	const usersWhoReadCurrMessageData = useSelector(selectCurrMessageWhoReadList);
 
 	const [usersWhoReadCurrMessage, setUsersWhoReadCurrMessage] = useState<UsersWhoReadMessageType | null>(null);
-	const usersWhoReadCurrMessageData = useSelector(selectCurrMessageWhoReadList);
 	const [isUsersFetching, setIsUsersFetching] = useState<boolean>(false);
+	const [messagesList, setMessagesList] = useState<JSX.Element[] | null>(null);
+	const [prevMessagesData, setPrevMessagesData] = useState<MessagesDataType>(messagesData);
+	const [myMessages, setMyMessages] = useState<JSX.Element[]>([]);
 
 	const listRef = useRef<HTMLDivElement>(null);
-	
+	const myMessageRef = useRef<HTMLDivElement>(null);
+
 	const dispatch = useAppDispatch();
 
 	//show delete message modal
@@ -71,22 +76,6 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessage
 
 	//sorting messages on groups by create date
 	const sortedMessages: FormattedMessagesType = {};
-
-
-	//here we sort messages in groups with keys - dates
-	messagesData?.forEach((messageData: MessageDataType) => {
-		//@ts-ignore
-		const createMilisecs = messageData.createdAt?.seconds * 1000;
-		const createDate = new Date(createMilisecs || new Date().getTime());
-		const createDateString = createDate.toLocaleDateString();
-
-		if(!sortedMessages[createDateString]) {
-			sortedMessages[createDateString] = [];
-		}
-
-		sortedMessages[createDateString].push(messageData);
-	});
-
 	//on scroll listener
 	// useEffect(() => {
 	// 	const handleScroll = () => {
@@ -102,37 +91,72 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessage
 	//get unread messages count
 	const unreadCount = messagesData?.filter((data: MessageDataType) => {
 		if(data.usersWhoRead) {
-			return !data.usersWhoRead.includes(loginData?.uid || null)
+			return !data.usersWhoRead.includes(myAccountData?.uid || null)
 		}
 		return false;
 	}).length;
 
 	//sorting messages in groups writed by 1 user in row
-	let messagesList: JSX.Element[] | null = null;
+	useEffect(() => {
+		if(myMessageRef.current) {
+			myMessageRef.current.scrollIntoView({
+				behavior: 'auto',
+			})
+		}
+	}, [myMessageRef.current]);
 
-	//set messages list
-	if(messagesData) {
+	//sorted messages data -> messagesList
+	useEffect(() => {
+		//set messages list
 		let messages: JSX.Element[] = []; // messages list
 
+			
+		//here we sort messages in groups with keys - dates
+		messagesData.forEach((messageData: MessageDataType) => {
+			//@ts-ignore
+			const createMilisecs = messageData.createdAt?.seconds * 1000;
+			const createDate = new Date(createMilisecs || new Date().getTime());
+			const createDateString = createDate.toLocaleDateString();
+
+			if(!sortedMessages[createDateString]) {
+				sortedMessages[createDateString] = [];
+			}
+
+			sortedMessages[createDateString].push(messageData);
+		});
+
+		console.log('sorting././././././././././././/.');
+
+		console.log('sorted messages', sortedMessages)
+
 		Object.keys(sortedMessages).forEach(dateStr => {
+
+			console.log('date Str', dateStr);
 
 			let currMessages: JSX.Element[] = []; // curr date messages
 			let currGroupIndex = -1; // index of current filling group
 			let messagesGroups: MessagesGroupType[] = []; // groups of messages by 1 user in a row
 
+			let currMyMessages: JSX.Element[] = [];
+
 			//set messages groups of 1 day
 			sortedMessages[dateStr].map((data, i) => {
 				const prevUid = i > 0 ? sortedMessages[dateStr][i-1].uid : null;
 				const isShort: boolean = prevUid == data.uid;
-				const isMy = data.uid === loginData?.uid || null;
+				const isMy = data.uid === myAccountData?.uid || null;
 
 				const currMessage = (
 					<Message 
-						messageData={data} myAccountId={loginData?.uid || ''} setEditMessageData={setEditMessageData}
+						messageData={data} myAccountId={myAccountData?.uid || ''} setEditMessageData={setEditMessageData}
 						key={`${data.createdAt}${data.uid}`} showDeleteConfirm={showDeleteConfirm} 
-						openInfoModal={setUsersWhoReadCurrMessage}  isShort={isShort}
+						openInfoModal={setUsersWhoReadCurrMessage}  isShort={isShort} ref={myMessageRef}
 					/>
 				);
+
+
+				if(isMy) {
+					currMyMessages = [...currMyMessages, currMessage];
+				}
 
 				//create new group
 				if(!isShort) {
@@ -162,7 +186,7 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessage
 				}
 			});
 
-			//data -> JSX.Element[]
+			//sorted data -> JSX.Element[]
 			currMessages = messagesGroups.map(group => {
 				return (
 					<MessagesGroup metadata={group.metadata} listRef={listRef}>
@@ -176,11 +200,17 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessage
 				...currMessages
 			];
 
+			setMyMessages((prevMessages) => [...prevMessages, ...currMyMessages]);
+
 			messages = [...messages, ...addedElements];
+
+			console.log('messages', message);
 		});
 
-		messagesList = messages;
-	}
+		setMessagesList(messages);
+
+		console.log('messagesList', messagesList);  
+	}, [myAccountData]);
 
 	//get users еhat read curr message 
 	useEffect(() => { 
@@ -198,8 +228,6 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessage
 	//set users who read current message components
 	let whoReadList: JSX.Element[] = [];
 
-	console.log('users that read mesage', usersWhoReadCurrMessageData);
-
 	if(usersWhoReadCurrMessageData) {
 		usersWhoReadCurrMessageData.forEach(data => {
 			whoReadList.push(<ReadMessageUser userData={data} />);
@@ -209,6 +237,86 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessage
 	const closeModal = () => {
 		setUsersWhoReadCurrMessage(null);
 	}
+
+	useEffect(() => {
+		if(messagesList && messagesList.length > 0 && prevMessagesData.length !== messagesData.length) {
+			//to chnage this if we create new group
+			const lastGroup = messagesList[messagesList?.length - 1];
+
+			//to add new message to this
+			const groupMessages = lastGroup.props.children;
+
+			const diff = messagesData.filter(({ id: id1 }, i) => {
+				const isDifferent = prevMessagesData[i]?.id !== id1;
+
+				console.log('is different', isDifferent);
+
+				return isDifferent;
+			});
+
+			if(diff.length > 0) {
+				messagesList.pop();
+			}
+
+			const newGroups = diff.map((data, i) => {
+				//we need to create new group
+				const secondLastAccountId = i === 0 ? prevMessagesData[prevMessagesData.length - 1].uid : diff[i - 1].uid;
+				//create new group or not
+				const isNewGroup: boolean = secondLastAccountId !== data.uid;
+				const isMy = data.uid === myAccountData?.uid;
+
+				const currMessage = (
+					<Message 
+						messageData={data} 
+						myAccountId={myAccountData?.uid || ''} 
+						setEditMessageData={setEditMessageData}
+						key={`${data.createdAt}${data.uid}`} 
+						showDeleteConfirm={showDeleteConfirm} 
+						openInfoModal={setUsersWhoReadCurrMessage}  
+						isShort={isNewGroup} 
+						ref={isMy ? myMessageRef : undefined}
+					/>
+				);
+	
+				if(!isNewGroup) {
+					groupMessages.push(currMessage);
+				}
+
+				const metadata: MessagesGroupMetadataType = {
+					isMy: isNewGroup,
+					avatarData: {
+						photoUrl: data.photoUrl,
+						uid: data.uid,
+					}
+				}
+	
+				return (
+					<>
+						{isNewGroup ?
+							<MessagesGroup listRef={listRef} metadata={metadata}>
+								<>
+								</>
+								{currMessage}
+							</MessagesGroup>
+							:
+							<MessagesGroup listRef={listRef} metadata={metadata}>
+								{groupMessages}
+							</MessagesGroup>
+						}
+					</>
+				)
+			})
+
+
+			const updatedList = [...messagesList, ...newGroups];
+
+			setMessagesList((updatedList));
+	
+	
+			setPrevMessagesData(messagesData);
+		}
+	}, [messagesData]);
+	if(!myAccountData) return <Preloader />;
 
 	return (
 		<div className={classes.Messages} ref={listRef}>
@@ -223,13 +331,13 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessage
 				{whoReadList || 'Ваше повідомлення ніхто не прочитав'}
 			</Modal>
 
-			{!!messagesList?.length
+			{!!messagesList && messagesList['length'] > 0
 				? 
 					messagesList
 				: <div>Немає повідомлень</div>
 			}
 
-			{listRef.current && !!messagesList?.length && 
+			{listRef.current && !!messagesList && messagesList['length'] && 
 			<ScrollBottomBtn element={listRef.current} ref={ref} unreadCount={unreadCount || 0} />}
 		</div>
 	)

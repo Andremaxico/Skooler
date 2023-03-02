@@ -60,9 +60,6 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 		}
 	}, [messageField]);
 
-	console.log('is valid', isValid);
-	console.log('message ref', messageField);
-
 	const dispatch = useAppDispatch();
 
 	const onSubmit = async (data: FieldValues) => {
@@ -139,10 +136,6 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 			trigger('message');
 		}
 	}, [watch('message')]);
-
-	console.log('errors', errors.message);   
-	console.log('condition', isFirstlyOpened ? !isFirstlyOpened : !errors.message );
-	console.log('value:', watch('message'));
 
 	return (
 		<form className={classes.NewMessageForm} onSubmit={handleSubmit(onSubmit)} ref={formRef}>

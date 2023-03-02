@@ -23,6 +23,8 @@ const Chat = () => {
 	const { auth } = useContext(FirebaseContext);
 	const [authData] = useAuthState(auth as Auth);
 
+	const messagesData = useSelector(selectMessages);
+
 	//is exists messages now editing
 	const [isEdit, setIsEdit] = useState<boolean>(false);
 	const [editMessageData, setEditMessageData] = useState<EditMessageDataType | undefined>(undefined);
@@ -53,11 +55,18 @@ const Chat = () => {
 
 	return (
 		<div className={classes.Chat}>
-			<Messages ref={scrollBtnRef} setEditMessageData={(data: EditMessageDataType) => {
-				setEditMessageData(data);
-				setIsEdit(true);
-				console.log('set edit message data', data);
-			}}/>
+			{messagesData ? 
+				<Messages 
+					ref={scrollBtnRef} 
+					messagesData={messagesData}
+					setEditMessageData={(data: EditMessageDataType) => {
+						setEditMessageData(data);
+						setIsEdit(true);
+						console.log('set edit message data', data);
+					}
+				}/>
+				: <div>Немає повідомлень</div>
+			}
 			<NewMessageForm 
 				authData={authData} scrollBottomBtn={scrollBtnRef.current} isMessageEdit={isEdit} 
 				updateMessage={sendUpdatedMessage} currValue={editMessageData?.value}

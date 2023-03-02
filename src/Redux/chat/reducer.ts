@@ -80,7 +80,7 @@ export const stopMessaging = () => {
 //messages interaction
 export const sendMessage = (data: MessageDataType) => async (dispatch: AppDispatchType) => {
 	console.log('send message');
-	await dispatch(newMessageReceived(data));
+	dispatch(newMessageReceived(data));
 	await chatAPI.sendMessage({...data, received: true});
 }
 
