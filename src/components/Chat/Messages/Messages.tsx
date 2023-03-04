@@ -125,14 +125,7 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessage
 			sortedMessages[createDateString].push(messageData);
 		});
 
-		console.log('sorting././././././././././././/.');
-
-		console.log('sorted messages', sortedMessages)
-
 		Object.keys(sortedMessages).forEach(dateStr => {
-
-			console.log('date Str', dateStr);
-
 			let currMessages: JSX.Element[] = []; // curr date messages
 			let currGroupIndex = -1; // index of current filling group
 			let messagesGroups: MessagesGroupType[] = []; // groups of messages by 1 user in a row
@@ -240,12 +233,6 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessage
 
 	useEffect(() => {
 		if(messagesList && messagesList.length > 0 && prevMessagesData.length !== messagesData.length) {
-			//to chnage this if we create new group
-			const lastGroup = messagesList[messagesList?.length - 1];
-
-			//to add new message to this
-			const groupMessages = lastGroup.props.children;
-
 			const diff = messagesData.filter(({ id: id1 }, i) => {
 				const isDifferent = prevMessagesData[i]?.id !== id1;
 
@@ -254,66 +241,100 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessage
 				return isDifferent;
 			});
 
+			//to chnage this if we create new group
+			const lastGroup = messagesList.pop();
+
+			//to add new message to this
+			const groupMessages = lastGroup?.props.children;
+
 			if(diff.length > 0) {
-				messagesList.pop();
-			}
-
-			const newGroups = diff.map((data, i) => {
-				//we need to create new group
-				const secondLastAccountId = i === 0 ? prevMessagesData[prevMessagesData.length - 1].uid : diff[i - 1].uid;
-				//create new group or not
-				const isNewGroup: boolean = secondLastAccountId !== data.uid;
-				const isMy = data.uid === myAccountData?.uid;
-
-				const currMessage = (
-					<Message 
-						messageData={data} 
-						myAccountId={myAccountData?.uid || ''} 
-						setEditMessageData={setEditMessageData}
-						key={`${data.createdAt}${data.uid}`} 
-						showDeleteConfirm={showDeleteConfirm} 
-						openInfoModal={setUsersWhoReadCurrMessage}  
-						isShort={isNewGroup} 
-						ref={isMy ? myMessageRef : undefined}
-					/>
-				);
+				const newGroups = diff.map((data, i) => {
+					const lastMessage: MessageDataType = i === 0 ? prevMessagesData[prevMessagesData.length - 1] : diff[i - 1];
+					//we need to create new group
+					const lastAccountId = lastMessage.uid ;
+					//@ts-ignore
+					console.log('timestamps', data.createdAt.seconds, lastMessage.createdAt.seconds, data.createdAt.seconds )
 	
-				if(!isNewGroup) {
-					groupMessages.push(currMessage);
-				}
-
-				const metadata: MessagesGroupMetadataType = {
-					isMy: isNewGroup,
-					avatarData: {
-						photoUrl: data.photoUrl,
-						uid: data.uid,
+	
+	
+					//@ts-ignore
+					const lastData = new Date(lastMessage.createdAt.seconds * 1000);
+	
+					console.log('last data', lastData);
+					//@ts-ignore
+					const currData = data.createdAt?.seconds ? new Date(data.createdAt.seconds * 1000) : new Date();
+	
+					console.log('curr', currData);
+	
+					const isNewDate = currData.getTime() - lastData.getTime() < 24 * 60 * 60 * 1000
+	
+					console.log('is new date', isNewDate);
+	
+					//create new group or not
+					const isNewGroup: boolean = lastAccountId !== data.uid;
+					const isMy = data.uid === myAccountData?.uid;
+	
+					const currMessage = (
+						<Message 
+							messageData={data} 
+							myAccountId={myAccountData?.uid || ''} 
+							setEditMessageData={setEditMessageData}
+							key={`${data.createdAt}${data.uid}`} 
+							showDeleteConfirm={showDeleteConfirm} 
+							openInfoModal={setUsersWhoReadCurrMessage}  
+							isShort={isNewGroup} 
+							ref={isMy ? myMessageRef : undefined}
+						/>
+					);
+		
+					if(!isNewGroup && !isNewDate) {
+						groupMessages.push(currMessage);
 					}
-				}
 	
-				return (
-					<>
-						{isNewGroup ?
-							<MessagesGroup listRef={listRef} metadata={metadata}>
-								<>
-								</>
-								{currMessage}
-							</MessagesGroup>
-							:
-							<MessagesGroup listRef={listRef} metadata={metadata}>
-								{groupMessages}
-							</MessagesGroup>
+					const metadata: MessagesGroupMetadataType = {
+						isMy: isNewGroup,
+						avatarData: {
+							photoUrl: data.photoUrl,
+							uid: data.uid,
 						}
-					</>
-				)
-			})
-
-
-			const updatedList = [...messagesList, ...newGroups];
-
-			setMessagesList((updatedList));
+					}
+				
+					return (
+						<>
+							{isNewGroup && !isNewDate ?
+								<>
+									{lastGroup}
+									<MessagesGroup listRef={listRef} metadata={metadata}>
+										<></>
+										{currMessage}
+									</MessagesGroup>
+								</>
+								: isNewDate ?
+								<>
+									{lastGroup}
+									<div className={classes.messagesDate}>{currData.toLocaleDateString()}</div>, 
+									<MessagesGroup listRef={listRef} metadata={metadata}>
+										<></>
+										{currMessage}
+									</MessagesGroup>
+								</>
+								:
+								<MessagesGroup listRef={listRef} metadata={metadata}>
+									{groupMessages}
+								</MessagesGroup>
+							}
+						</>
+					)
+				})
 	
 	
-			setPrevMessagesData(messagesData);
+				const updatedList = [...messagesList, ...newGroups];
+	
+				setMessagesList((updatedList));
+		
+		
+				setPrevMessagesData(messagesData);
+			}
 		}
 	}, [messagesData]);
 	if(!myAccountData) return <Preloader />;
