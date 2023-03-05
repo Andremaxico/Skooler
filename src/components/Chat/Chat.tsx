@@ -68,8 +68,11 @@ const Chat = () => {
 				: <div>Немає повідомлень</div>
 			}
 			<NewMessageForm 
-				authData={authData} scrollBottomBtn={scrollBtnRef.current} isMessageEdit={isEdit} 
-				updateMessage={sendUpdatedMessage} currValue={editMessageData?.value}
+				authData={authData} 
+				scrollBottomBtn={scrollBtnRef.current} 
+				isMessageEdit={isEdit} 
+				updateMessage={sendUpdatedMessage} 
+				currValue={editMessageData?.value}
 			/>
 		</div>
 	)

@@ -1,6 +1,6 @@
-import { Avatar, Dropdown, Menu, Typography } from 'antd';
+import { Avatar, Dropdown, Typography } from 'antd';
 import { CheckCircleOutlined, UserOutlined } from '@ant-design/icons';
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { MessageDataType, UsersWhoReadMessageType } from '../../../../utils/types';
 import classes from './Message.module.scss';
 import { Link } from 'react-router-dom';
@@ -11,7 +11,11 @@ import { markMessageAsRead } from '../../../../Redux/chat/reducer';
 import { DeleteMessageOption } from './MessageOptions/DeleteMessageOption';
 import { EditMessageDataType } from '../../Chat';
 import ListSubheader from '@mui/material/ListSubheader';
-const { Text } = Typography;
+import PopupState, { bindTrigger, bindMenu, Props, bindPopover } from 'material-ui-popup-state';
+import { Popover } from '@mui/material';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import cn from 'classnames';
 
 type PropsType = {
 	messageData: MessageDataType,
@@ -22,11 +26,13 @@ type PropsType = {
 	openInfoModal: (usersWHoRead: UsersWhoReadMessageType) => void,
 };
 
-const Message= React.forwardRef<HTMLDivElement, PropsType>(({
+const Message = React.forwardRef<HTMLDivElement, PropsType>(({
 	messageData, myAccountId, showDeleteConfirm, setEditMessageData, openInfoModal, isShort
 }, ref) => {
 	const { text, photoUrl, uid, id, usersWhoRead, createdAt, displayName, received, edited} = messageData;
 
+	const menuRef = useRef<HTMLDivElement>(null);
+	
 	//intersection observer hook
 	const { ref: observerRef, inView, entry } = useInView({
 		threshold: 0.7,
@@ -48,29 +54,32 @@ const Message= React.forwardRef<HTMLDivElement, PropsType>(({
 	//getTime() - щоб не показувалися неправильні дані при надісланні повіомлення
 	const sendTime = `${addZero(sendDate.getHours())}:${addZero(sendDate.getMinutes())}`;
 
-	//show this by (right button of mouse) click on message
-	const contextMenu = (
-		<Menu className={classes.contextMenu}
-			items={[
-				{
-					label: <Text onClick={() => setEditMessageData({value: text, id})}>Змінити</Text>,
-					key: '1',
-				},
-				{
-					label: <Text onClick={() => openInfoModal(usersWhoRead)}>Інформація</Text>,
-					key: '3',
-				},
-				{
-					label: 
-						<DeleteMessageOption 
-							className={classes.deleteMessage} 
-							showDeleteConfirm={showDeleteConfirm} messageId={messageData.id}
-						/>,
-					key: '2',
-				},
-			]}
-		/>
-	 );
+	// //show this by (right button of mouse) click on message
+	// const contextMenu = (
+	// 	<Menu className={classes.contextMenu}
+	// 		items={[
+	// 			{
+	// 				label: <Text onClick={() => {
+	// 					setEditMessageData({value: text, id})
+	// 					console.log('set edit message data message.tsx')
+	// 				}}>Змінити</Text>,
+	// 				key: '1',
+	// 			},
+	// 			{
+	// 				label: <Text onClick={() => openInfoModal(usersWhoRead)}>Інформація</Text>,
+	// 				key: '3',
+	// 			},
+	// 			{
+	// 				label: 
+	// 					<DeleteMessageOption 
+	// 						className={classes.deleteMessage} 
+	// 						showDeleteConfirm={showDeleteConfirm} messageId={messageData.id}
+	// 					/>,
+	// 				key: '2',
+	// 			},
+	// 		]}
+	// 	/>
+	//  );
 
 	return (
 		<div className={`${classes.Message} ${isMy && classes._my}`} ref={observerRef}>
@@ -81,23 +90,70 @@ const Message= React.forwardRef<HTMLDivElement, PropsType>(({
 						className={classes.avatar}
 					/>
 			</Link>} */}
-			<Dropdown overlay={contextMenu} trigger={['contextMenu', 'click']}>
-				<div className={classes.messageBody} ref={ref}>
-					{!isShort && !isMy && <h5 className={classes.username}>{displayName}</h5>}
-					<p className={classes.text}>{text}</p>
-					<div className={classes.info}>
-						<p className={classes.createDate}>{sendTime}</p>
+			<PopupState variant="popover" popupId="message-context">
+				{ (popupState) => (
+					<>
+					<div {...bindTrigger(popupState)} className={classes.messageBody} ref={ref}>
+						{!isShort && !isMy && <h5 className={classes.username}>{displayName}</h5>}
+						<p className={classes.text}>{text}</p>
+						<div className={classes.info}>
+							<p className={classes.createDate}>{sendTime}</p>
 
-						{isMy && <p className={classes.receivedStatus}>
-							{received 
-							? <><CheckCircleOutlined className={classes.icon}/><CheckCircleOutlined className={classes.icon}/></> 
-							: <CheckCircleOutlined className={classes.icon} />}
-						</p>}
+							{isMy && <p className={classes.receivedStatus}>
+								{received 
+								? <><CheckCircleOutlined className={classes.icon}/><CheckCircleOutlined className={classes.icon}/></> 
+								: <CheckCircleOutlined className={classes.icon} />}
+							</p>}
 
-						{edited && <p className={classes.edited}>Змінено</p>}
+							{edited && <p className={classes.edited}>Змінено</p>}
+						</div>
 					</div>
-				</div>
-			</Dropdown>
+					<Popover
+						{...bindPopover(popupState)}
+
+						onClick={(e: React.MouseEvent) =>{
+							const target = e.target as Element;
+							const isClickedOnMenu = target === menuRef.current;
+					
+							if(!isClickedOnMenu) {
+								popupState.close();
+							}
+						}}
+						anchorOrigin={{
+							vertical: 'bottom',
+							horizontal: 'center',
+						}}
+						transformOrigin={{
+							vertical: 'top',
+							horizontal: 'center',
+						}}
+					>
+						<Menu {...bindMenu(popupState)} ref={menuRef} className={classes.contextMenu}>
+							{isMy && 
+								<>
+									<MenuItem onClick={() => {
+										setEditMessageData({value: text, id})
+									}} className={classes.menuItem}>Редагувати</MenuItem>
+								</>
+							}
+							<MenuItem onClick={() => {
+								openInfoModal(usersWhoRead)
+							}} className={classes.menuItem}>Інформація</MenuItem>
+
+							{isMy && 
+								<MenuItem className={classes.deleteBtn}>
+									<DeleteMessageOption 
+										className={cn(classes.deleteMessage, classes.menuItem)} 
+										showDeleteConfirm={showDeleteConfirm} 
+										messageId={messageData.id}
+									/>
+								</MenuItem>
+							}
+						</Menu>
+					</Popover>
+					</>
+				)}
+			</PopupState>
 		</div>
 	)
 });

@@ -40,6 +40,28 @@ type MessagesGroupType = {
 	metadata: MessagesGroupMetadataType,
 }
 
+const sortMessagesByDate = (messagesData: MessagesDataType): FormattedMessagesType => {
+	const sortedMessages: FormattedMessagesType = {};
+
+	messagesData.forEach((messageData: MessageDataType) => {
+		//@ts-ignore
+		const createMilisecs = messageData.createdAt?.seconds * 1000;
+		const createDate = new Date(createMilisecs || new Date().getTime());
+		const createDateString = createDate.toLocaleDateString();
+
+
+
+		if(!sortedMessages[createDateString]) {
+			sortedMessages[createDateString] = [];
+		}
+
+		sortedMessages[createDateString].push(messageData);
+	});
+
+
+	return sortedMessages;
+}
+
 const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessageData, messagesData}, ref) => {
 	const isFetching = useSelector(selectIsMessagesFetching);
 	const myAccountData = useSelector(selectMyAccountData);
@@ -74,8 +96,6 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessage
 		});
 	};
 
-	//sorting messages on groups by create date
-	const sortedMessages: FormattedMessagesType = {};
 	//on scroll listener
 	// useEffect(() => {
 	// 	const handleScroll = () => {
@@ -96,7 +116,7 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessage
 		return false;
 	}).length;
 
-	//sorting messages in groups writed by 1 user in row
+	//scroll to last read message
 	useEffect(() => {
 		if(myMessageRef.current) {
 			myMessageRef.current.scrollIntoView({
@@ -111,19 +131,8 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessage
 		let messages: JSX.Element[] = []; // messages list
 
 			
-		//here we sort messages in groups with keys - dates
-		messagesData.forEach((messageData: MessageDataType) => {
-			//@ts-ignore
-			const createMilisecs = messageData.createdAt?.seconds * 1000;
-			const createDate = new Date(createMilisecs || new Date().getTime());
-			const createDateString = createDate.toLocaleDateString();
-
-			if(!sortedMessages[createDateString]) {
-				sortedMessages[createDateString] = [];
-			}
-
-			sortedMessages[createDateString].push(messageData);
-		});
+		//sorting messages on groups by create date
+		const sortedMessages: FormattedMessagesType = sortMessagesByDate(messagesData);
 
 		Object.keys(sortedMessages).forEach(dateStr => {
 			let currMessages: JSX.Element[] = []; // curr date messages
@@ -140,9 +149,14 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessage
 
 				const currMessage = (
 					<Message 
-						messageData={data} myAccountId={myAccountData?.uid || ''} setEditMessageData={setEditMessageData}
-						key={`${data.createdAt}${data.uid}`} showDeleteConfirm={showDeleteConfirm} 
-						openInfoModal={setUsersWhoReadCurrMessage}  isShort={isShort} ref={myMessageRef}
+						messageData={data} 
+						myAccountId={myAccountData?.uid || ''} 
+						setEditMessageData={setEditMessageData}
+						key={`${data.createdAt}${data.uid}`} 
+						showDeleteConfirm={showDeleteConfirm} 
+						openInfoModal={setUsersWhoReadCurrMessage}  
+						isShort={isShort} 
+						ref={myMessageRef}
 					/>
 				);
 
@@ -196,14 +210,10 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessage
 			setMyMessages((prevMessages) => [...prevMessages, ...currMyMessages]);
 
 			messages = [...messages, ...addedElements];
-
-			console.log('messages', message);
 		});
 
 		setMessagesList(messages);
-
-		console.log('messagesList', messagesList);  
-	}, [myAccountData]);
+	}, [myAccountData, messagesData]);
 
 	//get users еhat read curr message 
 	useEffect(() => { 
@@ -231,112 +241,130 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessage
 		setUsersWhoReadCurrMessage(null);
 	}
 
-	useEffect(() => {
-		if(messagesList && messagesList.length > 0 && prevMessagesData.length !== messagesData.length) {
-			const diff = messagesData.filter(({ id: id1 }, i) => {
-				const isDifferent = prevMessagesData[i]?.id !== id1;
+	//add new message to state
+	// useEffect(() => {
+	// 	if(messagesList && messagesList.length > 0 && prevMessagesData.length !== messagesData.length) {
+	// 		const diff = messagesData.filter(({ id: id1 }, i) => {
+	// 			const isDifferent = prevMessagesData[i]?.id !== id1;
 
-				console.log('is different', isDifferent);
+	// 			console.log('is different', isDifferent);
 
-				return isDifferent;
-			});
+	// 			return isDifferent;
+	// 		});
 
-			//to chnage this if we create new group
-			const lastGroup = messagesList.pop();
+	// 		//to chnage this if we create new group
+	// 		const lastGroup = messagesList.pop();
 
-			//to add new message to this
-			const groupMessages = lastGroup?.props.children;
+	// 		//to add new message to this
+	// 		const groupMessages = lastGroup?.props.children;
 
-			if(diff.length > 0) {
-				const newGroups = diff.map((data, i) => {
-					const lastMessage: MessageDataType = i === 0 ? prevMessagesData[prevMessagesData.length - 1] : diff[i - 1];
-					//we need to create new group
-					const lastAccountId = lastMessage.uid ;
-					//@ts-ignore
-					console.log('timestamps', data.createdAt.seconds, lastMessage.createdAt.seconds, data.createdAt.seconds )
+	// 		if(diff.length > 0) {
+	// 			const newGroups = diff.map((data, i) => {
+	// 				const lastMessage: MessageDataType = i === 0 ? prevMessagesData[prevMessagesData.length - 1] : diff[i - 1];
+	// 				//we need to create new group
+	// 				const lastAccountId = lastMessage.uid ;
+					
+	// 				//get messages dates
+	// 				//@ts-ignore
+	// 				const lastDate = lastMessage.createdAt?.seconds ? new Date(lastMessage.createdAt.seconds * 1000) : null;
+
+	// 				console.log('last date', lastDate);
+
+	// 				//@ts-ignore
+	// 				const currDate = data.createdAt?.seconds ? new Date(data.createdAt.seconds * 1000) : new Date();
 	
+	// 				//comparing dates
+	// 				const isNewDate = lastDate ? lastDate.toLocaleDateString() !== currDate.toLocaleDateString() : false;
+
+	// 				//create new group or not
+	// 				const isNewGroup: boolean = lastAccountId !== data.uid;
+	// 				const isMy = data.uid === myAccountData?.uid;
 	
-	
-					//@ts-ignore
-					const lastData = new Date(lastMessage.createdAt.seconds * 1000);
-	
-					console.log('last data', lastData);
-					//@ts-ignore
-					const currData = data.createdAt?.seconds ? new Date(data.createdAt.seconds * 1000) : new Date();
-	
-					console.log('curr', currData);
-	
-					const isNewDate = currData.getTime() - lastData.getTime() < 24 * 60 * 60 * 1000
-	
-					console.log('is new date', isNewDate);
-	
-					//create new group or not
-					const isNewGroup: boolean = lastAccountId !== data.uid;
-					const isMy = data.uid === myAccountData?.uid;
-	
-					const currMessage = (
-						<Message 
-							messageData={data} 
-							myAccountId={myAccountData?.uid || ''} 
-							setEditMessageData={setEditMessageData}
-							key={`${data.createdAt}${data.uid}`} 
-							showDeleteConfirm={showDeleteConfirm} 
-							openInfoModal={setUsersWhoReadCurrMessage}  
-							isShort={isNewGroup} 
-							ref={isMy ? myMessageRef : undefined}
-						/>
-					);
+	// 				const currMessage = (
+	// 					<Message 
+	// 						messageData={data} 
+	// 						myAccountId={myAccountData?.uid || ''} 
+	// 						setEditMessageData={setEditMessageData}
+	// 						key={`${data.createdAt}${data.uid}`} 
+	// 						showDeleteConfirm={showDeleteConfirm} 
+	// 						openInfoModal={setUsersWhoReadCurrMessage}  
+	// 						isShort={isNewGroup} 
+	// 						ref={isMy ? myMessageRef : undefined}
+	// 					/>
+	// 				);
 		
-					if(!isNewGroup && !isNewDate) {
-						groupMessages.push(currMessage);
-					}
+	// 				if(!isNewGroup && !isNewDate) {
+	// 					groupMessages.push(currMessage);
+	// 				}
 	
-					const metadata: MessagesGroupMetadataType = {
-						isMy: isNewGroup,
-						avatarData: {
-							photoUrl: data.photoUrl,
-							uid: data.uid,
-						}
-					}
+	// 				const metadata: MessagesGroupMetadataType = {
+	// 					isMy: isNewGroup,
+	// 					avatarData: {
+	// 						photoUrl: data.photoUrl,
+	// 						uid: data.uid,
+	// 					}
+	// 				}
 				
-					return (
-						<>
-							{isNewGroup && !isNewDate ?
-								<>
-									{lastGroup}
-									<MessagesGroup listRef={listRef} metadata={metadata}>
-										<></>
-										{currMessage}
-									</MessagesGroup>
-								</>
-								: isNewDate ?
-								<>
-									{lastGroup}
-									<div className={classes.messagesDate}>{currData.toLocaleDateString()}</div>, 
-									<MessagesGroup listRef={listRef} metadata={metadata}>
-										<></>
-										{currMessage}
-									</MessagesGroup>
-								</>
-								:
-								<MessagesGroup listRef={listRef} metadata={metadata}>
-									{groupMessages}
-								</MessagesGroup>
-							}
-						</>
-					)
-				})
+	// 				return (
+	// 					<>
+	// 						{isNewGroup && !isNewDate ?
+	// 							<>
+	// 								{lastGroup}
+	// 								<MessagesGroup listRef={listRef} metadata={metadata}>
+	// 									<></>
+	// 									{currMessage}
+	// 								</MessagesGroup>
+	// 							</>
+	// 							: isNewDate ?
+	// 							<>
+	// 								{lastGroup}
+	// 								<div className={classes.messagesDate}>{currDate.toLocaleDateString()}</div>, 
+	// 								<MessagesGroup listRef={listRef} metadata={metadata}>
+	// 									<></>
+	// 									{currMessage}
+	// 								</MessagesGroup>
+	// 							</>
+	// 							:
+	// 							<MessagesGroup listRef={listRef} metadata={metadata}>
+	// 								{groupMessages}
+	// 							</MessagesGroup>
+	// 						}
+	// 					</>
+	// 				)
+	// 			})
 	
 	
-				const updatedList = [...messagesList, ...newGroups];
+	// 			const updatedList = [...messagesList, ...newGroups];
 	
-				setMessagesList((updatedList));
-		
-		
-				setPrevMessagesData(messagesData);
-			}
-		}
-	}, [messagesData]);
+	// 			//set JSX.Elements -> rerender
+	// 			setMessagesList((updatedList));
+	// 			//for next new messages compare
+	// 			setPrevMessagesData(messagesData);
+	// 		}
+	// 	}
+	// }, [messagesData]);
+
+	// //change messages
+	// useEffect(() => {
+	// 	if(messagesData !== prevMessagesData) {
+	// 		const changedEl: JSX.Element[] = [];
+
+	// 		const diff = messagesData.filter(({ text: text1 }, i) => {
+	// 			const isDifferent = prevMessagesData[i]?.text !== text1;
+
+	// 			console.log('is different', isDifferent);
+
+	// 			return isDifferent;
+	// 		});
+
+	// 		if(diff.length > 0) {
+
+	// 			diff.forEach(data => {
+					
+	// 			});
+	// 		}
+	// 	}
+	// }, [messagesData]);
 	if(!myAccountData) return <Preloader />;
 
 	return (

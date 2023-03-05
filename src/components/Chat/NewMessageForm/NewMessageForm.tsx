@@ -39,6 +39,7 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 	const [isFocused, setIsFocused] = useState<boolean>(false);
 	const [isFirstlyOpened, setIsFirstlyOpened] = useState<boolean>(true);
 	const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+	const [textareaEl, setTextareaEl] = useState<HTMLTextAreaElement | null>(null);
 
 	//ant design form(щоб показувати зарашнє значення коментара) & reset formmessa
 
@@ -48,17 +49,16 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 	const messageField = useRef<HTMLDivElement>(null);
 	const formRef = useRef<HTMLFormElement>(null);
 
-	let textareaEl: HTMLTextAreaElement | null | undefined = null;
-
 	//set textarea element
 	useEffect(() => {
-		if(messageField) {
+		if(messageField.current) {
 			//fignyaaaaaaaa 
 			// DELETE THISSSS! IS`S GIVNOCODE
 			//ale pobachymo
-			textareaEl = messageField.current?.querySelector('textarea');
+			setTextareaEl(messageField.current.querySelector('textarea'));
+			console.log('set textareaEl');
 		}
-	}, [messageField]);
+	}, []);
 
 	const dispatch = useAppDispatch();
 
@@ -89,15 +89,18 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 
 	//for edit
 	useEffect(() => {
-		//set for antd textarea
-		//form.setFieldValue('message', currValue);
 		//set focus on the message field
+		console.log('curr value or ismessageEdit changed', textareaEl, isMessageEdit);
 		if(textareaEl && isMessageEdit) {
 			textareaEl.focus();
 		}
 		//set to react-hook-form value
+		
+	}, [isMessageEdit]);
+
+	useEffect(() => {
 		setValue('message', currValue || '');
-	}, [currValue]);
+	}, [currValue])
 
 	//send message to thunk
 	const addMessage = async (newMessage: string) => {
@@ -137,6 +140,8 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 		}
 	}, [watch('message')]);
 
+	const isSendBtnShowing = isFirstlyOpened && !isMessageEdit ? !isFirstlyOpened : !isMessageEdit ? !errors.message : true;
+
 	return (
 		<form className={classes.NewMessageForm} onSubmit={handleSubmit(onSubmit)} ref={formRef}>
 			<Controller
@@ -165,7 +170,7 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 							size='lg'
 							ref={messageField}
 							sx={{minWidth: '100%' }}
-							endDecorator={ (isFirstlyOpened ? !isFirstlyOpened : !errors.message) &&		
+							endDecorator={ isSendBtnShowing &&		
 								<IconButton color='primary' type='submit' className={classes.sendBtn}> 
 									<SendIcon />
 								</IconButton>

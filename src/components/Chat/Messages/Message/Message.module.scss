@@ -2,6 +2,15 @@
 
 $textColor: $black;
 
+.contextMenu {
+	padding: 0;
+	.menuItem {
+		@include smallText;
+		&.deleteMessage {
+			color: $error;
+		}
+	}
+}
 
 .Message {
 	position: relative;
