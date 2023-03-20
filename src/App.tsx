@@ -89,7 +89,7 @@ const App = () => {
   //get login data 
   useEffect(() => {
     console.log('user', user);
-    setIsFetching(false);
+    setIsFetching(loading);
     const getLoginData = async () => {
       if(user) {
         dispatch(loginDataReceived({...user}));
@@ -97,8 +97,8 @@ const App = () => {
       }
     }
     getLoginData();
-    setIsFetching(false);
-  }, [user]);
+    setIsFetching(loading);
+  }, [loading]);
 
 
   //footer&header height for padding botton
