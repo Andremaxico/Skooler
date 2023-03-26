@@ -16,6 +16,8 @@ import { Popover } from '@mui/material';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import cn from 'classnames';
+import DoneAllOutlinedIcon from '@mui/icons-material/DoneAllOutlined';
+import DoneOutlinedIcon from '@mui/icons-material/DoneOutlined';
 
 type PropsType = {
 	messageData: MessageDataType,
@@ -97,15 +99,15 @@ const Message = React.forwardRef<HTMLDivElement, PropsType>(({
 						{!isShort && !isMy && <h5 className={classes.username}>{displayName}</h5>}
 						<p className={classes.text}>{text}</p>
 						<div className={classes.info}>
+							{edited && <p className={classes.edited}>Змінено</p>}
+
 							<p className={classes.createDate}>{sendTime}</p>
 
 							{isMy && <p className={classes.receivedStatus}>
 								{received 
-								? <><CheckCircleOutlined className={classes.icon}/><CheckCircleOutlined className={classes.icon}/></> 
-								: <CheckCircleOutlined className={classes.icon} />}
+								? <DoneAllOutlinedIcon className={classes.icon} /> 
+								: <DoneOutlinedIcon className={classes.icon} />}
 							</p>}
-
-							{edited && <p className={classes.edited}>Змінено</p>}
 						</div>
 					</div>
 					<Popover

@@ -22,6 +22,7 @@ import { MessagesGroup } from './MessagesGroup';
 import { DeleteConfirm } from '../../../UI/DeleteConfirm';
 import { UsersWhoReadDialog } from '../../../UI/UsersWhoReadDialog';
 import { debounce } from 'lodash';
+import { getStringDate } from '../../../utils/helpers/getStringDate';
 
 type PropsType = {
 	setEditMessageData: (data: EditMessageDataType) => void, 
@@ -50,10 +51,7 @@ const getSortedByDateMessages = (messagesData: MessagesDataType): FormattedMessa
 	messagesData.forEach((messageData: MessageDataType) => {
 		//@ts-ignore
 		const createMilisecs = messageData.createdAt?.seconds * 1000;
-		const createDate = new Date(createMilisecs || new Date().getTime());
-		const createDateString = createDate.toLocaleDateString();
-
-
+		const createDateString = getStringDate(createMilisecs || new Date().getTime());
 
 		if(!sortedMessages[createDateString]) {
 			sortedMessages[createDateString] = [];

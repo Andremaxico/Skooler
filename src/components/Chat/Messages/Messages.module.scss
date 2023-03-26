@@ -8,8 +8,11 @@
 	overflow-y: auto;
 
 	.messagesDate {
+		@include smallText;
+		color: $gray;
 		margin: 20px 0 20px -24px; //-24 - half from 48px`s padding
 		text-align: center;
+		font-style: italic;
 	}
 
 
