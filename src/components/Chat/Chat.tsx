@@ -13,7 +13,7 @@ import { editMessage, startMessaging, stopMessaging } from '../../Redux/chat/red
 import { AnyAction } from 'redux';
 import Preloader from '../../UI/Preloader';
 import { useAppDispatch } from '../../Redux/store';
-import { ScrollBottomBtn } from '../../UI/ScrollBottomBtn';
+import { ScrollBtn } from '../../UI/ScrollBtn';
 import { selectMyAccountData } from '../../Redux/account/account-selectors';
 
 export type EditMessageDataType = {
@@ -55,7 +55,11 @@ const Chat = () => {
 	}
 
 	useEffect(() => {
+		setIsLoading(true);
 		dispatch(startMessaging());
+		setTimeout(() => {
+			setIsLoading(false);
+		}, 2000);
 	}, []);
 
 	//set unread messages count
@@ -72,7 +76,9 @@ const Chat = () => {
 		console.log('unread count', unreadCount);
 	}, [messagesData?.length])
 
-	if(isLoading && !messagesData) return <Preloader />;
+	console.log('messages data', messagesData);
+
+	if(!messagesData || !myAccountData) return <Preloader fixed={true} />;
 	if(!authData) return <Navigate to='/login' replace={true}/>	
 
 	return (
@@ -92,7 +98,7 @@ const Chat = () => {
 				: <div>Немає повідомлень</div>
 			}
 			{chatRef.current && 
-				<ScrollBottomBtn 
+				<ScrollBtn 
 					element={chatRef.current} 
 					ref={scrollBtnRef} 
 					unreadCount={unreadMessagesCount || 0} 
@@ -100,7 +106,7 @@ const Chat = () => {
 			}
 			<NewMessageForm 
 				authData={authData} 
-				scrollBottomBtn={scrollBtnRef.current} 
+				ScrollBtn={scrollBtnRef.current} 
 				isMessageEdit={isEdit} 
 				updateMessage={sendUpdatedMessage} 
 				currValue={editMessageData?.value}

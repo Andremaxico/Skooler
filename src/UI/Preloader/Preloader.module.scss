@@ -7,7 +7,9 @@
 	@include size(100px);
 	@include center-align;
 	transform: translate(-50%, -50%);
-	 
+	&._fixed {
+		position: fixed;
+	}
 	.clockLoader {
 		--clock-color: $primary;
 		--clock-width: 4rem;

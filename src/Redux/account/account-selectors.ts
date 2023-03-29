@@ -27,3 +27,7 @@ export const selectCurrAvatarUrl = (state: RootStateType) => {
 export const selectAuthedStatus = (state: RootStateType) => {
 	return state.account.isAuthed;
 }
+
+export const selectCurrUserQuestions = (state: RootStateType) => {
+	return state.account.currUserQuestions;
+}

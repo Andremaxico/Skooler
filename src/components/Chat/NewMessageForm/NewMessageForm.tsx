@@ -22,7 +22,7 @@ type PropsType = {
 	authData: UserType | null,
 	isMessageEdit: boolean,
 	currValue?: string, 
-	scrollBottomBtn: HTMLButtonElement | null,
+	ScrollBtn: HTMLButtonElement | null,
 	updateMessage: (value: string) => void,
 }
 
@@ -31,7 +31,7 @@ type FieldValues = {
 }
 
 export const NewMessageForm: React.FC<PropsType> = React.memo(({
-	authData, isMessageEdit, currValue, updateMessage, scrollBottomBtn
+	authData, isMessageEdit, currValue, updateMessage, ScrollBtn
 }): ReactElement<any, any> => {
 	//react-hook-form
 	const { control, formState: {errors, isValid}, handleSubmit, reset, setValue, trigger, watch } = useForm<FieldValues>();
@@ -69,11 +69,11 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 			setIsSending(true);
 			await addMessage(data.message);
 			setIsSending(false);
-			if(scrollBottomBtn) {
+			if(ScrollBtn) {
 				//for in MEssages changed will apply
 				setTimeout(() => {
 					console.log('cliked!');
-					scrollBottomBtn.click()
+					ScrollBtn.click()
 				}, 300);
 			}
 		} else  {

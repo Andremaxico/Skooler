@@ -1,7 +1,8 @@
+import { streamAPI } from './../../api/streamApi';
 import { accountAPI } from './../../api/accountApi';
 import { AppDispatchType, RootStateType } from './../store';
 import { ThunkAction } from 'redux-thunk';
-import { AccountDataType, ReceivedAccountDataType, UserType, SchoolInfoType, UserRatingsType } from './../../utils/types/index';
+import { AccountDataType, ReceivedAccountDataType, UserType, SchoolInfoType, UserRatingsType, PostDataType } from './../../utils/types/index';
 import { createReducer, createAction, AnyAction } from '@reduxjs/toolkit';
 import { schoolsAPI } from '../../api/schoolsApi';
 import { usersAPI } from '../../api/usersApi';
@@ -12,6 +13,7 @@ export type AccountStateType = {
 	myAccountData: ReceivedAccountDataType | null,
 	myLoginData: User | null,
 	currUserAccount: ReceivedAccountDataType | null | undefined,
+	currUserQuestions: PostDataType[] | null,
 	isFetching: boolean,
 	currMyAvatarUrl: string | null,
 	isAuthed: boolean,
@@ -30,10 +32,12 @@ export const currMyAvatarUrlReceived = createAction<string>('auth/CURR_MY_AVATAR
 export const newQuestionLiked = createAction<string>('account/NEW_QUESTION_LIKED');
 export const questionUnliked = createAction<string>('account/QESTION_UNLIKED');
 export const authStatusChanged = createAction<boolean>('account/AUTH_STATUS_CHANGED');
+export const currUserQuestionsReceived = createAction<PostDataType[] | null>('account/CURR_USER_QUESTIONS_RECEIVED');
 
 const initialState: AccountStateType = {
 	myAccountData: null,
 	myLoginData: null,
+	currUserQuestions: null,
 	currUserAccount: null,
 	isFetching: false,
 	currMyAvatarUrl: null,
@@ -91,6 +95,9 @@ const accountReducer = createReducer(initialState, (builder) => {
 		})
 		.addCase(authStatusChanged, (state, action) => {
 			state.isAuthed = action.payload;
+		})
+		.addCase(currUserQuestionsReceived, (state, action) => {
+			state.currUserQuestions = action.payload;
 		})
 		.addDefaultCase((state, action) => {});
 });
@@ -251,4 +258,10 @@ export const userAnswerMarkedAsCorrect = (uid: string) => async (dispatch: AppDi
 	}
 }
 
+
+export const setUserQuestions = (uid: string) => async (dispatch: AppDispatchType) => {
+	const questions = await streamAPI.getUserQuestions(uid);
+
+	dispatch(currUserQuestionsReceived(questions));
+}
 export default accountReducer;

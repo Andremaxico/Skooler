@@ -5,7 +5,7 @@ import { renderToStaticMarkup } from "react-dom/server"
 import { selectMyAccountData, selectMyLoginData } from '../../../Redux/account/account-selectors';
 import { selectCurrMessageWhoReadList, selectIsMessagesFetching, selectMessages } from '../../../Redux/chat/selectors'; 
 import Preloader from '../../../UI/Preloader';
-import { ScrollBottomBtn } from '../../../UI/ScrollBottomBtn';
+import { ScrollBtn } from '../../../UI/ScrollBtn';
 import { MessageDataType, MessagesDataType, ReceivedAccountDataType, UsersWhoReadMessageType } from '../../../utils/types';
 import Message from './Message';
 import classes from './Messages.module.scss';
@@ -356,7 +356,7 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessage
 		}
 	}, [messagesData]);
 	*/
-	if(!myAccountData) return <Preloader />;
+	if(!myAccountData || !messagesList) return <Preloader fixed={true} />;
 
 	return (
 		<div className={classes.Messages} ref={listRef}>

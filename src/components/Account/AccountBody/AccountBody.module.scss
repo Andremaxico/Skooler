@@ -1,29 +1,78 @@
 @import '../../../global-styles';
 
 .AccountBody {
+	margin-bottom: 24px;
 	.AccountHeader {
 		position: relative;
 		margin-bottom: 60px;
 	}
 	.cover {
+		position: relative;
 		@include size(100%, 15vh);
 		background-color: $mainCol;
 		border-radius: 0 0 24px 24px;
+		.fullName {
+			position: absolute;
+			top: 8px;
+			left: 12px;
+			margin: 0;
+			@include smallTitle; 
+			color: #fff;
+		}
+		.editBtn {
+			position: absolute;
+			bottom: 12px;
+			right: 12px;
+			.icon {
+				font-size: 24px;
+				color: #fff;
+				opacity: 0.6;
+			}
+		}
 	}
 	.avatar {
 		position: absolute;
 		bottom: 0;
-		left: 30px;
+		left: 28px;
 		transform: translateY(50%);
 		@include size(100px);
+		box-shadow: 2px 14px 43px -19px rgba(0,0,0,0.67);
 		img {
 
 		}
 	}
-	.fullName {}
-	.birthDate {}
-	.classNum {}
-	.status {}
-	.about {}
-	.school {}
+
+	.about {
+		margin-bottom: 12px;
+	}
+
+	.AccountInfo {
+		li {
+			padding: 8px 0 8px 32px;
+			@include row-align;
+			background-size: 28px;
+			background-position: left center;
+			background-repeat: no-repeat;
+		}
+		.title {
+			@include bigText;
+			font-weight: 500;
+		}
+		.birthDate {
+			background-image: url('../../../assets/images/birthday-icon.png');
+		}
+		.classNum {
+			background-image: url('../../../assets/images/pupil.png');
+		}
+		
+		.rating {
+			background-image: url('../../../assets/images/rating.png');
+		}
+		.AccountSchool {
+			background-image: url('../../../assets/images/school-icon.png');
+			.school {
+				color: $black; 
+			}
+		}
+	}
 }

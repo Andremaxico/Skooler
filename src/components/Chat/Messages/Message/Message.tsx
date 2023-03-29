@@ -56,33 +56,6 @@ const Message = React.forwardRef<HTMLDivElement, PropsType>(({
 	//getTime() - щоб не показувалися неправильні дані при надісланні повіомлення
 	const sendTime = `${addZero(sendDate.getHours())}:${addZero(sendDate.getMinutes())}`;
 
-	// //show this by (right button of mouse) click on message
-	// const contextMenu = (
-	// 	<Menu className={classes.contextMenu}
-	// 		items={[
-	// 			{
-	// 				label: <Text onClick={() => {
-	// 					setEditMessageData({value: text, id})
-	// 					console.log('set edit message data message.tsx')
-	// 				}}>Змінити</Text>,
-	// 				key: '1',
-	// 			},
-	// 			{
-	// 				label: <Text onClick={() => openInfoModal(usersWhoRead)}>Інформація</Text>,
-	// 				key: '3',
-	// 			},
-	// 			{
-	// 				label: 
-	// 					<DeleteMessageOption 
-	// 						className={classes.deleteMessage} 
-	// 						showDeleteConfirm={showDeleteConfirm} messageId={messageData.id}
-	// 					/>,
-	// 				key: '2',
-	// 			},
-	// 		]}
-	// 	/>
-	//  );
-
 	return (
 		<div className={`${classes.Message} ${isMy && classes._my}`} ref={observerRef}>
 			{/* {!isShort && !isMy && <Link to={`/account/${!isMy ? uid : ''}`} replace={true}>

@@ -57,6 +57,21 @@ export const streamAPI =  {
 		}
 	},
 
+	async getUserQuestions(uid: string) {
+		const questionRef = collection(firestore, 'questions');
+		const docs = query(questionRef, where('authorId', '==', uid));
+
+		const snapshots = await getDocs(docs);
+
+		const questions: PostDataType[] = [];
+
+		snapshots.forEach(snap => {
+			if(snap.exists()) questions.push(snap.data() as PostDataType);
+		});
+
+		return questions;
+	},
+
 	async editPost(data: PostDataType, newText: string) {
 		const changingPost = doc(firestore, 'questions', data.id);
 

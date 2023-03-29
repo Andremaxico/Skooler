@@ -127,8 +127,8 @@ const App = () => {
         <Content 
           className={classes.Content} 
           style={{
-            paddingTop: `${headerHeight + 12}px`, 
-            paddingBottom: `${footerHeight + 12}px`,
+            paddingTop: `${headerHeight   }px`, 
+            paddingBottom: `${footerHeight}px`,
           }}
         >
           <div className="site-layout-content" style={{flex: '1 1 auto'}}>

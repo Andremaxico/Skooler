@@ -10,6 +10,7 @@ import Preloader from '../../UI/Preloader';
 import { AccountBody } from './AccountBody';
 import { AccountForm } from './AccountForm';
 import { NoAccountData } from './NoAccountData';
+import { AccountQuestions } from './AccountQuestions';
 
 type PropsType = {};
 
@@ -23,10 +24,6 @@ const Account: React.FC<PropsType> = ({}) => {
 	const isAuthed = useSelector(selectAuthedStatus);
 
 	const { userId } = useParams();
-
-	console.log('user id', userId);
-	console.log('curr user account data', currUserAccountData);
-
 
 	const accountData = userId ? currUserAccountData : myAccountData;
 	const isMy = !userId;
@@ -55,16 +52,14 @@ const Account: React.FC<PropsType> = ({}) => {
 		<div className={classes.Account}>
 			{
 			!isEdit && accountData ?
-				<AccountBody accountData={accountData} />
+				<>
+					<AccountBody accountData={accountData} setIsEdit={setIsEdit}/>
+					<AccountQuestions uid={accountData.uid} />
+				</>
 			: isMy ? (
 				<AccountForm accountData={myAccountData} setIsEdit={setIsEdit}/>
 			) 
 			: <NoAccountData />
-			}
-			
-			{ isMy && <Button onClick={() => setIsEdit(!isEdit)}>
-					{!isEdit ? 'Змінити дані профілю' : !!myAccountData ? 'Не зберігати зміни' : '' }
-				</Button>
 			}
 		</div>
 	)
