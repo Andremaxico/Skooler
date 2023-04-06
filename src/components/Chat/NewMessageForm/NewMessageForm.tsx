@@ -106,7 +106,7 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 	const addMessage = async (newMessage: string) => {
 		const newMessageData: MessageDataType = {
 			uid: authData?.uid || 'undefined',
-			displayName: `${accountData?.surname} ${accountData?.name}` || 'Анонім',
+			displayName: `${accountData?.fullName}` || 'Анонім',
 			photoUrl: accountData?.avatarUrl || '',
 			text: newMessage,
 			createdAt: serverTimestamp(),

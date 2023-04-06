@@ -18,7 +18,7 @@ export const PupilCard: React.FC<PropsType> = ({data}) => {
 					className={classes.avatar}
 				/>
 			</NavLink>
-			<h3 className={classes.name}>{data.name} {data.surname}</h3>
+			<h3 className={classes.name}>{data.fullName}</h3>
 		</div>
 	)
 }

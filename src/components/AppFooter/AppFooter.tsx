@@ -37,7 +37,7 @@ export const AppFooter: React.FC<PropsType> = ({}) => {
         <FooterLink icon={HomeIcon} to='/'/>
         <FooterLink icon={SchoolIcon} to='/myschool'/>
         <FooterLink icon={isAuthed ? ContactSupportIcon : LoginLink} bigger to='/new-post'/>
-        <FooterLink icon={MessageIcon} to='/chat' />
+        <FooterLink icon={MessageIcon} to='/chats' />
         <FooterLink icon={MessageIcon} to='/chat'/>
       </nav>
     </footer>

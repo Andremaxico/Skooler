@@ -20,7 +20,7 @@ type PropsType = {
 
 export const AccountBody: React.FC<PropsType> = React.memo(({accountData}) => {
 	const {
-		name, surname, birthDate, class: classNum, school, status, aboutMe, avatarUrl, rating
+		fullName, birthDate, class: classNum, school, status, aboutMe, avatarUrl, rating
 	} = accountData;
 	const loginData = useSelector(selectMyLoginData);
 
@@ -35,7 +35,7 @@ export const AccountBody: React.FC<PropsType> = React.memo(({accountData}) => {
 					<div className={classes.editBtn}>
 						<EditRoundedIcon className={classes.icon} />
 					</div>
-					<h1 className={classes.fullName}>{surname} { name}</h1>
+					<h1 className={classes.fullName}>{fullName}</h1>
 				</div>
 				<Avatar 
 					className={classes.avatar} icon={<UserOutlined />} 

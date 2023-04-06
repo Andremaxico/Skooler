@@ -17,7 +17,9 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 type PropsType = {};
 
 export type RegistrationFieldValues = AccountDataType & {
-	avatar: FileList
+	avatar: FileList,
+	name: string, 
+	surname: string,
 };
 
 export const Registration: React.FC<PropsType> = ({}) => {

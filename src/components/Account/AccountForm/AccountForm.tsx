@@ -35,6 +35,8 @@ export const AccountForm: React.FC<PropsType> = React.memo(({accountData, setIsE
 	let defaultBirthDateValue = null;
 	let defaultSchoolValue: SchoolSearchItemType | null = null;
 
+	const [name, surname] = accountData ? accountData.fullName.split(' ') : [undefined, undefined];
+
 	//форматовані дані для початкових значень деяких інпутів
 	if(accountData) {
 		const { date, months, years } = accountData?.birthDate;
@@ -130,7 +132,7 @@ export const AccountForm: React.FC<PropsType> = React.memo(({accountData, setIsE
 					<Col span={12}>
 						{/* Input name */}
 						<InitialInput 
-							control={control} initValue={accountData?.name || null} label="Ім'я" 
+							control={control} initValue={name || null} label="Ім'я" 
 							name='name'
 						/>
 					</Col>
@@ -138,7 +140,7 @@ export const AccountForm: React.FC<PropsType> = React.memo(({accountData, setIsE
 						{/* Input surname */}
 						<InitialInput 
 							control={control} name='surname' label='Прізвище'
-							initValue={accountData?.surname || null}
+							initValue={surname || null}
 						/>
 					</Col>
 				</Row>

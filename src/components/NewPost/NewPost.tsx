@@ -45,7 +45,7 @@ export const NewPost: React.FC<PropsType> = ({}) => {
 		const newPostData: PostDataType = {
 			id: v4(),
 			authorAvatarUrl: myAccountData?.avatarUrl || null,
-			authorFullname: `${myAccountData?.surname} ${myAccountData?.name}`,
+			authorFullname: `${myAccountData?.fullName}`,
 			createdAt: serverTimestamp(),
 			text: data.text,
 			category: data.category,

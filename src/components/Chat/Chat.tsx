@@ -101,7 +101,7 @@ const Chat = () => {
 				<ScrollBtn 
 					element={chatRef.current} 
 					ref={scrollBtnRef} 
-					unreadCount={unreadMessagesCount || 0} 
+					unreadCount={unreadMessagesCount || undefined} 
 				/>
 			}
 			<NewMessageForm 

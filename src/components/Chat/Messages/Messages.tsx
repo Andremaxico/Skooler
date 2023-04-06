@@ -1,23 +1,15 @@
-import { FieldValue } from 'firebase/firestore';
-import React, { useEffect, useImperativeHandle, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux';
-import { renderToStaticMarkup } from "react-dom/server"
-import { selectMyAccountData, selectMyLoginData } from '../../../Redux/account/account-selectors';
-import { selectCurrMessageWhoReadList, selectIsMessagesFetching, selectMessages } from '../../../Redux/chat/selectors'; 
+import { selectMyAccountData } from '../../../Redux/account/account-selectors';
+import { selectCurrMessageWhoReadList, selectIsMessagesFetching } from '../../../Redux/chat/selectors'; 
 import Preloader from '../../../UI/Preloader';
-import { ScrollBtn } from '../../../UI/ScrollBtn';
-import { MessageDataType, MessagesDataType, ReceivedAccountDataType, UsersWhoReadMessageType } from '../../../utils/types';
+import { MessageDataType, MessagesDataType, UsersWhoReadMessageType } from '../../../utils/types';
 import Message from './Message';
 import classes from './Messages.module.scss';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
-import confirm from 'antd/lib/modal/confirm';
 import { useAppDispatch } from '../../../Redux/store';
 import { deleteMessage, setCurrMessageWhoReadList } from '../../../Redux/chat/reducer';
 import { EditMessageDataType } from '../Chat';
-import { Avatar, message, Modal } from 'antd';
 import { ReadMessageUser } from '../../../UI/ReadMessageUser';
-import ListSubheader from '@mui/material/ListSubheader';
-import { Link } from 'react-router-dom';
 import { MessagesGroup } from './MessagesGroup';
 import { DeleteConfirm } from '../../../UI/DeleteConfirm';
 import { UsersWhoReadDialog } from '../../../UI/UsersWhoReadDialog';

@@ -26,7 +26,7 @@ export type ControllerFieldType = {
 	}
 }
 
-export type PathsType = '/chat' | '/login' | '/account' | '/myschool' | '/' | '/new-post' | '/post';
+export type PathsType = '/chat' | '/login' | '/account' | '/myschool' | '/' | '/new-post' | '/post' | '/chats';
 
 export type UsersWhoReadMessageType = Array<string | null>;
 
@@ -43,6 +43,14 @@ export type MessageDataType = {
 }
 export type MessagesDataType = MessageDataType[];
 
+
+export type ChatDataType = {
+	//intelocutor - співрозмовник
+	interlocutorId: string,
+	interlocutorFullname: string,
+	interlocutorAvatarUrl: string,
+	lastMessageData: MessageDataType,
+}
 //==============STREAM======================
 export type QuestionCategoriesType = Array<
 	'Математика' |
@@ -98,8 +106,7 @@ export type UserRatingsType =
 export type AccountDataType = {
 	class: string,
 	schoolId: number,
-	name: string,
-	surname: string,
+	fullName: string,
 	status: 'teacher' | 'schoolboy',
 	birthDate: moment.Moment | null, 
 	aboutMe: string | null,
@@ -111,8 +118,7 @@ export type AccountDataType = {
 export type ReceivedAccountDataType = { 
 	class: string,
 	school: SchoolInfoType,
-	name: string,
-	surname: string,
+	fullName: string,
 	status: 'teacher' | 'schoolboy',
 	rating: UserRatingsType,
 	birthDate: BirthDateObject, 

@@ -37,10 +37,12 @@ import { ActionStatus } from './UI/ActionStatus';
 import { theme } from './utils/theme';
 
 const Chat = React.lazy(() => import('./components/Chat'));
+const Chats = React.lazy(() => import('./components/Chats'));
 const Login = React.lazy(() => import('./components/Login'))
 const Account = React.lazy(() => import('./components/Account'));
 
 const SuspensedChat = withSuspense(Chat);
+const SuspensedChats = withSuspense(Chats);
 const SuspensedLogin = withSuspense(Login);
 const SuspensedAccount = withSuspense(Account);
 
@@ -136,7 +138,7 @@ const App = () => {
             
             <Routes>
               <Route path='/login' element={<SuspensedLogin />}/>
-              <Route path='/chat' element={<SuspensedChat />}/>
+              <Route path='/chats' element={<SuspensedChats />}/>
               <Route path='/account' element={<SuspensedAccount />}>
                 <Route path=':userId'/>
               </Route> 

@@ -32,7 +32,7 @@ export const NewAnswer: React.FC<PropsType> = ({cancelAnswer, questionId}) => {
 				createdAt: serverTimestamp(),
 				text: data.text,
 				authorAvatarUrl: myAccountData.avatarUrl || '',
-				authorFullname: `${myAccountData.surname} ${myAccountData.name}`,
+				authorFullname: `${myAccountData?.fullName}`,
 				id: v4(),
 				authorId: myAccountData.uid,
 				stars: 0,

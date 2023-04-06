@@ -9,12 +9,12 @@ type PropsType = {
 };
 
 export const ReadMessageUser: React.FC<PropsType> = ({userData}) => {
-	const { name, surname, avatarUrl } = userData;
+	const { fullName, avatarUrl } = userData;
 
 	return (
 		<div className={classes.ReadMessageUser}>
 			<Avatar className={classes.avatar} src={avatarUrl} icon={<UserOutlined />} size={50}/>
-			<p className={classes.name}>{name} {surname}</p>
+			<p className={classes.name}>{fullName}</p>
 		</div>
 	)
 }
