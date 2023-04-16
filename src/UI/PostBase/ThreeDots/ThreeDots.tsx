@@ -20,7 +20,7 @@ type PropsType = {
 export const ThreeDots = React.forwardRef<HTMLDivElement, PropsType>(({qId, menuRef, answerQId, postText, isForOwner}, ref) => {
 	const [isDeleteConfirmShowing, setIsDeleteConfirmShowing] = useState<boolean>(false);
 	const [isEditPostModalShowing, setIsEditPostModalShowing] = useState<boolean>(false);
-
+   
 	//const [isPopupShowing, setIsPopupShowing] = useState<>(false);
 
 	const dispatch = useAppDispatch();

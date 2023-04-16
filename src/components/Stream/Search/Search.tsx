@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 import { FormControl, IconButton, Input} from '@mui/joy';
-=======
-import { FormControl, IconButton, TextField } from '@mui/joy';
->>>>>>> f0a0e1dc5720320ac046ce0a9489471ff300868f
 import React, { useRef, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import classes from './Search.module.scss';
@@ -81,11 +77,7 @@ export const Search: React.FC<PropsType> = ({setIsLoading}) => {
 					name='query'
 					render={({field: {onChange, value}}) => (
 						<FormControl>
-<<<<<<< HEAD
 							<Input 
-=======
-							<TextField 
->>>>>>> f0a0e1dc5720320ac046ce0a9489471ff300868f
 								value={value}
 								onChange={onChange}
 								ref={fieldWrapRef}

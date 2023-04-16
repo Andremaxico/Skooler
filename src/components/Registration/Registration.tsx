@@ -11,11 +11,7 @@ import { LoginFields } from './Steps/LoginFields';
 import { AvatarUpload } from './Steps/AvatarUpload/AvatarUpload';
 import { useSelector } from 'react-redux';
 import { selectMyUid } from '../../Redux/account/account-selectors';
-<<<<<<< HEAD
 import { FirebaseContext } from '../../main';
-=======
-import { FirebaseContext } from '../..';
->>>>>>> f0a0e1dc5720320ac046ce0a9489471ff300868f
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 type PropsType = {};
