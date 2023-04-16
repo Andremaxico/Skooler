@@ -48,7 +48,11 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 	useEffect(() => {
 		//if first posts -> loader
 		if(!posts) {
+<<<<<<< HEAD
 			//if last vivisble post in not setted -> get first posts and show loader
+=======
+			//if last vivisble post in not setted -> get firest posts and show loader
+>>>>>>> f0a0e1dc5720320ac046ce0a9489471ff300868f
 			if(lastVisiblePost !== null) {
 				const getFirstPosts = async () => {
 					setIsPostsFetching(true);
@@ -72,6 +76,7 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 		}
 	}, [isSearching]);
 
+<<<<<<< HEAD
 	//get next posts if at down
 	const handleScroll = () => {
 		// const triggerHeight = (postsRef.current?.scrollTop || 0) + (postsRef.current?.offsetHeight || 0);
@@ -82,6 +87,16 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 	}
 
 	//add listener if we have more than 10 posts
+=======
+	const handleScroll = () => {
+		const triggerHeight = (postsRef.current?.scrollTop || 0) + (postsRef.current?.offsetHeight || 0);
+
+		if(triggerHeight >= (postsRef.current?.scrollHeight || 0) - 10) {
+			dispatch(getNextPosts());
+		}
+	}
+
+>>>>>>> f0a0e1dc5720320ac046ce0a9489471ff300868f
 	useEffect(() => {
 		if(posts && posts.length >= 10 && postsRef.current) {
 			console.log('add event listener');
@@ -96,7 +111,11 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 	if(isLoading || isPostsFetching) return <Preloader />;
 
 	return (
+<<<<<<< HEAD
 		<div ref={postsRef} className={classes.Posts} >
+=======
+		<div ref={postsRef} className={classes.Posts} style={{height: `calc(100vh - ${footerHeight + headerHeight + 32}px)`}}>
+>>>>>>> f0a0e1dc5720320ac046ce0a9489471ff300868f
 			{searchedPosts && searchedPosts.length > 0 ?
 				<>
 					<div className={classes.returnBtn}>

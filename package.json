@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "skooler",
   "homepage": "https://Andremaxico.github.io/Skooler",
   "private": true,
@@ -11,6 +12,12 @@
     "predeploy": "vite build",
     "deploy": "gh-pages -d build"
   },
+=======
+  "name": "my-app",
+  "version": "0.1.0",
+  "homepage": "https://Andremaxico.github.io/Skooler",
+  "private": true,
+>>>>>>> f0a0e1dc5720320ac046ce0a9489471ff300868f
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "@babel/runtime": "^7.21.0",
@@ -59,7 +66,11 @@
     "react-intersection-observer": "^9.4.0",
     "react-redux": "^8.0.2",
     "react-router-dom": "^6.3.0",
+<<<<<<< HEAD
     "react-scripts": "^2.1.3",
+=======
+    "react-scripts": "^5.0.1",
+>>>>>>> f0a0e1dc5720320ac046ce0a9489471ff300868f
     "react-transition-group": "^4.4.5",
     "redux": "^4.2.0",
     "sass": "^1.54.9",
@@ -73,6 +84,7 @@
     "uuid": "^9.0.0",
     "web-vitals": "^2.1.0"
   },
+<<<<<<< HEAD
   "devDependencies": {
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
@@ -80,5 +92,36 @@
     "gh-pages": "^4.0.0",
     "typescript": "^4.9.3",
     "vite": "^4.2.0"
+=======
+  "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "start-typesense-server": "node scripts/startTypesenseServer.ts"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "gh-pages": "^4.0.0"
+>>>>>>> f0a0e1dc5720320ac046ce0a9489471ff300868f
   }
 }
