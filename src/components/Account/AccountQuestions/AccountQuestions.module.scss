@@ -1,0 +1,39 @@
+@import '../../../global-styles';
+
+.AccountQuestions {
+	position: relative;
+	.top {
+		@include row-align;
+		justify-content: space-between;
+		margin-bottom: 12px;
+		width: 100%;
+		.title {
+			@include bigText;
+			font-weight: 500;
+		}
+		&._open {
+			.arrow {
+				transform: rotate(180deg);
+			}
+		}
+		.arrow {
+			font-size: 24px;
+			color: $gray;
+			transition: 0.2s;
+		}
+	}
+
+	.questionsList {
+		position: relative;
+		height: 100%;
+		max-height: 0;
+		opacity: 0;
+		overflow: hidden;
+		transition: 0.4s;
+		z-index: -1;
+		&._open {
+			opacity: 1;
+			max-height: 100%;
+		}
+	}
+}

@@ -1,0 +1,56 @@
+@import '../../../../global-styles';
+
+.Event {
+	position: relative;
+	&:not(:last-child) {
+		margin-bottom: 12px;
+		padding-bottom: 12px;
+		border-bottom: 1px solid $lightGray;
+	}
+	&._target {
+		.top {
+			.date {
+				color: red;
+			}
+		}
+	}
+	&._past {
+		opacity: 0.5;
+		&::after {
+			content: 'У минулому*';
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			@include text;
+			color: red;
+			transform: translate(-50%, -50%);
+		}
+	}
+	&._today {
+		padding: 6px 8px;
+		border: 1px solid red;
+		border-radius: 4px;
+	}
+	.top {
+		@include row-align;
+		.title {
+			@include bigText;
+			margin: 0 6px 0 0;
+		}
+		.leading {
+			margin-right: 12px;
+			color: $lightGray;
+		}
+		.date {
+			@include row-align;
+			.icon {
+				display: block;
+				margin-right: 4px;
+				color: $lightGray;
+			}
+		}
+	}
+	.about {
+		margin-bottom: 0;
+	}
+}

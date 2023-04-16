@@ -1,0 +1,14 @@
+@import '../../../../global-styles';
+
+.MessagesGroup {
+	position: relative;
+	.avatar {
+		position: absolute;
+		top: 0;
+		left: -6px;
+		transform: translateX(-100%);
+	}
+	.messages {
+		width: 100%;
+	}
+}

@@ -1,0 +1,23 @@
+@import '../../../global-styles';
+
+.ThreeDots {
+	padding-right: 8px;
+	@include column-align;
+	&::before, &::after {
+		content: '';
+		@include size(3px);
+		background-color: $gray;
+		border-radius: 50%;
+	}
+	.dot {
+		margin: 4px 0;
+		@include size(3px);
+		background-color: $gray;
+		border-radius: 50%;
+	}
+	.popover {
+		.menu {
+			z-index: 10;
+		}
+	}
+}

@@ -1,0 +1,20 @@
+@import '../../../global-styles';
+
+.DeleteConfirm {
+	padding: 15px 20px;
+	@include column-align;
+	background-color: #fff;
+	border-radius: 8px;
+	.text {
+		margin-bottom: 16px;
+		@include bigText;
+	}
+	.buttons {
+		display: flex;
+		justify-content: flex-end;
+		.deleteBtn {
+			margin-right: 4px;
+		}
+		.cancelBtn {}
+	}
+}

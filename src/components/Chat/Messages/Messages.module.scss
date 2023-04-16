@@ -1,0 +1,19 @@
+@import '../../../global-styles';
+
+.Messages {
+	position: relative;
+	padding: 0 0 0 48px; // for avatars
+	flex: 1 1 auto;
+	width: 100%;
+	overflow-y: auto;
+
+	.messagesDate {
+		@include smallText;
+		color: $gray;
+		margin: 20px 0 20px -24px; //-24 - half from 48px`s padding
+		text-align: center;
+		font-style: italic;
+	}
+
+
+}

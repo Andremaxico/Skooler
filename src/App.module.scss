@@ -1,0 +1,33 @@
+ @import './global-styles';
+
+.App {
+  @include column-align;
+  flex: 1 1 auto;
+  text-align: center;
+  min-height: 100%;
+}
+
+.content {
+  @include column-align;
+  width: 100%;
+  .container {
+    position: relative;
+    padding: 15px 20px;
+    width: 100%;
+    max-width: 1180px;
+    margin: 0 auto;
+    flex: 1 1 auto;
+    box-sizing: border-box ;
+  }
+}
+@media (max-width: 576px) {
+  .content {
+    .container {
+      padding: 0 12px;
+      max-width: 100vw;
+    }
+  } 
+}
+
+.Header {}
+

@@ -1,0 +1,57 @@
+@import '../../../global-styles';
+
+.AccountInfo {
+	display: flex;
+	align-items: center;
+	.avatar {
+		display: block;
+		width: 32px;
+		height: 32px;
+		margin-right: 8px;
+		box-shadow: $smBoxShadow;
+	}
+	.name {
+		margin: 0 4px 0 0;
+		line-height: 1;
+		color: #fff;
+	}
+	.moreBtn {
+		color: $gray;
+	}
+	.popover {
+		.contextMenu {
+			.menuItem {
+				@include row-align;
+				@include smallText;
+				.icon {
+					margin-right: 4px;
+					font-size: 40px;
+					@include size(40px);
+				}
+
+				&.deleteBtn {
+					color: $error;
+					.icon {
+						color: $error;
+					}
+				}
+			}
+		}
+	}
+}
+
+
+.signoutBtn {
+	width: 100%;
+}
+
+.signOutIcon {
+	@include size(12px);
+	fill: #fff;
+}
+
+.toAccountLink {
+	color: $black;
+}
+
+.loginLink {}

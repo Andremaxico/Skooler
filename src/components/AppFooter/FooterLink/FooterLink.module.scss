@@ -1,0 +1,27 @@
+@import '../../../global-styles';
+
+.link {
+	@include center-align;
+	& + & {
+		margin-left: 16px;
+	}
+	&._bigger {
+		.btn {
+			.icon {
+				color: $darkGray;
+				font-size: 30px;
+			}
+		}
+	}
+	&._active {
+		.icon,
+		.btn .icon {
+			color: $primary;
+		}
+	}
+	.btn {
+		.icon {
+			font-size: 20px;
+		}
+	}
+} 

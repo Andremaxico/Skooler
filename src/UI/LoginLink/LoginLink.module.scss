@@ -1,0 +1,12 @@
+@import '../../global-styles';
+
+.LoginLink {
+	.icon {
+		color: $darkGray;
+		font-size: 20px;
+		transition: 0.2s;
+		&:hover {
+			color: $primary;
+		}
+	}
+}

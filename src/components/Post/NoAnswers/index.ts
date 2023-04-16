@@ -1,0 +1,1 @@
+export { NoAnswers } from './NoAnswers';

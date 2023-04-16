@@ -1,0 +1,12 @@
+@import '../../../../global-styles';
+
+.PupilCard {
+	@include column-align;
+	align-items: center;
+	.avatar {
+		@include size(60px);
+	}
+	.name {
+		@include bigText;
+	}
+}

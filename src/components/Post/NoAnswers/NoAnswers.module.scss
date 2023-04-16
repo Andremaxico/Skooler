@@ -1,0 +1,17 @@
+@import '../../../global-styles';
+
+.NoAnswers {
+	@include column-align;
+	align-items: center;
+	.text {
+		@include bigText;
+		color: $gray;
+		font-weight: 500;
+	}
+	.iconWrap {
+		.icon {
+			@include size(100px);
+			fill: $gray;
+		}
+	}
+}

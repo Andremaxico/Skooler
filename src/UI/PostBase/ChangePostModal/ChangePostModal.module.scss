@@ -1,0 +1,23 @@
+@import '../../../global-styles';
+
+.ChangePost {
+	padding: 12px 15px;
+	background-color: #fff;
+	border-radius: 8px;
+	min-width: 350px;
+	.title {
+		@include bigText;
+	}
+	.form {
+		.textarea {}
+		.buttons {
+			display: flex;
+			justify-content: flex-end;
+			width: 100%;
+			.cancelBtn {
+				margin-right: 4px;
+			}
+			.submitBtn {}
+		}
+	}
+}

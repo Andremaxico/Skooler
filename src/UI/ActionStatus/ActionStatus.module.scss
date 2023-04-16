@@ -1,0 +1,48 @@
+@import '../../global-styles';
+
+.ActionStatus {
+	position: fixed;
+	left: 50%;
+	padding: 6px 12px;
+	background-color: #fff;
+	box-shadow: $smBoxShadow;
+	border-radius: 12px;
+	transform: translateX(-50%) scale(0.5);
+	opacity: 0;
+	transition: 0.1s;
+	z-index: 7;
+	&._show {
+		opacity: 1;
+		transform: translateX(-50%) scale(1);
+	}
+	.body {
+		@include row-align;
+		.text {
+			margin-right: 4px;
+			white-space: nowrap;
+		}
+	}
+	&._loading {
+		.text, .icon {
+			//change it
+			color: $gray;
+		}
+		.icon {
+			
+		}
+	}
+	&._error {
+		.text, .icon {
+			//change it
+			color: red;
+		}
+	}
+	&._success {
+		.text, .icon {
+			color: $success;
+		}
+		.icon {
+			font-size: 20px;
+		}
+	}
+}                                 

@@ -1,0 +1,13 @@
+@import '../../../global-styles';
+
+.Posts {
+	box-sizing: border-box;
+	&::-webkit-scrollbar {
+		display: none;
+	}
+	.noQuestions {
+		@include text;
+		color: $gray;
+		font-style: italic;
+	}
+}

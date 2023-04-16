@@ -1,0 +1,27 @@
+@import '../../global-styles';
+
+.Post {
+	position: relative;
+	@include column-align;
+	min-height: 100%;
+	.comments {
+		position: relative;
+		.loaderWrap {
+			margin-top : 120px;
+		}
+	}
+	.returnBtn {
+		position: fixed;
+		right: 16px;
+		@include center-align;
+		@include size(50px);
+		background-color: #fff;
+		border-radius: 50%;
+		box-shadow: 3px 5px 22px -1px $gray;
+		z-index: 2;
+		.icon {
+			color: $gray;
+			font-size: 24px;
+		}
+	}
+}

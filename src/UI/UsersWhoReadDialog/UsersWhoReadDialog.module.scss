@@ -1,0 +1,19 @@
+@import '../../global-styles';
+
+.Dialog {
+	.dialogTitle,
+	.content {
+		@media (max-width: $md3) {
+			min-width: 80%;
+			box-sizing: content-box;
+		}
+	}
+	.dialogTitle {
+		.closeBtn {
+			font-size: 16px;
+			color: $gray;
+			.icon {}
+		}
+	}
+	.content {}
+}

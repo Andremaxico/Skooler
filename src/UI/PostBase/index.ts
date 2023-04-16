@@ -1,0 +1,1 @@
+export { PostBase } from './PostBase';

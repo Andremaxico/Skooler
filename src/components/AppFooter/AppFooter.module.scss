@@ -1,0 +1,16 @@
+@import '../../global-styles';
+
+.AppFooter {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	@include row-align;
+	justify-content: center;
+	width: 100%;
+	padding: 12px;
+	background-color: $grayBg;
+	z-index: 5;
+	&__nav {
+	  @include row-align;
+	}
+ }

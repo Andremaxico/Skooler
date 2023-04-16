@@ -1,0 +1,16 @@
+@import '../../global-styles';
+
+.Login {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	.loginBtn {
+		@include row-align;
+		justify-content: center;
+		max-width: 600px;
+		.googleIcon {
+			@include size(20px);
+		}
+	}
+}

@@ -1,0 +1,18 @@
+@import '../../../global-styles';
+
+.Pupils {
+	.title {
+		margin-bottom: 20px;
+	}
+	.classSelect {
+		margin-bottom: 16px;
+	}
+	.pupilsGrid {
+		padding: 16px 24px;
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(120px, 0.5fr));
+		border: 1px solid $lightGray;
+		border-radius: 6px;
+		.noPupilsMessage {}
+	}
+}

@@ -1,0 +1,25 @@
+@import '../../global-styles';
+
+.PostDate {
+	position: relative;
+	@include row-align;
+	&::after {
+		content: '';
+		@include size(100%, 1px);
+		background-color: $gray;
+		border-radius: 0 1px 1px 0;
+	}
+	p {
+		@include font-style(12px, 14px, 400, $gray);
+		white-space: nowrap;
+		font-style: italic;
+	}
+	&._closed {
+		&::after {
+			background-color: $success;
+		}
+		p {
+			color: $success;
+		}
+	}
+}
