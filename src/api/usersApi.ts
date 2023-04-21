@@ -9,11 +9,10 @@ import functions from 'firebase-functions';
 import { SearchParametersWithQueryBy } from 'typesense-instantsearch-adapter';
 import { SearchParams } from 'typesense/lib/Typesense/Documents';
 
-/*
+
 const instance = axios.create({
 	baseURL: 'https://real-time-chat-test-ece84-default-rtdb.europe-west1.firebasedatabase.app/',
 });
-
 
 //typesense
 const API_KEY = process.env.TYPESENSE_ADMIN_API_KEY || '';
@@ -28,42 +27,42 @@ const client = new Typesense.Client({
 	}],
 	'apiKey': TYPESENSE_ADMIN_API_KEY,
 	'connectionTimeoutSeconds': 2
- });
+});
 
- async function createTypesenseCollections() {
+async function createTypesenseCollections() {
 	// Every 'collection' in Typesense needs a schema. A collection only
 	// needs to be created one time before you index your first document.
 	//
 	// Alternatively, use auto schema detection:
 	// https://typesense.org/docs/latest/api/collections.html#with-auto-schema-detection
 	const notesCollection = {
-	  'name': 'notes',
-	  'fields': [],
+		'name': 'notes',
+		'fields': [],
 	};
- 
+
 	await client.collections().create(notesCollection);
- }
+}
 
 // Update the search index every time a blog post is written.
-exports.onNoteWritten = functions.firestore.document('users/{uid}').onWrite(async (snap, context) => {
-	// Use the 'nodeId' path segment as the identifier for Typesense
-	const id = context.params.uid;
+// exports.onNoteWritten = functions.firestore.document('users/{uid}').onWrite(async (snap, context) => {
+// 	// Use the 'nodeId' path segment as the identifier for Typesense
+// 	const id = context.params.uid;
 
-	// If the note is deleted, delete the note from the Typesense index
-	if (!snap.after.exists) {
-	await client.collections('notes').documents(id).delete();
-	return;
-	}
+// 	// If the note is deleted, delete the note from the Typesense index
+// 	if (!snap.after.exists) {
+// 	await client.collections('notes').documents(id).delete();
+// 	return;
+// 	}
 
-	// Otherwise, create/update the note in the the Typesense index
-	const note = snap.after.data();
-	await client.collections('users').documents().upsert({
-		id,
-		owner: note?.owner,
-		text: note?.text
-	});
-});
-*/
+// 	// Otherwise, create/update the note in the the Typesense index
+// 	const note = snap.after.data();
+// 	await client.collections('users').documents().upsert({
+// 		id,
+// 		owner: note?.owner,
+// 		text: note?.text
+// 	});
+// });
+
 
 export const usersAPI = {
 	async getUsers() {
@@ -81,31 +80,37 @@ export const usersAPI = {
 	async getUsersByQuery(queryStr: string) {
 		const usersRef = collection(firestore, 'users');
 
-		console.log('get users by query');
+		console.log('get users by query', queryStr);
 
 		// Search for notes with matching text
-		const searchParameters: SearchParams = {
-			q: queryStr,
-			query_by: 'text'
-		};
-		const searchResults = await client.collections('notes')
-			.documents()
-			.search(searchParameters);
+		// const searchParameters: SearchParams = {
+		// 	q: queryStr,
+		// 	query_by: 'text'
+		// };
+		// const searchResults = await client.collections('notes')
+		// 	.documents()
+		// 	.search(searchParameters);
 
-		console.log('searchResults', searchResults);
+		// console.log('searchResults', searchResults);
 
-		const usersQuery = query(usersRef, orderBy('fullName'), startAt(queryStr), endAt(queryStr+"\uf8ff"));
-		const snaps = await getDocs(usersQuery);
+		if(queryStr) {
+			const usersQuery = query(usersRef, 	
+					orderBy('fullName'), 
+					startAt(queryStr), 
+					endAt(queryStr+"\uf8ff")
+			);
+			const snaps = await getDocs(usersQuery);
 
-		console.log('snaps', snaps);
+			console.log('snaps', snaps);
 
-		const users: ReceivedAccountDataType[] = [];
+			const users: ReceivedAccountDataType[] = [];
 
-		snaps.forEach(snap => {
-			if(snap.exists()) users.push(snap.data() as ReceivedAccountDataType);
-		});
+			snaps.forEach(snap => {
+				if(snap.exists()) users.push(snap.data() as ReceivedAccountDataType);
+			});
 
-		return users;
+			return users;
+		}
 	},
 
 	async getUserById(uid: string) {

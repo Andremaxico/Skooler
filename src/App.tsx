@@ -151,7 +151,7 @@ const App = () => {
             <Suspense fallback={<Preloader />}>
               <Routes>
                 <Route path='/login' element={<Login />}/>
-                <Route path='/chats' element={<SuspensedChats />}/>
+                <Route path='/chats' element={<Chats />}/>
                 <Route path='/account' element={<SuspensedAccount />}>
                   <Route path=':userId'/>
                 </Route> 

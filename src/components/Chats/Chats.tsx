@@ -5,7 +5,7 @@ import { UsersSearch } from './UsersSearch';
 
 type PropsType = {};
 
-export const Chats: React.FC<PropsType> = ()	=> {
+const Chats: React.FC<PropsType> = ()	=> {
 	//отримати дані про ці чати
 
 	return (
@@ -14,3 +14,5 @@ export const Chats: React.FC<PropsType> = ()	=> {
 		</div>
 	)
 }
+
+export default Chats;

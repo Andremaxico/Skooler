@@ -1,9 +1,8 @@
-import { IconButton, Input } from '@mui/joy';
-import React, { useState } from 'react';
+import { IconButton } from '@mui/joy';
+import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import classes from './UsersSearch.module.scss';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
-import cn from 'classnames';
 import Autocomplete from '@mui/joy/Autocomplete';
 import { usersAPI } from '../../../api/usersApi';
 
@@ -13,23 +12,47 @@ type FieldValues = {
 }
 
 export const UsersSearch: React.FC<PropsType> = ({}) => {
-	const { control } = useForm<FieldValues>(); 
-	const [loading, setLoading] = useState<boolean>(false);
+	const { control, watch, handleSubmit } = useForm<FieldValues>(); 
+	const [ loading, setLoading ] = useState<boolean>(false);
+	const [options, setOptions] = useState<string[]>([]);
+	const [inputValue, setInputValue] = useState<string>('');
 
-	let options: string[] = [];
-	
-	const handleChange = async (value: string) => {
-		setLoading(true);
-		const newUsers = await usersAPI.getUsersByQuery(value);
-		console.log('new users', newUsers);
-		setLoading(false);
-		options = newUsers.map(data => data.fullName);
+	const handleInputChange = (event: any, value: string) => {
+		setInputValue(value)
 	}
+
+	const onSubmit = (data: FieldValues) => {
+		console.log('submit');
+		setOptionsByQuery(data.query);
+	}
+
+	//qury -> server -> options
+	const setOptionsByQuery = async (query: string | null) => {
+		console.log('query', query);
+		if(query) {
+			setLoading(true);
+			const newUsers = await usersAPI.getUsersByQuery(query);
+			console.log('new users', newUsers);
+			setLoading(false);
+			if(newUsers) {
+				setOptions(newUsers.map(data => data.fullName));
+				console.log('options', options);
+			}           
+		}
+	}
+
+	//if query changed -> change options
+	useEffect(() => {
+		console.log('query changed');
+		if(inputValue) {
+			setOptionsByQuery(inputValue);
+		}
+	}, [inputValue]);
 
 	return (
 		<div className={classes.UsersSearch}>
 			<h3 className={classes.title}>Знайдіть нових співрозмовників</h3>
-			<form className={classes.form}>
+			<form className={classes.form} onSubmit={handleSubmit(onSubmit)}>
 				<Controller 
 					control={control}
 					name={'query'}
@@ -37,15 +60,16 @@ export const UsersSearch: React.FC<PropsType> = ({}) => {
 						<Autocomplete
 							options={options} 
 							className={classes.input}
-							onKeyDown={() => handleChange(value)}
 							value={value}
+							inputValue={inputValue}
 							freeSolo
 							loading={loading}
 							loadingText={'Пошук...'}
 							onChange={onChange}
-							placeholder='Шукайте тут'
+							onInputChange={handleInputChange}
+							placeholder={`І'мя та прізвище`}
 							endDecorator={
-								<IconButton className={classes.iconBtn}>
+								<IconButton className={classes.iconBtn} type='submit'>
 									<SearchRoundedIcon className={classes.icon} />
 								</IconButton>
 							}
