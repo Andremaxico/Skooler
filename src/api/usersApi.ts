@@ -94,20 +94,35 @@ export const usersAPI = {
 		// console.log('searchResults', searchResults);
 
 		if(queryStr) {
-			const usersQuery = query(usersRef, 	
-					orderBy('fullName'), 
-					startAt(queryStr), 
-					endAt(queryStr+"\uf8ff")
+			//fullname замість name, тому що починається з ім'я і пошук по name - зайвий
+			const surnamesQuery = query(usersRef, 	
+				orderBy('surname'), 
+				startAt(queryStr), 
+				endAt(queryStr+"\uf8ff")
 			);
-			const snaps = await getDocs(usersQuery);
+			const fullnamesQuery = query(usersRef, 	
+				orderBy('fullName'), 
+				startAt(queryStr), 
+				endAt(queryStr+"\uf8ff")
+			);
+			const surnamesSnaps = await getDocs(surnamesQuery);
+			const fullnamesSnaps = await getDocs(fullnamesQuery);
 
-			console.log('snaps', snaps);
+			const usersSet: Set<ReceivedAccountDataType> = new Set();
+
+			surnamesSnaps.forEach(snap => {
+				if(snap.exists()) usersSet.add(snap.data() as ReceivedAccountDataType);
+			});
+
+			fullnamesSnaps.forEach(snap => {
+				if(snap.exists()) usersSet.add(snap.data() as ReceivedAccountDataType);
+			});
+
+			console.log('users set', usersSet);
 
 			const users: ReceivedAccountDataType[] = [];
 
-			snaps.forEach(snap => {
-				if(snap.exists()) users.push(snap.data() as ReceivedAccountDataType);
-			});
+			for(let value of usersSet) users.push(value);
 
 			return users;
 		}
