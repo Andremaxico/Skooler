@@ -5,17 +5,25 @@ import classes from './UsersSearch.module.scss';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import Autocomplete from '@mui/joy/Autocomplete';
 import { usersAPI } from '../../../api/usersApi';
+import { useNavigate } from 'react-router-dom';
 
 type PropsType = {};
 type FieldValues = {
 	query: string,
 }
 
+type OptionsType = {
+	uid: string, 
+	fullName: string,
+}
 export const UsersSearch: React.FC<PropsType> = ({}) => {
 	const { control, watch, handleSubmit } = useForm<FieldValues>(); 
 	const [ loading, setLoading ] = useState<boolean>(false);
-	const [options, setOptions] = useState<string[]>([]);
+	const [options, setOptions] = useState<OptionsType[]>([]);
 	const [inputValue, setInputValue] = useState<string>('');
+
+	//for navigate to found user account 
+	const navigate = useNavigate();
 
 	const handleInputChange = (event: any, value: string) => {
 		setInputValue(value)
@@ -28,15 +36,15 @@ export const UsersSearch: React.FC<PropsType> = ({}) => {
 
 	//qury -> server -> options
 	const setOptionsByQuery = async (query: string | null) => {
-		console.log('query', query);
 		if(query) {
 			setLoading(true);
 			const newUsers = await usersAPI.getUsersByQuery(query);
-			console.log('new users', newUsers);
 			setLoading(false);
 			if(newUsers) {
-				setOptions(newUsers.map(data => data.fullName));
-				console.log('options', options);
+				setOptions(newUsers.map(data => ({
+					fullName: data.fullName,
+					uid: data.uid,
+				})));
 			}           
 		}
 	}
@@ -60,12 +68,18 @@ export const UsersSearch: React.FC<PropsType> = ({}) => {
 						<Autocomplete
 							options={options} 
 							className={classes.input}
-							value={value}
 							inputValue={inputValue}
 							freeSolo
 							loading={loading}
 							loadingText={'Пошук...'}
-							onChange={onChange}
+							//@ts-ignore
+							isOptionEqualToValue={(option, value) => option.fullName === value.fullName}
+							//@ts-ignore //не дає доступу до fullName  
+							getOptionLabel={(option) => option.fullName}
+							onChange={(event, value) => {
+								//@ts-ignore
+								navigate(`/account/${value.uid}`);
+							}}
 							onInputChange={handleInputChange}
 							placeholder={`І'мя та прізвище`}
 							endDecorator={
