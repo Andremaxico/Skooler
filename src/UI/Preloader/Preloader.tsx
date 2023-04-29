@@ -10,17 +10,10 @@ type PropsType = {
 };
 
 
-//hehehey it`s a testaasdfdfSADSSSDSDJDJK;KL;;;;;;;;HELLLO WORLD HOW ARE YOU? i``M FINE
-
-const Paper = () => {
-	return <li></li>
-}
 
 const Preloader: React.FC<PropsType> = ({width = 50, height = width, fixed}) => {
-	const n = 18;
-
 	return (
-		<div className={cn(classes.Preloader, fixed && classes._fixed)}>
+		<div className={cn(classes.Preloader, fixed && classes._fixed)} id='preloader'>
 			<div className={classes.clockLoader}></div>
 		</div>
 	)

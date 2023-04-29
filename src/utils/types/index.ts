@@ -46,10 +46,11 @@ export type MessagesDataType = MessageDataType[];
 
 export type ChatDataType = {
 	//intelocutor - співрозмовник
-	interlocutorId: string,
-	interlocutorFullname: string,
-	interlocutorAvatarUrl: string,
+	contactId: string,
+	contactFullname: string,
+	contactAvatarUrl: string,
 	lastMessageData: MessageDataType,
+	lastMessageTime: number,
 }
 //==============STREAM======================
 export type QuestionCategoriesType = Array<

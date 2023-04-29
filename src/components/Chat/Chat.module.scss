@@ -1,8 +1,7 @@
 @import '../../global-styles';
 
 .Chat {
-	display: flex;
-	flex-direction: column;
+	flex: 1 1 auto;
 	height: 100%;
 	max-width: 60%;
 	@media (max-width: $md2) {

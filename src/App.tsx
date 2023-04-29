@@ -151,7 +151,10 @@ const App = () => {
             <Suspense fallback={<Preloader />}>
               <Routes>
                 <Route path='/login' element={<Login />}/>
-                <Route path='/chats' element={<Chats />}/>
+                <Route path='/chat' element={<Chat />}>
+                  <Route path=':userId'/>
+                </Route>
+                <Route path='/chats' element={<Chats />} />
                 <Route path='/account' element={<SuspensedAccount />}>
                   <Route path=':userId'/>
                 </Route> 
@@ -177,7 +180,7 @@ const App = () => {
             }
           </div>
         </div>
-        {location.pathname !== '/chat' && <AppFooter />}
+        {!location.pathname.includes('/chat/') && <AppFooter />}
     </div>
   );
 }

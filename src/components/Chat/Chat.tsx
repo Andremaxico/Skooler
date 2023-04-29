@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { Navigate } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import { FirebaseContext } from '../..';
 import Messages from './Messages';
 import classes from './Chat.module.scss';
@@ -8,13 +8,13 @@ import { NewMessageForm } from './NewMessageForm';
 import { Auth } from 'firebase/auth';
 import { MessageDataType } from '../../utils/types';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectMessages } from '../../Redux/chat/selectors';
+import { selectIsMessagesFetching, selectMessages } from '../../Redux/chat/selectors';
 import { editMessage, startMessaging, stopMessaging } from '../../Redux/chat/reducer';
 import { AnyAction } from 'redux';
 import Preloader from '../../UI/Preloader';
 import { useAppDispatch } from '../../Redux/store';
 import { ScrollBtn } from '../../UI/ScrollBtn';
-import { selectMyAccountData } from '../../Redux/account/account-selectors';
+import { selectMyAccountData, selectMyLoginData } from '../../Redux/account/account-selectors';
 
 export type EditMessageDataType = {
 	value: string,
@@ -22,17 +22,19 @@ export type EditMessageDataType = {
 }
 
 const Chat = () => {
-	const { auth } = useContext(FirebaseContext);
-	const [authData] = useAuthState(auth as Auth);
 
 	const messagesData = useSelector(selectMessages);
 	const myAccountData = useSelector(selectMyAccountData);
+	const authData = useSelector(selectMyLoginData);
+	const isFetching = useSelector(selectIsMessagesFetching);
 
 	//is exists messages now editing
 	const [isEdit, setIsEdit] = useState<boolean>(false);
 	const [editMessageData, setEditMessageData] = useState<EditMessageDataType | null>(null);
-	const [isLoading, setIsLoading] = useState(true);
 	const [unreadMessagesCount, setUnreadMessagesCount] = useState<number | null>(null);
+
+	const params = useParams();
+	const uid2 = params.userId || '';
 
 	//messages list ref
 	const scrollBtnRef = useRef<HTMLButtonElement>(null);
@@ -41,6 +43,7 @@ const Chat = () => {
 
 	const dispatch = useAppDispatch();
 
+	
 	//update message
 	const cancelEdit = () => {
 		setIsEdit(false);
@@ -55,12 +58,11 @@ const Chat = () => {
 	}
 
 	useEffect(() => {
-		setIsLoading(true);
-		dispatch(startMessaging());
-		setTimeout(() => {
-			setIsLoading(false);
-		}, 2000);
-	}, []);
+		dispatch(startMessaging(uid2));
+		return () => {
+			dispatch(stopMessaging());
+		}
+	}, [myAccountData?.uid]);
 
 	//set unread messages count
 	useEffect(() => {
@@ -78,12 +80,13 @@ const Chat = () => {
 
 	console.log('messages data', messagesData);
 
-	if(!messagesData || !myAccountData) return <Preloader fixed={true} />;
+	if(isFetching || messagesData?.length === 0) return <Preloader fixed={true} />;
+	console.log('message sdata', messagesData, 'myAccountdata', myAccountData);
 	if(!authData) return <Navigate to='/login' replace={true}/>	
 
 	return (
 		<div className={classes.Chat} ref={chatRef}>
-			{messagesData ? 
+			{messagesData !== null ? 
 				<Messages 
 					ref={scrollBtnRef} 
 					messagesData={messagesData}
@@ -105,6 +108,7 @@ const Chat = () => {
 				/>
 			}
 			<NewMessageForm 
+				uid2={uid2}
 				authData={authData} 
 				ScrollBtn={scrollBtnRef.current} 
 				isMessageEdit={isEdit} 

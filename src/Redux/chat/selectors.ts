@@ -11,3 +11,7 @@ export const selectIsMessagesFetching = (state: RootStateType) => {
 export const selectCurrMessageWhoReadList = (state: RootStateType) => {
 	return state.messages.currMessageWhoReadList;
 }
+
+export const selectChatsData = (state: RootStateType) => {
+	return state.messages.chatsData;
+}

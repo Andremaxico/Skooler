@@ -8,9 +8,11 @@
 }
 
 .content {
-  @include column-align;
+  @include column-align;  
+  flex: 1 1 auto;
   width: 100%;
   .container {
+    @include column-align;
     position: relative;
     padding: 15px 20px;
     width: 100%;

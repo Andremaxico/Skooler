@@ -24,6 +24,7 @@ type PropsType = {
 	currValue?: string, 
 	ScrollBtn: HTMLButtonElement | null,
 	updateMessage: (value: string) => void,
+	uid2: string,
 }
 
 type FieldValues = {
@@ -31,7 +32,7 @@ type FieldValues = {
 }
 
 export const NewMessageForm: React.FC<PropsType> = React.memo(({
-	authData, isMessageEdit, currValue, updateMessage, ScrollBtn
+	authData, isMessageEdit, currValue, updateMessage, ScrollBtn, uid2
 }): ReactElement<any, any> => {
 	//react-hook-form
 	const { control, formState: {errors, isValid}, handleSubmit, reset, setValue, trigger, watch } = useForm<FieldValues>();
@@ -117,7 +118,7 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 		}
 
 		reset();
-		await dispatch(sendMessage(newMessageData));
+		await dispatch(sendMessage(newMessageData, uid2));
 		if(textareaEl) textareaEl.value = '';
 	}
 

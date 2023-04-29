@@ -53,7 +53,11 @@ const Account: React.FC<PropsType> = ({}) => {
 			{
 			!isEdit && accountData ?
 				<>
-					<AccountBody accountData={accountData} setIsEdit={setIsEdit}/>
+					<AccountBody 
+						accountData={accountData} 
+						setIsEdit={setIsEdit}
+						isMy={isMy}
+					/>
 					<AccountQuestions uid={accountData.uid} />
 				</>
 			: isMy ? (

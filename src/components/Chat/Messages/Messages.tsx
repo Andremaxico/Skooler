@@ -24,6 +24,7 @@ type PropsType = {
 }
 
 type FormattedMessagesType = {[key: string]: MessageDataType[]};
+
 export type MessagesGroupMetadataType = {
 	isMy: boolean,
 	avatarData?: {

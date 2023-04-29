@@ -1,4 +1,4 @@
-import { MessageDataType, MessagesDataType } from './../utils/types/index';
+import { ChatDataType, MessageDataType, MessagesDataType } from './../utils/types/index';
 import { query, collection, Firestore, orderBy, onSnapshot, DocumentData, getDocs, setDoc, doc, updateDoc, getDoc, deleteDoc } from "firebase/firestore";
 import { firestore } from "../firebase/firebaseApi";
 
@@ -21,17 +21,27 @@ const notifyFetchingSubscribers = (value: boolean) => {
 }
 
 //get query 
-const q = query(collection(firestore as Firestore, 'messages'), orderBy('createdAt'));
+let q = query(collection(firestore as Firestore, 'messages'), orderBy('createdAt'));
 
-let unsubscribeFromMessages = () => {}; //nothing
+let unsubscribeFromMessages = () => {}; //nothing -> function after subscribe
 
 const chatAPI = {
-	async subscribe(subscriber: MessageSubscriberType) {
+	async subscribe(subscriber: MessageSubscriberType, uid: string, uid2: string) {
+
+		console.log('get messages');
 		notifyFetchingSubscribers(true);
+
+		console.log('uids', uid, uid2);
+
+		let q = query(
+			collection(firestore as Firestore, `messages/chat/${uid}/${uid2}/messages`), 
+			orderBy('createdAt')
+		);
 
 		const querySnapshot = await getDocs(q);
 
 		let messages: DocumentData = [];
+
 		querySnapshot.forEach((doc) => {
 			messages.push({...doc.data(), id: doc.id})
 		});
@@ -63,9 +73,10 @@ const chatAPI = {
 		subscribers['fetching-sub'].push(subscriber);
 	},
 	
-	sendMessage(messageData: MessageDataType)  {
+	sendMessage(messageData: MessageDataType, uid1: string, uid2: string)  {
 		try {
-			setDoc(doc(firestore, 'messages', messageData.id), messageData); 
+			const messageDoc = doc(firestore, `messages/chat/${uid1}/${uid2}/messages`, messageData.id)
+			setDoc(messageDoc, messageData); 
 			
 		} catch(e) {
 			console.log(e);
@@ -99,6 +110,25 @@ const chatAPI = {
 			text: newText,
 			edited: true,
 		})
+	},
+
+	async getChatsData(uid: string) {
+		const q = query(
+			collection(firestore, `messages/chat/${uid}`),
+			orderBy('lastMessageTime', 'desc'),
+		);
+
+		const qSnapshot = await getDocs(q);
+
+		const chatsData: ChatDataType[] = []; 
+
+		qSnapshot.forEach(snap => {
+			if(snap.exists()) {
+				chatsData.push(snap.data() as ChatDataType);
+			}
+		});
+
+		return chatsData;
 	}
 }
 
