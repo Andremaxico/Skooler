@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { selectMyAccountData } from '../../Redux/account/account-selectors';
 import { getChatsData } from '../../Redux/chat/reducer';
 import { selectChatsData } from '../../Redux/chat/selectors';
+import { ChatsList } from './ChatsList';
 
 type PropsType = {};
 
@@ -25,6 +26,11 @@ const Chats: React.FC<PropsType> = ({})	=> {
 	return (
 		<div className={cn(classes.Chats, 'container')}>
 			<UsersSearch />
+			{chatsData ?
+				<ChatsList chatsData={chatsData} />
+			:
+				<p>Немає розмов</p>
+			}
 		</div>
 	)
 }

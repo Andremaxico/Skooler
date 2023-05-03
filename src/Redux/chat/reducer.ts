@@ -43,6 +43,9 @@ const chatReducer = createReducer(initialState, (builder) => {
 		.addCase(newMessageReceived, (state, action) => {
 			state.messagesData = state.messagesData ? [...state.messagesData, action.payload] : [action.payload];
 		})
+		.addCase(chatsDataReceived, (state, action) => {
+			state.chatsData = action.payload;
+		})
 		.addDefaultCase((state, action) => {});
 });
 
@@ -110,7 +113,15 @@ export const getChatsData = () => async (dispatch: AppDispatchType, getState: ()
 
 	if(uid) {
 		const data = await chatAPI.getChatsData(uid);
-		
+		console.log('data', data);
+		dispatch(chatsDataReceived(data));
+	}
+}
+
+export const setChatInfo = (data: ChatDataType, uid2: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
+	const uid = getState().account.myAccountData?.uid;
+	if(uid) {
+		chatAPI.setChatInfo(data, uid, uid2);
 	}
 }
  

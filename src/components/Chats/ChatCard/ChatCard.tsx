@@ -1,5 +1,5 @@
 import React from 'react';
-import classes from './ChatCards.module.scss';
+import classes from './ChatCard.module.scss';
 import { ChatDataType } from '../../../utils/types';
 import { Avatar } from '@mui/joy';
 
@@ -21,7 +21,7 @@ export const ChatCard: React.FC<PropsType> = ({data}) => {
 			<div className={classes.body}>
 				<div className={classes.top}>
 					<div className={classes.contactName}>{contactFullname}</div>
-					<div className={classes.lastMessageTime}>{lastMessageTime}</div>
+					{/* <div className={classes.lastMessageTime}>{lastMessageTime}</div> */}
 				</div>
 				<div className={classes.lastMessage}>
 					<div className={classes.senderName}>

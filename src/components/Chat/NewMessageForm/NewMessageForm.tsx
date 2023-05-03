@@ -4,10 +4,10 @@ import SendIcon from '@mui/icons-material/Send';
 import TextArea from 'antd/lib/input/TextArea';
 import classes from './NewMessageForm.module.scss';
 import Preloader from '../../../UI/Preloader';
-import { MessageDataType, UserType } from '../../../utils/types';
+import { ChatDataType, MessageDataType, UserType } from '../../../utils/types';
 import { serverTimestamp } from 'firebase/firestore';
 import { useDispatch, useSelector } from 'react-redux';
-import { editMessage, sendMessage } from '../../../Redux/chat/reducer';
+import { editMessage, sendMessage, setChatInfo } from '../../../Redux/chat/reducer';
 import { AnyAction } from 'redux';
 import { selectMyAccountData } from '../../../Redux/account/account-selectors';
 import { Controller, useForm } from 'react-hook-form';
@@ -17,6 +17,8 @@ import { scrollElementToBottom } from '../../../utils/helpers/scrollElementToBot
 import { Button, FormControl, IconButton, Textarea } from '@mui/joy';
 import { message } from 'antd';
 import { footerHeightReceived } from '../../../Redux/app/appReducer';
+import { selectMessages } from '../../../Redux/chat/selectors';
+import { useUserData } from '../../../utils/hooks/useUserData';
 
 type PropsType = {
 	authData: UserType | null,
@@ -45,6 +47,8 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 	//ant design form(щоб показувати зарашнє значення коментара) & reset formmessa
 
 	const accountData = useSelector(selectMyAccountData);
+	const messages = useSelector(selectMessages);
+	const contactData = useUserData(uid2);
 
 	//for autofocus
 	const messageField = useRef<HTMLDivElement>(null);
@@ -103,6 +107,33 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 		setValue('message', currValue || '');
 	}, [currValue])
 
+	
+	const createChatInfo = async (messageData: MessageDataType) => {
+		let chatInfo: ChatDataType | null = null;
+		//if we havent messages -> we havent chat in firebase -> create info
+		if(messages && messages.length > 0) {
+			const userData = await contactData;
+			if(userData) {
+				chatInfo = {
+					lastMessageData: messageData,
+					lastMessageTime: messageData.createdAt,
+					contactAvatarUrl: userData?.avatarUrl,
+					contactFullname: userData.fullName,
+					contactId: userData.uid,
+				}
+			}
+		//we update old info
+		} else {
+			chatInfo = {
+				lastMessageData: messageData,
+				lastMessageTime: messageData.createdAt,
+			}
+		}
+		if(chatInfo) {
+			dispatch(setChatInfo(chatInfo, uid2));
+		}
+	}
+
 	//send message to thunk
 	const addMessage = async (newMessage: string) => {
 		const newMessageData: MessageDataType = {
@@ -116,7 +147,7 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 			edited: false,
 			received: false,
 		}
-
+		await createChatInfo(newMessageData);
 		reset();
 		await dispatch(sendMessage(newMessageData, uid2));
 		if(textareaEl) textareaEl.value = '';

@@ -1,5 +1,5 @@
 import { ChatDataType, MessageDataType, MessagesDataType } from './../utils/types/index';
-import { query, collection, Firestore, orderBy, onSnapshot, DocumentData, getDocs, setDoc, doc, updateDoc, getDoc, deleteDoc } from "firebase/firestore";
+import { query, collection, Firestore, orderBy, onSnapshot, DocumentData, getDocs, setDoc, doc, updateDoc, getDoc, deleteDoc, addDoc } from "firebase/firestore";
 import { firestore } from "../firebase/firebaseApi";
 
 export type MessageSubscriberType = (messages: MessagesDataType) => void;
@@ -129,6 +129,13 @@ const chatAPI = {
 		});
 
 		return chatsData;
+	},
+
+	async setChatInfo(data: ChatDataType, uid1: string, uid2: string) {
+		setDoc(
+			doc(firestore, `messages/chat/${uid1}/${uid2}`), 
+			data,
+		);
 	}
 }
 
