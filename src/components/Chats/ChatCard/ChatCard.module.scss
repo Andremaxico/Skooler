@@ -1,0 +1,41 @@
+@import '../../../global-styles';
+
+.ChatCard {
+	padding: 10px 8px;
+	@include text;
+	@include row-align;
+	background-color: $lightGray;
+	border-radius: 8px;
+	.avatar {
+		@include size(50px);
+		margin-right: 8px;
+	}
+	.body {
+		flex: 1 1 auto;
+		padding-right: 8px;
+		.top {
+			@include row-align;
+			justify-content: space-between;
+			margin-bottom: 12px;
+			.contactName {
+				font-weight: 500;
+			}
+			.lastMessageTime {
+				@include smallText;
+				color: $darkGray;
+			}
+		}
+		.lastMessage {
+			display: flex;
+			.senderName {
+				margin-right: 4px;
+			}
+			.text {
+				flex: 1 1 auto;
+			}
+			.newMessagesCount {
+				@include unreadCount;
+			}
+		}
+	}
+}

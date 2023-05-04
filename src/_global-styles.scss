@@ -45,18 +45,33 @@ $smBoxShadow: 3px 5px 22px -1px $gray;
 //typographic
 @mixin bigText {
   @include font-style(18px, 140%);
+  @media (max-width: $md2) {
+    @include font-style(16px, 140%);
+  }
 }
 @mixin text() {
   @include font-style(16px, 140%);
+  @media (max-width: $md2) {
+    @include font-style(14px, 140%);
+  }
 }
 @mixin smallText() {
   @include font-style(14px, 140%);
+  @media (max-width: $md2) {
+    @include font-style(12px, 140%);
+  }
 }
 @mixin smallTitle() {
   @include font-style(22px, 140%, 500);
+  @media (max-width: $md2) {
+    @include font-style(18px, 140%, 500);
+  }
 }
 @mixin title() {
   @include font-style(40px, 140%, 700);
+  @media (max-width: $md2) {
+    @include font-style(32px, 140%, 700);
+  }
 }
 //general styles
 .container {
@@ -105,4 +120,18 @@ $smBoxShadow: 3px 5px 22px -1px $gray;
     border-color: $mainCol;
   }
 
+}
+
+@mixin unreadCount {
+  padding: 2px 6px;
+  height: 20px;
+  @include smallText;
+  @include center-align;
+  border-radius: 16px;
+  color: #fff;
+  background-color: $primary;
+
+  @media (max-width: $md2) {
+    color: #fff;
+  }
 }
