@@ -108,6 +108,17 @@ export const deleteMessage = (messageId: string) => async (dispatch: AppDispatch
 	await chatAPI.deleteMessage(messageId);
 }
 
+export const subscribeOnChats = () => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
+	const uid = getState().account.myAccountData?.uid;
+
+	const chatsSubscriber = (data: ChatDataType[]) => {
+		dispatch(chatsDataReceived(data));
+	}
+
+	if(uid) {
+		chatAPI.subscribeOnChats(uid, chatsSubscriber);
+	}
+}
 export const getChatsData = () => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
 	const uid = getState().account.myAccountData?.uid;
 

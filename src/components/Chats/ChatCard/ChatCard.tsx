@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import classes from './ChatCard.module.scss';
 import { ChatDataType } from '../../../utils/types';
-import { Avatar } from '@mui/joy';
+import { Avatar, useTheme } from '@mui/joy';
 import { getStringDate } from '../../../utils/helpers/getStringDate';
 
 type PropsType = {
@@ -51,25 +51,56 @@ export const ChatCard: React.FC<PropsType> = ({data}) => {
 		lastMessageData, lastMessageTime 
 	} = data;
 
+	const [isCut, setIsCut] = useState<boolean>(false);
+	const [widthForText, setWidthForText] = useState<number | undefined>(undefined);
+
+	const textRef = useRef<HTMLParagraphElement>(null);
+	const lastMessageRef = useRef<HTMLDivElement>(null);
+	const counterRef = useRef<HTMLSpanElement>(null);
+	const senderNameRef = useRef<HTMLParagraphElement>(null);
+
+	//when refs setted -> set maxWidth for text
+	useEffect(() => {
+		if(lastMessageRef.current && counterRef.current && senderNameRef.current) {
+			const width = lastMessageRef.current.offsetWidth - counterRef.current.offsetWidth - senderNameRef.current.offsetWidth;
+			console.log('width', width);
+			setWidthForText(width);
+		}
+	}, [lastMessageRef.current, counterRef.current, senderNameRef.current]);
+
+	//width for text setted -> set isCut
+	useEffect(() => {
+		if(widthForText && textRef.current) {
+			const value = textRef.current.offsetWidth > widthForText;
+			setIsCut(value);  
+		}
+	}, [widthForText, textRef.current]);
+
+	const theme = useTheme();
 	//@ts-ignore
 	const date = lastMessageTime.seconds ? new Date(lastMessageTime.seconds * 1000) : new Date();
 
 	const stringDate = getMessageTime(date);
 
+	console.log('is cut', isCut);  
 	return (
 		<div className={classes.ChatCard}>
 			<Avatar src={contactAvatarUrl} className={classes.avatar}/>
 			<div className={classes.body}>
 				<div className={classes.top}>
 					<div className={classes.contactName}>{contactFullname}</div>
-					<div className={classes.lastMessageTime}>{stringDate}</div>
+					<div className={classes.lastMessageTime}  >{stringDate}</div>
 				</div>
-				<div className={classes.lastMessage}>
-					<div className={classes.senderName}>
+				<div className={classes.lastMessage} ref={lastMessageRef}>
+					<p className={classes.senderName} ref={senderNameRef}>
 						{lastMessageData.displayName === contactFullname ? contactFullname : 'Я'}:
-					</div>
-					<p className={classes.text}>{lastMessageData.text}fgdgdgdhg ndfsuy gifudguysdfogydfyigiunvfbygvniofsguyn</p>
-					<span className={classes.newMessagesCount}>0</span>
+					</p>
+					<p className={classes.text} ref={textRef} style={{maxWidth: `${widthForText}px`}}>
+						{lastMessageData.text}
+						fgdgdgdhg ndfsuy gifudguysdfogydfyigiunvfbygvniofsguyn
+						{isCut && <span className={classes.ending}>...</span>}
+					</p>
+					<span className={classes.newMessagesCount} ref={counterRef}>0</span>
 				</div>
 			</div>
 		</div>

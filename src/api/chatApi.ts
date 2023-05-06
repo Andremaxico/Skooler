@@ -4,12 +4,18 @@ import { firestore } from "../firebase/firebaseApi";
 
 export type MessageSubscriberType = (messages: MessagesDataType) => void;
 export type FetchingSubscriberType = (value: boolean) => void;
+export type ChatsSubscriberType = (chatsData: ChatDataType[]) => void;
 
 type SubscribersObjType = {}
+type UnsubscribersType = {
+	messages?: Function,
+	chats?: Function,
+}
 
 const subscribers = {
 	'messages-subs': [] as MessageSubscriberType[],
 	'fetching-sub': [] as FetchingSubscriberType[],
+	'chats-sub': [] as ChatsSubscriberType[],
 }
 
 const notifyMessagesSubscribers = (data: MessagesDataType) => {
@@ -20,33 +26,23 @@ const notifyFetchingSubscribers = (value: boolean) => {
 	subscribers['fetching-sub'].forEach(sub => sub(value));
 }
 
-//get query 
-let q = query(collection(firestore as Firestore, 'messages'), orderBy('createdAt'));
+const notifyChatsSubscribers = (data: ChatDataType[]) => {
+	subscribers['chats-sub'].forEach(sub => sub(data));
+}
 
-let unsubscribeFromMessages = () => {}; //nothing -> function after subscribe
+
+const unsubscribers: UnsubscribersType = {}; //nothing -> function after subscribe
 
 const chatAPI = {
 	async subscribe(subscriber: MessageSubscriberType, uid: string, uid2: string) {
-
-		console.log('get messages');
 		notifyFetchingSubscribers(true);
-
-		console.log('uids', uid, uid2);
 
 		let q = query(
 			collection(firestore as Firestore, `messages/chat/${uid}/${uid2}/messages`), 
 			orderBy('createdAt')
 		);
 
-		const querySnapshot = await getDocs(q);
-
-		let messages: DocumentData = [];
-
-		querySnapshot.forEach((doc) => {
-			messages.push({...doc.data(), id: doc.id})
-		});
-
-		unsubscribeFromMessages = onSnapshot(q, 
+		unsubscribers.messages = onSnapshot(q, 
 			(querySnapshot) => {
 				let messages: DocumentData = [];
 
@@ -61,11 +57,8 @@ const chatAPI = {
 			}
 		);
 
-		console.log('messages data', messages);
-
 		subscribers['messages-subs'].push(subscriber);
 
-		notifyMessagesSubscribers( messages as MessagesDataType );
 		notifyFetchingSubscribers(false);
 	},
 
@@ -93,7 +86,9 @@ const chatAPI = {
 
 	unsubscribe() {
 		console.log('unsubscribe');
-		unsubscribeFromMessages();
+		if(unsubscribers.messages) {
+			unsubscribers.messages();
+		}
 	},
 
 	async deleteMessage(messageId: string) {
@@ -129,6 +124,31 @@ const chatAPI = {
 		});
 
 		return chatsData;
+	},
+
+	async subscribeOnChats(uid: string, subscriber: ChatsSubscriberType) {
+		subscribers['chats-sub'].push(subscriber);
+
+		const q = query(
+			collection(firestore, `messages/chat/${uid}`),
+			orderBy('lastMessageTime', 'desc')
+		);
+
+		unsubscribers.chats = onSnapshot(q, 
+			(snap) => {
+				const chatsData: ChatDataType[] = [];
+
+				snap.forEach(doc => {
+					if(doc.exists()) {
+						console.log('doc data', doc.data());
+						chatsData.push(doc.data() as ChatDataType);
+					}
+				});
+
+				notifyChatsSubscribers(chatsData);
+			}
+		);
+
 	},
 
 	async setChatInfo(data: ChatDataType, uid1: string, uid2: string) {

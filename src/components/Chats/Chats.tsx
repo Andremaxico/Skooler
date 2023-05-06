@@ -5,7 +5,7 @@ import { UsersSearch } from './UsersSearch';
 import { useAppDispatch } from '../../Redux/store';
 import { useSelector } from 'react-redux';
 import { selectMyAccountData } from '../../Redux/account/account-selectors';
-import { getChatsData } from '../../Redux/chat/reducer';
+import { getChatsData, subscribeOnChats } from '../../Redux/chat/reducer';
 import { selectChatsData } from '../../Redux/chat/selectors';
 import { ChatsList } from './ChatsList';
 
@@ -20,7 +20,7 @@ const Chats: React.FC<PropsType> = ({})	=> {
 	const chatsData = useSelector(selectChatsData);
 
 	useEffect(() => {
-		dispatch(getChatsData());
+		dispatch(subscribeOnChats());
 	}, [myAccountData?.uid]);
 
 	return (
