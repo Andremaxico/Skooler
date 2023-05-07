@@ -124,7 +124,7 @@ const chatAPI = {
 		});
 
 		return chatsData;
-	},
+	},    
 
 	async subscribeOnChats(uid: string, subscriber: ChatsSubscriberType) {
 		subscribers['chats-sub'].push(subscriber);
@@ -154,9 +154,16 @@ const chatAPI = {
 	async setChatInfo(data: ChatDataType, uid1: string, uid2: string) {
 		setDoc(
 			doc(firestore, `messages/chat/${uid1}/${uid2}`), 
-			data,
+			data,   
 		);
-	}
+	},
+
+	async updateChatInfo(data: ChatDataType, uid1: string, uid2: string) {
+		updateDoc(
+			doc(firestore, `messages/chat/${uid1}/${uid2}`), 
+			data,   
+		);
+	},
 }
 
 export default chatAPI;

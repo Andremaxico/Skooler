@@ -37,11 +37,13 @@ const Login: React.FC<PropsType> = ({}) => {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		console.log('auth data', authData);
+		console.log('auth data', authData, 'prev page', prevPage);
 		if(!!authData && prevPage) {
 			if(prevPage === '/login') {
+				console.log('navigate to main');
 				navigate('/', {replace: true});	
 			} else {
+				console.log('other navigate');
 				navigate(prevPage, {replace: true});
 			}
 		}

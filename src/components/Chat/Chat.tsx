@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { Navigate, useParams } from 'react-router-dom';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { FirebaseContext } from '../..';
 import Messages from './Messages';
 import classes from './Chat.module.scss';
@@ -22,7 +22,6 @@ export type EditMessageDataType = {
 }
 
 const Chat = () => {
-
 	const messagesData = useSelector(selectMessages);
 	const myAccountData = useSelector(selectMyAccountData);
 	const authData = useSelector(selectMyLoginData);
@@ -34,7 +33,12 @@ const Chat = () => {
 	const [unreadMessagesCount, setUnreadMessagesCount] = useState<number | null>(null);
 
 	const params = useParams();
+	const navigate = useNavigate();
+
 	const uid2 = params.userId || '';
+
+	//fucking kostyl
+	if(uid2 === authData?.uid) navigate('/', {replace: true});
 
 	//messages list ref
 	const scrollBtnRef = useRef<HTMLButtonElement>(null);

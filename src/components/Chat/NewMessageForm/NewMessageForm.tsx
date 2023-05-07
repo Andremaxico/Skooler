@@ -4,10 +4,10 @@ import SendIcon from '@mui/icons-material/Send';
 import TextArea from 'antd/lib/input/TextArea';
 import classes from './NewMessageForm.module.scss';
 import Preloader from '../../../UI/Preloader';
-import { ChatDataType, MessageDataType, UserType } from '../../../utils/types';
+import { ChatDataType, MessageDataType, ReceivedAccountDataType, UserType } from '../../../utils/types';
 import { serverTimestamp } from 'firebase/firestore';
 import { useDispatch, useSelector } from 'react-redux';
-import { editMessage, sendMessage, setChatInfo } from '../../../Redux/chat/reducer';
+import { editMessage, sendMessage, setChatInfo, updateChatInfo } from '../../../Redux/chat/reducer';
 import { AnyAction } from 'redux';
 import { selectMyAccountData } from '../../../Redux/account/account-selectors';
 import { Controller, useForm } from 'react-hook-form';
@@ -19,6 +19,8 @@ import { message } from 'antd';
 import { footerHeightReceived } from '../../../Redux/app/appReducer';
 import { selectMessages } from '../../../Redux/chat/selectors';
 import { useUserData } from '../../../utils/hooks/useUserData';
+
+type ContactDataType = ReceivedAccountDataType | Promise<ReceivedAccountDataType | undefined>;
 
 type PropsType = {
 	authData: UserType | null,
@@ -108,11 +110,16 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 	}, [currValue])
 
 	
-	const createChatInfo = async (messageData: MessageDataType) => {
+	const createChatInfo = async (
+		messageData: MessageDataType, secondUserData: ContactDataType, baseUid: string, secondUid: string
+	) => {
 		let chatInfo: ChatDataType | null = null;
+
+		console.log('create chat info messages', messages);
 		//if we havent messages -> we havent chat in firebase -> create info
-		if(messages && messages.length > 0) {
-			const userData = await contactData;
+		if(!messages || messages.length === 0) {
+			console.log('new chat info');
+			const userData = await secondUserData;
 			if(userData) {
 				chatInfo = {
 					lastMessageData: messageData,
@@ -121,6 +128,7 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 					contactFullname: userData.fullName,
 					contactId: userData.uid,
 				}
+				dispatch(setChatInfo(chatInfo, baseUid, secondUid));
 			}
 		//we update old info
 		} else {
@@ -128,14 +136,13 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 				lastMessageData: messageData,
 				lastMessageTime: messageData.createdAt,
 			}
-		}
-		if(chatInfo) {
-			dispatch(setChatInfo(chatInfo, uid2));
+			dispatch(updateChatInfo(chatInfo, baseUid, secondUid));
 		}
 	}
 
 	//send message to thunk
 	const addMessage = async (newMessage: string) => {
+		//create new message data
 		const newMessageData: MessageDataType = {
 			uid: authData?.uid || 'undefined',
 			displayName: `${accountData?.fullName}` || 'Анонім',
@@ -147,9 +154,18 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 			edited: false,
 			received: false,
 		}
-		await createChatInfo(newMessageData);
+		//if authed -> send message and set chat info
+		if(accountData) {
+			//uid1 -> uid2-> data (api)
+			createChatInfo(newMessageData, contactData, accountData.uid, uid2);
+			//uid2 -> uid1 -> data (api)
+			createChatInfo(newMessageData, accountData, uid2, accountData.uid);
+			//uid1->uid2->messages
+			dispatch(sendMessage(newMessageData, accountData.uid, uid2));
+			//uid1->uid2->messages
+			await dispatch(sendMessage(newMessageData, uid2, accountData.uid));
+		}
 		reset();
-		await dispatch(sendMessage(newMessageData, uid2));
 		if(textareaEl) textareaEl.value = '';
 	}
 

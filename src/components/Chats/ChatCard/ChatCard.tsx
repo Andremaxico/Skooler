@@ -3,6 +3,7 @@ import classes from './ChatCard.module.scss';
 import { ChatDataType } from '../../../utils/types';
 import { Avatar, useTheme } from '@mui/joy';
 import { getStringDate } from '../../../utils/helpers/getStringDate';
+import { Link } from 'react-router-dom';
 
 type PropsType = {
 	data: ChatDataType
@@ -15,10 +16,11 @@ const getMessageTime = (date: Date): string => {
 
 	const diff = currTime - messageTime;
 	const minutesDiff = Math.floor(diff / 1000 / 60);
-	const hoursDiff = Math.floor(minutesDiff);
+	const hoursDiff = Math.floor(minutesDiff / 60);
 	const timeDiff =  hoursDiff ;
 
 	console.log('hoursDiff', timeDiff);
+	console.log('message datee', date);
 
 	const isToday = currDate.getHours() - hoursDiff > 0;
 
@@ -84,7 +86,7 @@ export const ChatCard: React.FC<PropsType> = ({data}) => {
 
 	console.log('is cut', isCut);  
 	return (
-		<div className={classes.ChatCard}>
+		<Link to={`/chat/${contactId}`} className={classes.ChatCard}>
 			<Avatar src={contactAvatarUrl} className={classes.avatar}/>
 			<div className={classes.body}>
 				<div className={classes.top}>
@@ -92,9 +94,9 @@ export const ChatCard: React.FC<PropsType> = ({data}) => {
 					<div className={classes.lastMessageTime}  >{stringDate}</div>
 				</div>
 				<div className={classes.lastMessage} ref={lastMessageRef}>
-					<p className={classes.senderName} ref={senderNameRef}>
+					{/* <p className={classes.senderName} ref={senderNameRef}>
 						{lastMessageData.displayName === contactFullname ? contactFullname : 'Я'}:
-					</p>
+					</p> */}
 					<p className={classes.text} ref={textRef} style={{maxWidth: `${widthForText}px`}}>
 						{lastMessageData.text}
 						fgdgdgdhg ndfsuy gifudguysdfogydfyigiunvfbygvniofsguyn
@@ -103,6 +105,6 @@ export const ChatCard: React.FC<PropsType> = ({data}) => {
 					<span className={classes.newMessagesCount} ref={counterRef}>0</span>
 				</div>
 			</div>
-		</div>
+		</Link>
 	)
 }

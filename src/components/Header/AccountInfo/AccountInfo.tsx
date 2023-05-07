@@ -21,6 +21,7 @@ import cn from 'classnames';
 
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
+import { prevPageChanged } from '../../../Redux/app/appReducer';
 
 type PropsType = {
 	loginData: UserType | null,
@@ -37,12 +38,13 @@ export const AccountInfo: React.FC<PropsType> = ({loginData}) => {
 	const dispatch = useAppDispatch();
 	const signout = () => {
 		console.log('sign out ui');
-		if(auth) {
-			signOut(auth);
-		}
 		dispatch(loginDataReceived(null));
 		dispatch(myAccountDataReceived(null));
 		dispatch(authStatusChanged(false));
+
+		if(auth) {
+			signOut(auth);
+		}
 	}
 
 	const handleClose = () => {

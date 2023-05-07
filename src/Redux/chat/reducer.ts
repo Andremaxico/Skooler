@@ -88,10 +88,10 @@ export const stopMessaging = () => (dispatch: AppDispatchType) => {
 
 
 //messages interaction
-export const sendMessage = (data: MessageDataType, uid2: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
+export const sendMessage = (data: MessageDataType, uid1: string, uid2: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
 	console.log('send message');
-	dispatch(newMessageReceived(data));
-	const uid1 = getState().account.myAccountData?.uid || '';
+	const myUid = getState().account.myAccountData?.uid;
+	if(myUid === uid1) dispatch(newMessageReceived(data));
 	await chatAPI.sendMessage({...data, received: true}, uid1, uid2);
 }
 
@@ -129,10 +129,17 @@ export const getChatsData = () => async (dispatch: AppDispatchType, getState: ()
 	}
 }
 
-export const setChatInfo = (data: ChatDataType, uid2: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
+export const setChatInfo = (data: ChatDataType, uid1: string, uid2: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
 	const uid = getState().account.myAccountData?.uid;
 	if(uid) {
-		chatAPI.setChatInfo(data, uid, uid2);
+		chatAPI.setChatInfo(data, uid1, uid2);
+	}
+}
+
+export const updateChatInfo = (data: ChatDataType, uid1: string, uid2: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
+	const uid = getState().account.myAccountData?.uid;
+	if(uid) {
+		chatAPI.updateChatInfo(data, uid1, uid2);
 	}
 }
  
