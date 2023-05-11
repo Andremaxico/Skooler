@@ -152,7 +152,8 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 			id: v1(),
 			usersWhoRead: [authData?.uid || null],
 			edited: false,
-			received: false,
+			sent: false,
+			isRead: false,
 		}
 		//if authed -> send message and set chat info
 		if(accountData) {

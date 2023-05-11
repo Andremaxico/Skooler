@@ -50,6 +50,8 @@ const chatAPI = {
 					messages.push({...doc.data(), id: doc.id});
 				});
 
+				console.log('messages changed, api');
+
 				notifyMessagesSubscribers(messages as MessagesDataType);
 			},
 			(error) => {
@@ -66,10 +68,10 @@ const chatAPI = {
 		subscribers['fetching-sub'].push(subscriber);
 	},
 	
-	sendMessage(messageData: MessageDataType, uid1: string, uid2: string)  {
+	async sendMessage(messageData: MessageDataType, uid1: string, uid2: string)  {
 		try {
 			const messageDoc = doc(firestore, `messages/chat/${uid1}/${uid2}/messages`, messageData.id)
-			setDoc(messageDoc, messageData); 
+			await setDoc(messageDoc, messageData); 
 			
 		} catch(e) {
 			console.log(e);

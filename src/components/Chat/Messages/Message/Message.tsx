@@ -31,7 +31,7 @@ type PropsType = {
 const Message = React.forwardRef<HTMLDivElement, PropsType>(({
 	messageData, myAccountId, showDeleteConfirm, setEditMessageData, openInfoModal, isShort
 }, ref) => {
-	const { text, photoUrl, uid, id, usersWhoRead, createdAt, displayName, received, edited} = messageData;
+	const { text, photoUrl, uid, id, usersWhoRead, createdAt, displayName, sent, edited} = messageData;
 
 	const menuRef = useRef<HTMLDivElement>(null);
 	
@@ -77,7 +77,7 @@ const Message = React.forwardRef<HTMLDivElement, PropsType>(({
 							<p className={classes.createDate}>{sendTime}</p>
 
 							{isMy && <p className={classes.receivedStatus}>
-								{received 
+								{sent 
 								? <DoneAllOutlinedIcon className={classes.icon} /> 
 								: <DoneOutlinedIcon className={classes.icon} />}
 							</p>}

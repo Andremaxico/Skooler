@@ -39,7 +39,8 @@ export type MessageDataType = {
 	id: string,
 	usersWhoRead: UsersWhoReadMessageType,
 	edited: boolean,
-	received: boolean,
+	sent: boolean,
+	isRead: boolean,   
 }
 export type MessagesDataType = MessageDataType[];
 

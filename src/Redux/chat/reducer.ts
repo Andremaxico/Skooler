@@ -75,8 +75,10 @@ export const startMessaging = (uid2: string) => (dispatch: AppDispatchType, getS
 	const subscriber = (data: MessagesDataType) => {
 		//null = 'no messages', if no messages we set this to null for shoing an component with 'no messages     '
 		dispatch(messagesReceived(data.length == 0 ? null : data));
+		console.log('new messages received, reducer subscriber');
 	}
 	const uid1 = getState().account.myAccountData?.uid || '';
+	
 	chatAPI.subscribe(subscriber, uid1, uid2);
 	chatAPI.fetchingSubscribe(fetchingSubscriberCreator(dispatch));
 }
@@ -92,7 +94,7 @@ export const sendMessage = (data: MessageDataType, uid1: string, uid2: string) =
 	console.log('send message');
 	const myUid = getState().account.myAccountData?.uid;
 	if(myUid === uid1) dispatch(newMessageReceived(data));
-	await chatAPI.sendMessage({...data, received: true}, uid1, uid2);
+	await chatAPI.sendMessage({...data, sent: true}, uid1, uid2);
 }
 
 export const markMessageAsRead = (messageId: string, uid: string) => async (dispatch: AppDispatchType) => {
