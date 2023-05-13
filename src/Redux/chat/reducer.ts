@@ -1,5 +1,4 @@
 import { MessageDataType, MessagesDataType, ReceivedAccountDataType, UsersWhoReadMessageType, ChatDataType } from './../../utils/types/index';
-import { Item } from "firebase/analytics";
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createReducer, createAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { AppDispatchType, RootStateType } from '../store';
@@ -78,7 +77,7 @@ export const startMessaging = (uid2: string) => (dispatch: AppDispatchType, getS
 		console.log('new messages received, reducer subscriber');
 	}
 	const uid1 = getState().account.myAccountData?.uid || '';
-	
+
 	chatAPI.subscribe(subscriber, uid1, uid2);
 	chatAPI.fetchingSubscribe(fetchingSubscriberCreator(dispatch));
 }
@@ -97,8 +96,8 @@ export const sendMessage = (data: MessageDataType, uid1: string, uid2: string) =
 	await chatAPI.sendMessage({...data, sent: true}, uid1, uid2);
 }
 
-export const markMessageAsRead = (messageId: string, uid: string) => async (dispatch: AppDispatchType) => {
-	await chatAPI.readMessage(messageId, uid);
+export const markMessageAsRead = (messageId: string, uid: string, uid2: string) => async (dispatch: AppDispatchType) => {
+	await chatAPI.readMessage(messageId, uid2, uid);
 }
 
 export const editMessage = (messageId: string, newText: string) => async (dispatch: AppDispatchType) => {

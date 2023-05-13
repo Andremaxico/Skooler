@@ -19,6 +19,7 @@ import { getStringDate } from '../../../utils/helpers/getStringDate';
 type PropsType = {
 	setEditMessageData: (data: EditMessageDataType) => void, 
 	messagesData: MessageDataType[],
+	contactId: string,
 	cancelEdit: () => void,
 	//ref: React.RefObject<HTMLButtonElement>,
 }
@@ -57,7 +58,7 @@ const getSortedByDateMessages = (messagesData: MessagesDataType): FormattedMessa
 	return sortedMessages;
 }
 
-const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessageData, messagesData}, ref) => {
+const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessageData, messagesData, contactId}, ref) => {
 	const isFetching = useSelector(selectIsMessagesFetching);
 	const myAccountData = useSelector(selectMyAccountData);
 	const usersWhoReadCurrMessageData = useSelector(selectCurrMessageWhoReadList);
@@ -140,6 +141,7 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessage
 						openInfoModal={setUsersWhoReadCurrMessage}  
 						isShort={isShort} 
 						ref={myMessageRef}
+						contactId={contactId}
 					/>
 				);
 

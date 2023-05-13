@@ -6,7 +6,6 @@ import reportWebVitals from './reportWebVitals';
 import { getAuth, Auth } from 'firebase/auth';
 
 import { initializeApp, getApps, getApp } from "firebase/app";
-import { Analytics, getAnalytics } from "firebase/analytics";
 import { Firestore, getFirestore } from 'firebase/firestore';
 import { getMessaging } from "firebase/messaging";
 import { Database, getDatabase } from "firebase/database";
@@ -29,7 +28,6 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
-const analytics = getAnalytics(app);
 const auth  = getAuth(app);
 auth.useDeviceLanguage();
 
@@ -37,14 +35,14 @@ const firestore = getFirestore();
 const messaging = getMessaging(app);
 const database = getDatabase(app);
 
+console.log('app launch');
+
 export const FirebaseContext = createContext({
   auth: null,
-  analytics: null,
   firestore: null,
   database: null,
 } as {
   auth: Auth | null,
-  analytics: Analytics | null,
   firestore: Firestore | null,
   database: Database | null,
 });
@@ -54,7 +52,6 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <FirebaseContext.Provider value={{
-      analytics,
       auth,
       firestore,
       database

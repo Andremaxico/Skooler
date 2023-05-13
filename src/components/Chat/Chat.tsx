@@ -93,6 +93,7 @@ const Chat = () => {
 			{messagesData !== null ? 
 				<Messages 
 					ref={scrollBtnRef} 
+					contactId={uid2}
 					messagesData={messagesData}
 					setEditMessageData={(data: EditMessageDataType) => {
 						setEditMessageData(data);

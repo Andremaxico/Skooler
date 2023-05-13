@@ -18,10 +18,12 @@ import MenuItem from '@mui/material/MenuItem';
 import cn from 'classnames';
 import DoneAllOutlinedIcon from '@mui/icons-material/DoneAllOutlined';
 import DoneOutlinedIcon from '@mui/icons-material/DoneOutlined';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
 type PropsType = {
 	messageData: MessageDataType,
 	myAccountId: string,
+	contactId: string,
 	isShort: boolean,
 	showDeleteConfirm: (messageId: string) => void,
 	setEditMessageData: (data: EditMessageDataType) => void,
@@ -29,12 +31,15 @@ type PropsType = {
 };
 
 const Message = React.forwardRef<HTMLDivElement, PropsType>(({
-	messageData, myAccountId, showDeleteConfirm, setEditMessageData, openInfoModal, isShort
+	messageData, myAccountId, showDeleteConfirm, setEditMessageData, openInfoModal, isShort, contactId
 }, ref) => {
-	const { text, photoUrl, uid, id, usersWhoRead, createdAt, displayName, sent, edited} = messageData;
+	const { text, photoUrl, uid, id, usersWhoRead, createdAt, displayName, sent, edited, isRead} = messageData;
 
 	const menuRef = useRef<HTMLDivElement>(null);
 	
+	//check if my
+	const isMy = uid === myAccountId;
+
 	//intersection observer hook
 	const { ref: observerRef, inView, entry } = useInView({
 		threshold: 0.7,
@@ -43,12 +48,9 @@ const Message = React.forwardRef<HTMLDivElement, PropsType>(({
 	const dispatch = useAppDispatch();
 
 	//if in view and weren't in view
-	if(inView && !usersWhoRead.includes(myAccountId)) {
-		dispatch(markMessageAsRead(id, myAccountId));
+	if(inView && !usersWhoRead.includes(myAccountId) && !isMy) {
+		dispatch(markMessageAsRead(id, myAccountId, contactId));
 	}
-
-	//check if my
-	const isMy = uid === myAccountId;
 
 	//@ts-ignore
 	const createdAtMilisecs = createdAt?.seconds * 1000;
@@ -77,9 +79,12 @@ const Message = React.forwardRef<HTMLDivElement, PropsType>(({
 							<p className={classes.createDate}>{sendTime}</p>
 
 							{isMy && <p className={classes.receivedStatus}>
-								{sent 
-								? <DoneAllOutlinedIcon className={classes.icon} /> 
-								: <DoneOutlinedIcon className={classes.icon} />}
+								{ isRead 
+									? <DoneAllOutlinedIcon className={classes.icon} /> 
+									: 
+									sent 
+									? <DoneOutlinedIcon className={classes.icon} /> 
+									: <AccessTimeIcon className={classes.icon} />}
 							</p>}
 						</div>
 					</div>

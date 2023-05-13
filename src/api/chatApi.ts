@@ -50,8 +50,6 @@ const chatAPI = {
 					messages.push({...doc.data(), id: doc.id});
 				});
 
-				console.log('messages changed, api');
-
 				notifyMessagesSubscribers(messages as MessagesDataType);
 			},
 			(error) => {
@@ -78,11 +76,12 @@ const chatAPI = {
 		}
 	},
 
-	async readMessage(messageId: string, uid: string) {
-		const docRef = doc(firestore, 'messages', messageId);
-		const messageData = await getDoc(docRef);
+	async readMessage(messageId: string, uid: string, uid2: string) {
+		const docRef = doc(firestore, 'messages', 'chat', uid, uid2, 'messages', messageId);
+		//const messageData = await getDoc(docRef);
 		await updateDoc(docRef, {
-			usersWhoRead: [...messageData.data()?.usersWhoRead, uid]
+			//usersWhoRead: [...messageData.data()?.usersWhoRead, uid]
+			isRead: true,
 		});
 	},
 

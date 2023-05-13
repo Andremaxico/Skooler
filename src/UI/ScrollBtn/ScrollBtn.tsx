@@ -15,26 +15,38 @@ type PropsType = {
 export const ScrollBtn = React.forwardRef<HTMLButtonElement, PropsType>(({element, unreadCount, up, className}, ref) => {
 	const body = document.body;
 
-	const scrollToBottomHeight = body.scrollHeight + body.clientHeight;
+	const scrollToBottomHeight = body.scrollHeight -   body.scrollTop + body.clientHeight;
 	const remainingScroll = body.scrollHeight - (element.scrollTop + element.clientHeight);
 	const [isBottom, setIsBottom ] = useState<boolean>(remainingScroll < 100);
 	const [isShowing, setIsShowing] = useState<boolean>(false);
-	const [prevScroll, setPrevScroll] = useState<number>(scrollToBottomHeight);
+	//const [prevScroll, setPrevScroll] = useState<number>(scrollToBottomHeight);
 
 	useEffect(() => {
+		let prevScroll = scrollToBottomHeight;
 		const changeVisibility = debounce((e) => {
 			let currScroll = window.scrollY;
 			const isInBottom = body.scrollHeight - (currScroll + body.clientHeight) < 100;
 			setIsBottom(isInBottom);
 
-			if(currScroll < prevScroll && !isInBottom) {
-				setIsShowing(true);
-			} else if(currScroll > prevScroll)  {
+			console.log('prevScroll', prevScroll);
+			console.log('currScroll', currScroll);
+			console.log('isInBottom', isInBottom);
+
+			//in down
+			if(isInBottom) {
 				setIsShowing(false);
+				//scrolling up
+			} else if(prevScroll >= currScroll)  {
+				console.log('set is showing false');
+				setIsShowing(false);
+				//scrolling down
+			} else if(prevScroll < currScroll) {
+				console.log('set is showing true');
+				setIsShowing(true);
 			}
 	
-			setPrevScroll(currScroll);
-		}, 20);
+			prevScroll = currScroll;
+		}, 10);
 
 		if(!up) {
 			//visible / unvisible
@@ -63,7 +75,7 @@ export const ScrollBtn = React.forwardRef<HTMLButtonElement, PropsType>(({elemen
 	}
 
 	return (
-		<div className={cn(classes.ScrollBtn, isBottom && !isShowing ? classes._hidden : '', className)}>
+		<div className={cn(classes.ScrollBtn, isBottom || !isShowing ? classes._hidden : '', className)}>
 			<button ref={ref} className={classes.arrow} onClick={up ? scrollTop : scrollBottom}>
 				{unreadCount && unreadCount > 0 && <div className={classes.unreadCount}>
 					{unreadCount}

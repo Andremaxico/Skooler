@@ -35,13 +35,14 @@ import { selectUserActionStatus } from './Redux/stream/stream-selectors';
 import { ActionStatus } from './UI/ActionStatus';
 import { theme } from './utils/theme';
 import { FirebaseContext } from './main';
+import Chat from './components/Chat';
 
-const Chat = React.lazy(() => import('./components/Chat'));
+//const Chat = React.lazy(() => import('./components/Chat'));
 const Chats = React.lazy(() => import('./components/Chats'));
 const Login = React.lazy(() => import('./components/Login'))
 const Account = React.lazy(() => import('./components/Account'));
 
-const SuspensedChat = withSuspense(Chat);
+//const SuspensedChat = withSuspense(Chat);
 const SuspensedChats = withSuspense(Chats);
 const SuspensedLogin = withSuspense(Login);
 const SuspensedAccount = withSuspense(Account);

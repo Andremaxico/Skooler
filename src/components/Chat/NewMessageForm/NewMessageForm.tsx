@@ -19,6 +19,7 @@ import { message } from 'antd';
 import { footerHeightReceived } from '../../../Redux/app/appReducer';
 import { selectMessages } from '../../../Redux/chat/selectors';
 import { useUserData } from '../../../utils/hooks/useUserData';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
 type ContactDataType = ReceivedAccountDataType | Promise<ReceivedAccountDataType | undefined>;
 
@@ -45,6 +46,7 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 	const [isFirstlyOpened, setIsFirstlyOpened] = useState<boolean>(true);
 	const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 	const [textareaEl, setTextareaEl] = useState<HTMLTextAreaElement | null>(null);
+	const [isSendBtnShowing, setIsSendBtnShowing] = useState<boolean>(false);
 
 	//ant design form(щоб показувати зарашнє значення коментара) & reset formmessa
 
@@ -168,9 +170,10 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 		}
 		reset();
 		if(textareaEl) textareaEl.value = '';
+		setIsSendBtnShowing(false);
 	}
 
-	//form instaead of footer
+	//form instead of footer
 	useEffect(() => {
 		if(formRef.current) {
 			const formHeight = formRef.current.offsetHeight;
@@ -184,12 +187,14 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 	//trigger message field for start validation
 	useEffect(() => {
 		if(!isSubmitted) {
-			console.log('trigger');
 			trigger('message');
 		}
 	}, [watch('message')]);
 
-	const isSendBtnShowing = isFirstlyOpened && !isMessageEdit ? !isFirstlyOpened : !isMessageEdit ? !errors.message : true;
+	useEffect(() => {
+		setIsSendBtnShowing(isFirstlyOpened && !isMessageEdit ? false : !isMessageEdit ? !errors.message : true);
+	}, [isFirstlyOpened, isMessageEdit, errors.message]);
+	//if firstly open and not editing -> false, else if no(editing) and no firstly -> is messagesErrors(true -> false)
 
 	return (
 		<form className={classes.NewMessageForm} onSubmit={handleSubmit(onSubmit)} ref={formRef}>
