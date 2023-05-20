@@ -157,6 +157,10 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 			sent: false,
 			isRead: false,
 		}
+		reset();
+		if(textareaEl) textareaEl.value = '';
+		setIsSendBtnShowing(false);
+
 		//if authed -> send message and set chat info
 		if(accountData) {
 			//uid1 -> uid2-> data (api)
@@ -170,9 +174,6 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 			//uid1->uid2->messages
 			await dispatch(sendMessage(newMessageData, uid2, accountData.uid));
 		}
-		reset();
-		if(textareaEl) textareaEl.value = '';
-		setIsSendBtnShowing(false);
 	}
 
 	//form instead of footer
@@ -194,8 +195,12 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 	}, [watch('message')]);
 
 	useEffect(() => {
-		setIsSendBtnShowing(isFirstlyOpened && !isMessageEdit ? false : !isMessageEdit ? !errors.message : true);
-	}, [isFirstlyOpened, isMessageEdit, errors.message]);
+		setIsSendBtnShowing(
+			isFirstlyOpened && !isMessageEdit ? false 
+			: !isMessageEdit ? isValid
+			: true
+		);
+	}, [isFirstlyOpened, isMessageEdit, isValid]);
 	//if firstly open and not editing -> false, else if no(editing) and no firstly -> is messagesErrors(true -> false)
 
 	return (

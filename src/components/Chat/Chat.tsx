@@ -27,7 +27,7 @@ const Chat = () => {
 	const authData = useSelector(selectMyLoginData);
 	const isFetching = useSelector(selectIsMessagesFetching);
 
-	//is exists messages now editing
+	//is existing messages now editing
 	const [isEdit, setIsEdit] = useState<boolean>(false);
 	const [editMessageData, setEditMessageData] = useState<EditMessageDataType | null>(null);
 	const [unreadMessagesCount, setUnreadMessagesCount] = useState<number | null>(null);
