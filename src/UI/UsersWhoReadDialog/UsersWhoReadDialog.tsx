@@ -4,8 +4,8 @@ import { styled } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
-import div from '@mui/material/div';
 import CloseIcon from '@mui/icons-material/Close';
+import { Divider } from '@mui/joy';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -34,10 +34,10 @@ const BootstrapDialogTitle: React.FC<DialogTitleProps> = ({children, onClose, ..
     <DialogTitle sx={{ m: 0, p: 2 }} {...other} className={classes.dialogTitle}>
       {children}
       {onClose ? (
-        <div
+        <Divider
           aria-label="close"
           onClick={onClose}
-			 className={classes.closeBtn}
+			    className={classes.closeBtn}
           sx={{
             position: 'absolute',
             right: 8,
@@ -45,7 +45,7 @@ const BootstrapDialogTitle: React.FC<DialogTitleProps> = ({children, onClose, ..
           }}
         >
           <CloseIcon className={classes.icon} />
-        </div>
+        </Divider>
       ) : null}
     </DialogTitle>
   );

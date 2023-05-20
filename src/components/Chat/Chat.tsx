@@ -55,9 +55,9 @@ const Chat = () => {
 	}
 
 	const sendUpdatedMessage = (value: string) => {
-		if(editMessageData?.id) {
+		if(editMessageData?.id && myAccountData?.uid) {
 			cancelEdit();
-			dispatch(editMessage(editMessageData.id, value));
+			dispatch(editMessage(editMessageData.id, value, myAccountData.uid, uid2));
 		}
 	}
 

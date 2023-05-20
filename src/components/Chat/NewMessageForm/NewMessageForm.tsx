@@ -1,7 +1,6 @@
 import React, { FocusEvent, ReactElement, useEffect, useRef, useState } from 'react';
 
 import SendIcon from '@mui/icons-material/Send';
-import TextArea from 'antd/lib/input/TextArea';
 import classes from './NewMessageForm.module.scss';
 import Preloader from '../../../UI/Preloader';
 import { ChatDataType, MessageDataType, ReceivedAccountDataType, UserType } from '../../../utils/types';
@@ -15,7 +14,6 @@ import { v1 } from 'uuid';
 import { useAppDispatch } from '../../../Redux/store';
 import { scrollElementToBottom } from '../../../utils/helpers/scrollElementToBottom';
 import { Button, FormControl, IconButton, Textarea } from '@mui/joy';
-import { message } from 'antd';
 import { footerHeightReceived } from '../../../Redux/app/appReducer';
 import { selectContactData, selectMessages } from '../../../Redux/chat/selectors';
 import { useUserData } from '../../../utils/hooks/useUserData';

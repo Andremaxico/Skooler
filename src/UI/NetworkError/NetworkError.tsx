@@ -1,8 +1,6 @@
 import React from 'react';
-import { Typography } from 'antd';
 import classes from './NetworkError.module.scss';
-
-const { Text } = Typography;
+import { Typography } from '@mui/joy';
 
 type PropsType = {
 	message: string,
@@ -12,7 +10,7 @@ export const NetworkError: React.FC<PropsType> = ({message}) => {
 	console.log('network error render');
 	return (
 		<div className={classes.NetworkError}>
-			<Text className={classes.message}>{message}</Text>
+			<Typography className={classes.message}>{message}</Typography>
 		</div>
 	)
 }

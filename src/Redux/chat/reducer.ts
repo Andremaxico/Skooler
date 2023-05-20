@@ -106,9 +106,10 @@ export const markMessageAsRead = (messageId: string, uid: string, uid2: string) 
 	await chatAPI.readMessage(messageId, uid, uid2);
 }
 
-export const editMessage = (messageId: string, newText: string) => async (dispatch: AppDispatchType) => {
+export const editMessage = (messageId: string, newText: string, uid1: string, uid2: string) => async (dispatch: AppDispatchType) => {
 	console.log('edit message', messageId, newText);
-	await chatAPI.updateMessage(messageId, newText);
+	chatAPI.updateMessage(messageId, newText, uid1, uid2);
+	await chatAPI.updateMessage(messageId, newText, uid2, uid1);
 } 
 
 export const deleteMessage = (messageId: string) => async (dispatch: AppDispatchType) => {
@@ -122,7 +123,7 @@ export const subscribeOnChats = () => async (dispatch: AppDispatchType, getState
 		dispatch(chatsDataReceived(data));
 	}
 
-	if(uid) {
+	if(uid) {  
 		chatAPI.subscribeOnChats(uid, chatsSubscriber);
 	}
 }

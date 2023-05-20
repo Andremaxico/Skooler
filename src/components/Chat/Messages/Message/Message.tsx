@@ -1,5 +1,4 @@
-import { Avatar, Dropdown, Typography } from 'antd';
-import { CheckCircleOutlined, UserOutlined } from '@ant-design/icons';
+
 import React, { useEffect, useRef, useState } from 'react'
 import { MessageDataType, UsersWhoReadMessageType } from '../../../../utils/types';
 import classes from './Message.module.scss';

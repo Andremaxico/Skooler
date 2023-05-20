@@ -1,27 +1,20 @@
-import { Avatar, Dropdown, Typography } from 'antd';
-import { CaretDownFilled, UserOutlined } from '@ant-design/icons';
 import React, { useContext, useState } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { UserType } from '../../../utils/types';
 import classes from './AccountInfo.module.scss';
 import { FirebaseContext } from '../../../main';
-import { Auth, signOut } from 'firebase/auth';
-import { useAuthState } from 'react-firebase-hooks/auth';
+import { signOut } from 'firebase/auth';
 import { myAccountDataReceived, loginDataReceived, authStatusChanged } from '../../../Redux/account/account-reducer';
 import { useAppDispatch } from '../../../Redux/store';
 import { useSelector } from 'react-redux';
 import { selectMyAccountData } from '../../../Redux/account/account-selectors';
-import { SignoutIcon } from '../../../UI/Icons';
-import Popover from '@mui/material/Popover';
-import PopupState, { bindTrigger, bindPopover, bindMenu } from 'material-ui-popup-state';
-import { Button, ListDivider, ListItemDecorator, Menu, MenuItem} from '@mui/joy';
-import { Edit, DeleteForever } from '@mui/icons-material';
-import { IconButton } from '@mui/joy';
+import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
+import { Avatar, Menu, MenuItem} from '@mui/joy';
 import cn from 'classnames';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
-import { prevPageChanged } from '../../../Redux/app/appReducer';
 
 type PropsType = {
 	loginData: UserType | null,
@@ -60,9 +53,7 @@ export const AccountInfo: React.FC<PropsType> = ({loginData}) => {
 		<div className={classes.AccountInfo}>
 			<Link to='/account'>
 				<Avatar 
-					icon={<UserOutlined />} src={ 
-						accountData?.avatarUrl || loginData?.photoURL
-					}
+					src={accountData?.avatarUrl}
 					className={classes.avatar} 
 				/>
 			</Link>
@@ -72,7 +63,7 @@ export const AccountInfo: React.FC<PropsType> = ({loginData}) => {
 				{(popupState) => (
 				<>
 					<button {...bindTrigger(popupState)}>
-						<CaretDownFilled className={classes.moreBtn}/>
+						<KeyboardArrowDownIcon className={classes.moreBtn}/>
 					</button>
 					{/* <Popover
 						className={classes.popover}

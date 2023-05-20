@@ -70,7 +70,7 @@ export const AvatarUpload: React.FC<PropsType> = ({name, control, setValue, avat
 
 	const uploadButton = (
 		<div>
-			{loading ? <LoadingOutlined /> : <PlusOutlined />}
+		{/* {loading ? <LoadingOutlined/> : <PlusOutlined />} */}
 			<div
 				style={{
 					marginTop: 8,

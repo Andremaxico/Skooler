@@ -1,4 +1,3 @@
-import { Button } from 'antd';
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
 import classes from './Account.module.scss';
@@ -61,7 +60,8 @@ const Account: React.FC<PropsType> = ({}) => {
 					<AccountQuestions uid={accountData.uid} />
 				</>
 			: isMy ? (
-				<AccountForm accountData={myAccountData} setIsEdit={setIsEdit}/>
+				// <AccountForm accountData={myAccountData} setIsEdit={setIsEdit}/>
+				<p>Тут має бути AccountForm</p>
 			) 
 			: <NoAccountData />
 			}

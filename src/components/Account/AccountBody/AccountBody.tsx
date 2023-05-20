@@ -1,5 +1,4 @@
-import { UserOutlined } from '@ant-design/icons';
-import { Avatar } from 'antd';
+
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { selectMyLoginData } from '../../../Redux/account/account-selectors';
@@ -12,7 +11,7 @@ import { addZero } from '../../../utils/helpers/formatters';
 import { getStringDate } from '../../../utils/helpers/getStringDate';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import MessageIcon from '@mui/icons-material/Message';
-import { Button } from '@mui/joy';
+import { Avatar, Button } from '@mui/joy';
 import { Link } from 'react-router-dom';
 
 type PropsType = {
@@ -41,9 +40,9 @@ export const AccountBody: React.FC<PropsType> = React.memo(({accountData, isMy})
 					</div>
 					<h1 className={classes.fullName}>{fullName}</h1>
 				</div>
-				<Avatar 
-					className={classes.avatar} icon={<UserOutlined />} 
-					src={ avatarUrl || loginData?.photoURL } alt='Фото користувача'
+				<Avatar
+					className={classes.avatar}
+					src={ avatarUrl } alt='Фото користувача'
 				/>
 			</div>
 			<p className={classes.about}>{aboutMe}</p>

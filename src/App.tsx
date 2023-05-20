@@ -1,7 +1,6 @@
 import React, { Suspense } from 'react';
 import { useContext, useEffect, useState } from 'react';
 import './nullstyle.scss';
-import "antd/dist/antd.css";
 import classes from './App.module.scss';
 
 import AppHeader from './components/Header';
@@ -9,8 +8,6 @@ import { HashRouter, Route, Routes, useLocation } from 'react-router-dom';
 
 import { Provider, useSelector } from 'react-redux';
 
-
-import Layout, { Content } from 'antd/lib/layout/layout';
 import { store, useAppDispatch } from './Redux/store';
 import { networkErrorStatusChanged, prevPageChanged } from './Redux/app/appReducer';
 import { loginDataReceived, setMyAccount } from './Redux/account/account-reducer';
@@ -102,9 +99,7 @@ const App = () => {
   //   setIsFetching(false);
   // }, [user]);
   useEffect(() => {
-    console.log('auth', auth);
     if(auth) {
-      console.log('add listener');
       onAuthStateChanged(auth, async (user) => {
         if (user) {
           dispatch(loginDataReceived({...user}));

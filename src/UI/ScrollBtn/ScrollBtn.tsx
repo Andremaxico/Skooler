@@ -1,5 +1,5 @@
-import { ArrowDownOutlined } from '@ant-design/icons';
 import { debounce } from 'lodash';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import React, { useEffect, useState } from 'react';
 import { scrollElementToBottom } from '../../utils/helpers/scrollElementToBottom';
 import classes from './ScrollBtn.module.scss';
@@ -74,7 +74,7 @@ export const ScrollBtn = React.forwardRef<HTMLButtonElement, PropsType>(({elemen
 				{unreadCount && unreadCount > 0 && <div className={classes.unreadCount}>
 					{unreadCount}
 				</div>}
-				<ArrowDownOutlined className={cn(classes.icon, up && classes._up)} />
+				<ExpandMoreIcon className={cn(classes.icon, up && classes._up)} />
 			</button>
 		</div>
 	)

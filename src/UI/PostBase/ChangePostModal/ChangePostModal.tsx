@@ -1,4 +1,4 @@
-import { div, Textarea } from '@mui/joy';
+import { Textarea } from '@mui/joy';
 import React, { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Modal } from '../../Modal';
@@ -55,12 +55,12 @@ export const ChangePostModal: React.FC<PropsType> = ({isShow, changeP, cancel, p
 								placeholder='Новий текст'
 								endDecorator={
 									<div className={classes.buttons}>
-										<div className={classes.cancelBtn} onClick={handleClose}>
+										<button className={classes.cancelBtn} onClick={handleClose}>
 											<CloseIcon />
-										</div>
-										<div className={classes.submitBtn} type='submit'>
+										</button>
+										<button className={classes.submitBtn} type='submit'>
 											<DoneIcon />
-										</div>
+										</button>
 									</div>
 								}
 							/>

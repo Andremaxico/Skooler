@@ -99,8 +99,8 @@ const chatAPI = {
 		await deleteDoc(docRef);
 	},
 
-	async updateMessage(messageId: string, newText: string) {
-		const docRef = doc(firestore, 'messages', messageId);
+	async updateMessage(messageId: string, newText: string, uid1: string, uid2: string,) {
+		const docRef = doc(firestore, 'messages', 'chat', uid1, uid2, 'messages', messageId);
 		console.log('update message', messageId, newText);
 		await updateDoc(docRef, {
 			text: newText,

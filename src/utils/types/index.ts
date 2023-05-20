@@ -2,7 +2,6 @@ import * as moment from 'moment';
 import { PathRouteProps, LayoutRouteProps, IndexRouteProps } from 'react-router-dom';
 import { User } from 'firebase/auth';
 import { FieldValue} from 'firebase/firestore';
-import { DatePickRef } from 'antd/lib/date-picker/generatePicker/interface';
 
 import { Value } from 'sass';
 import { BirthDateObject } from '../../Redux/account/account-reducer';
