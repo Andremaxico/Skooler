@@ -10,6 +10,7 @@ export type ChatStateType = {
 	isFetching: boolean,
 	currMessageWhoReadList: null | ReceivedAccountDataType[],
 	chatsData: ChatDataType[] | null,
+	contactData: ReceivedAccountDataType | null,
 }
 
 
@@ -19,6 +20,7 @@ export const fetchingStatusChanged = createAction<boolean>('chat/SET_IS_FETCHING
 export const currMessageWhoReadListReceived = createAction<ReceivedAccountDataType[]>('chat/WHO_READ_LIST_RECEIVE');
 export const newMessageReceived = createAction<MessageDataType>('chat/NEW_MESSAGE_RECEIVED');
 export const chatsDataReceived = createAction<ChatDataType[] | null>('chat/CHATS_DATA_RECEIVED');
+export const contactDataReceived = createAction<ReceivedAccountDataType | null>('chat/CONTACT_DATA_RECEIVED');
 
 //===========================REDUCER========================
 const initialState: ChatStateType = {
@@ -26,6 +28,7 @@ const initialState: ChatStateType = {
 	isFetching: false,
 	currMessageWhoReadList: null,
 	chatsData: [],
+	contactData: null,
 }
 
 const chatReducer = createReducer(initialState, (builder) => {
@@ -44,6 +47,9 @@ const chatReducer = createReducer(initialState, (builder) => {
 		})
 		.addCase(chatsDataReceived, (state, action) => {
 			state.chatsData = action.payload;
+		})
+		.addCase(contactDataReceived, (state, action) => {
+			state.contactData = action.payload;
 		})
 		.addDefaultCase((state, action) => {});
 });
@@ -97,7 +103,7 @@ export const sendMessage = (data: MessageDataType, uid1: string, uid2: string) =
 }
 
 export const markMessageAsRead = (messageId: string, uid: string, uid2: string) => async (dispatch: AppDispatchType) => {
-	await chatAPI.readMessage(messageId, uid2, uid);
+	await chatAPI.readMessage(messageId, uid, uid2);
 }
 
 export const editMessage = (messageId: string, newText: string) => async (dispatch: AppDispatchType) => {
@@ -134,6 +140,13 @@ export const setChatInfo = (data: ChatDataType, uid1: string, uid2: string) => a
 	const uid = getState().account.myAccountData?.uid;
 	if(uid) {
 		chatAPI.setChatInfo(data, uid1, uid2);
+	}
+}
+
+export const setContactData = (uid: string) => async (dispatch: AppDispatchType) => {
+	const data = await usersAPI.getUserById(uid);
+	if(data) {
+		dispatch(contactDataReceived(data));
 	}
 }
 

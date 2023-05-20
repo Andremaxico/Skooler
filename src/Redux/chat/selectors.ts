@@ -15,3 +15,7 @@ export const selectCurrMessageWhoReadList = (state: RootStateType) => {
 export const selectChatsData = (state: RootStateType) => {
 	return state.messages.chatsData;
 }
+
+export const selectContactData = (state: RootStateType) => {
+	return state.messages.contactData;
+}

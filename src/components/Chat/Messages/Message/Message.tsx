@@ -43,13 +43,15 @@ const Message = React.forwardRef<HTMLDivElement, PropsType>(({
 	//intersection observer hook
 	const { ref: observerRef, inView, entry } = useInView({
 		threshold: 0.7,
-	});
+	});   
 
 	const dispatch = useAppDispatch();
 
 	//if in view and weren't in view
-	if(inView && !usersWhoRead.includes(myAccountId) && !isMy) {
+	if(inView && !usersWhoRead.includes(myAccountId) && !isRead  && !isMy) {
+		console.log('mark message as read');   
 		dispatch(markMessageAsRead(id, myAccountId, contactId));
+		dispatch(markMessageAsRead(id, contactId, myAccountId));
 	}
 
 	//@ts-ignore

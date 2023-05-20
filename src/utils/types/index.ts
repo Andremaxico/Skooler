@@ -52,6 +52,7 @@ export type ChatDataType = {
 	contactAvatarUrl?: string,
 	lastMessageData: MessageDataType,
 	lastMessageTime: FieldValue,
+	unreadCount: number,
 }
 //==============STREAM======================
 export type QuestionCategoriesType = Array<

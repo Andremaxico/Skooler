@@ -165,6 +165,37 @@ const chatAPI = {
 			data,   
 		);
 	},
+
+	async increaceUnreadCount(uid1: string, uid2: string) {
+		const ref = doc(firestore, 'messages', 'chats', uid1, uid2)
+		const prevDoc = await getDoc(ref);
+
+		let prevData: null | ChatDataType = null;
+		if(prevDoc.exists()) {
+			prevData = prevDoc.data() as ChatDataType;
+		}
+
+		updateDoc(
+			ref, {
+				unreadCount: (prevData?.unreadCount || 0) + 1,
+			}
+		)
+	},
+	async decreaceUnreadCount(uid1: string, uid2: string) {
+		const ref = doc(firestore, 'messages', 'chats', uid1, uid2)
+		const prevDoc = await getDoc(ref);
+
+		let prevData: null | ChatDataType = null;
+		if(prevDoc.exists()) {
+			prevData = prevDoc.data() as ChatDataType;
+		}
+
+		updateDoc(
+			ref, {
+				unreadCount: (prevData?.unreadCount || 0) - 1,
+			}
+		)
+	},
 }
 
 export default chatAPI;

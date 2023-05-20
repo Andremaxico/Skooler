@@ -17,7 +17,7 @@ import { scrollElementToBottom } from '../../../utils/helpers/scrollElementToBot
 import { Button, FormControl, IconButton, Textarea } from '@mui/joy';
 import { message } from 'antd';
 import { footerHeightReceived } from '../../../Redux/app/appReducer';
-import { selectMessages } from '../../../Redux/chat/selectors';
+import { selectContactData, selectMessages } from '../../../Redux/chat/selectors';
 import { useUserData } from '../../../utils/hooks/useUserData';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
@@ -52,7 +52,7 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 
 	const accountData = useSelector(selectMyAccountData);
 	const messages = useSelector(selectMessages);
-	const contactData = useUserData(uid2);
+	const contactData = useSelector(selectContactData);  
 
 	//for autofocus
 	const messageField = useRef<HTMLDivElement>(null);
@@ -129,6 +129,7 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 					contactAvatarUrl: userData?.avatarUrl,
 					contactFullname: userData.fullName,
 					contactId: userData.uid,
+					unreadCount: 0,
 				}
 				dispatch(setChatInfo(chatInfo, baseUid, secondUid));
 			}
@@ -137,6 +138,7 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 			chatInfo = {
 				lastMessageData: messageData,
 				lastMessageTime: messageData.createdAt,
+				unreadCount: 1,
 			}
 			dispatch(updateChatInfo(chatInfo, baseUid, secondUid));
 		}
@@ -160,7 +162,9 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 		//if authed -> send message and set chat info
 		if(accountData) {
 			//uid1 -> uid2-> data (api)
-			createChatInfo(newMessageData, contactData, accountData.uid, uid2);
+			if(contactData) {
+				createChatInfo(newMessageData, contactData, accountData.uid, uid2);
+			}
 			//uid2 -> uid1 -> data (api)
 			createChatInfo(newMessageData, accountData, uid2, accountData.uid);
 			//uid1->uid2->messages

@@ -28,25 +28,19 @@ export const ScrollBtn = React.forwardRef<HTMLButtonElement, PropsType>(({elemen
 			const isInBottom = body.scrollHeight - (currScroll + body.clientHeight) < 100;
 			setIsBottom(isInBottom);
 
-			console.log('prevScroll', prevScroll);
-			console.log('currScroll', currScroll);
-			console.log('isInBottom', isInBottom);
-
 			//in down
 			if(isInBottom) {
 				setIsShowing(false);
 				//scrolling up
 			} else if(prevScroll >= currScroll)  {
-				console.log('set is showing false');
 				setIsShowing(false);
 				//scrolling down
 			} else if(prevScroll < currScroll) {
-				console.log('set is showing true');
 				setIsShowing(true);
 			}
 	
 			prevScroll = currScroll;
-		}, 10);
+		}, 15);
 
 		if(!up) {
 			//visible / unvisible

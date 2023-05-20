@@ -70,12 +70,7 @@ const Chat = () => {
 
 	//set unread messages count
 	useEffect(() => {
-		const unreadCount = messagesData?.filter((data: MessageDataType) => {
-			if(data.usersWhoRead) {
-				return !data.usersWhoRead.includes(myAccountData?.uid || null)
-			}
-			return false;
-		}).length;
+		const unreadCount = messagesData?.filter((data: MessageDataType) => !data.isRead && data.uid !== myAccountData?.uid).length;
 
 		setUnreadMessagesCount(unreadCount || null);
 
