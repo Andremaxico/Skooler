@@ -101,7 +101,7 @@ export const stopMessaging = () => (dispatch: AppDispatchType) => {
 
 export const subscribeOnChat = (uid1: string, contactUid: string) => async (dispatch: AppDispatchType) => {
 	const subscriber = (data: ChatDataType) => {
-		dispatch(currChatDataReceived);
+		dispatch(currChatDataReceived(data));
 	}
 
 	chatAPI.subscribeOnChatInfo(uid1, contactUid, subscriber);

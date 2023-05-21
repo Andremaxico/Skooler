@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { selectMyAccountData } from '../../../Redux/account/account-selectors';
 import { selectCurrMessageWhoReadList, selectIsMessagesFetching } from '../../../Redux/chat/selectors'; 
@@ -88,6 +88,8 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessage
 		}
 	}
 
+	console.log('my message ref', myMessageRef);
+
 	//on scroll listener
 	useEffect(() => {
 		const handleScroll = () => {
@@ -102,12 +104,16 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessage
 
 	//scroll to last read message
 	useEffect(() => {
+		console.log('mu message ref current', myMessageRef?.current);
 		if(myMessageRef.current) {
+			console.log('scroll to my new message');
 			myMessageRef.current.scrollIntoView({
 				behavior: 'auto',
 			})
 		}
-	}, [myMessageRef.current]);
+	}, [myMessageRef.current, myAccountData]);
+
+	console.log('my message ref', myMessageRef.current);
 
 	//sorted messages data -> messagesList(JSX.Element[])
 	useEffect(() => {
@@ -118,84 +124,86 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessage
 		//sorting messages on groups by create date
 		const sortedMessages: FormattedMessagesType = getSortedByDateMessages(messagesData);
 
-		Object.keys(sortedMessages).forEach(dateStr => {
-			let currMessages: JSX.Element[] = []; // curr date messages
-			let currGroupIndex = -1; // index of current filling group
-			let messagesGroups: MessagesGroupType[] = []; // groups of messages by 1 user in a row
+		if(myAccountData) {
+			Object.keys(sortedMessages).forEach(dateStr => {
+				let currMessages: JSX.Element[] = []; // curr date messages
+				let currGroupIndex = -1; // index of current filling group
+				let messagesGroups: MessagesGroupType[] = []; // groups of messages by 1 user in a row
 
-			let currMyMessages: JSX.Element[] = [];
+				let currMyMessages: JSX.Element[] = [];
 
-			//set messages groups of 1 day
-			sortedMessages[dateStr].map((data, i) => {
-				const prevUid = i > 0 ? sortedMessages[dateStr][i-1].uid : null;
-				const isShort: boolean = prevUid == data.uid;
-				const isMy = data.uid === myAccountData?.uid || null;
+				//set messages groups of 1 day
+				sortedMessages[dateStr].map((data, i) => {
+					const prevUid = i > 0 ? sortedMessages[dateStr][i-1].uid : null;
+					const isShort: boolean = prevUid == data.uid;
+					const isMy = data.uid === myAccountData.uid;
+					console.log('us my', isMy);
 
-				const currMessage = (
-					<Message 
-						messageData={data} 
-						myAccountId={myAccountData?.uid || ''} 
-						setEditMessageData={setEditMessageData}
-						key={`${data.createdAt}${data.uid}`} 
-						showDeleteConfirm={showDeleteConfirm} 
-						openInfoModal={setUsersWhoReadCurrMessage}  
-						isShort={isShort} 
-						ref={myMessageRef}
-						contactId={contactId}
-					/>
-				);
-
-
-				if(isMy) {
-					currMyMessages = [...currMyMessages, currMessage];
-				}
-
-				//create new group
-				if(!isShort) {
-					//if not my, add user avatar, that wrote these messages(data)
-					if(!isMy) {
-						messagesGroups.push({
-							messages: [],
-							metadata: {
-								isMy: false,
-								avatarData: {
-									photoUrl: data.photoUrl,
-									uid: data.uid,
-								}
-							}
-						});
-						//add current message to new group
-						messagesGroups[currGroupIndex+1].messages.push(currMessage)
-					} else {
-						messagesGroups.push({
-							messages: [currMessage],
-							metadata: {isMy: true}
-						});
+					const currMessage = (
+						<Message 
+							messageData={data} 
+							myAccountId={myAccountData?.uid || ''} 
+							setEditMessageData={setEditMessageData}
+							key={`${data.createdAt}${data.uid}`} 
+							showDeleteConfirm={showDeleteConfirm} 
+							openInfoModal={setUsersWhoReadCurrMessage}  
+							isShort={isShort} 
+							ref={isMy ? myMessageRef : null}
+							contactId={contactId}
+						/>
+					);
+					
+					if(isMy) {
+						currMyMessages = [...currMyMessages, currMessage];
 					}
-					currGroupIndex++;
-				} else {
-					messagesGroups[currGroupIndex].messages.push(currMessage);
-				}
+
+					//create new group
+					if(!isShort) {
+						//if not my, add user avatar, that wrote these messages(data)
+						if(!isMy) {
+							messagesGroups.push({
+								messages: [],
+								metadata: {
+									isMy: false,
+									avatarData: {
+										photoUrl: data.photoUrl,
+										uid: data.uid,
+									}
+								}
+							});
+							//add current message to new group
+							messagesGroups[currGroupIndex+1].messages.push(currMessage)
+						} else {
+							messagesGroups.push({
+								messages: [currMessage],
+								metadata: {isMy: true}
+							});
+						}
+						currGroupIndex++;
+					} else {
+						messagesGroups[currGroupIndex].messages.push(currMessage);
+					}
+				});
+
+				//sorted data -> JSX.Element[]
+				currMessages = messagesGroups.map(group => {
+					return (
+						<MessagesGroup metadata={group.metadata} listRef={listRef}>
+							{group.messages}
+						</MessagesGroup>
+					)	
+				});
+
+				const addedElements = [
+					<div className={classes.messagesDate}>{dateStr}</div>, 
+					...currMessages
+				];
+
+				setMyMessages((prevMessages) => [...prevMessages, ...currMyMessages]);
+
+				messages = [...messages, ...addedElements];
 			});
-
-			//sorted data -> JSX.Element[]
-			currMessages = messagesGroups.map(group => {
-				return (
-					<MessagesGroup metadata={group.metadata} listRef={listRef}>
-						{group.messages}
-					</MessagesGroup>
-				)	
-			});
-
-			const addedElements = [
-				<div className={classes.messagesDate}>{dateStr}</div>, 
-				...currMessages
-			];
-
-			setMyMessages((prevMessages) => [...prevMessages, ...currMyMessages]);
-
-			messages = [...messages, ...addedElements];
-		});
+		}
 
 		setMessagesList(messages);
 	}, [myAccountData, messagesData]);

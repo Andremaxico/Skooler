@@ -89,9 +89,12 @@ const Chat = () => {
 	useEffect(() => {
 		const unreadCount = chatData?.unreadCount;
 
+		console.log('new unread count', unreadCount);
+
 		setUnreadMessagesCount(unreadCount || null);
 	}, [chatData]);
 
+	//set contact data
 	useEffect(() => {
 		if(contactUid) {
 			console.log('set contact data');
@@ -132,7 +135,7 @@ const Chat = () => {
 					unreadCount={unreadMessagesCount || undefined} 
 				/>
 			}
-			<NewMessageForm 
+			<NewMessageForm   
 				contactUid={contactUid || ''}
 				authData={authData} 
 				ScrollBtn={scrollBtnRef.current} 

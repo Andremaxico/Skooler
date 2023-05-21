@@ -78,11 +78,8 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 			await addMessage(data.message);
 			setIsSending(false);
 			if(ScrollBtn) {
-				//for in MEssages changed will apply
-				setTimeout(() => {
-					console.log('cliked!');
-					ScrollBtn.click()
-				}, 300);
+				//scroll to new message
+				ScrollBtn.click();
 			}
 		} else  {
 			setIsSending(true);
