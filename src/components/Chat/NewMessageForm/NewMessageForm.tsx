@@ -15,7 +15,7 @@ import { useAppDispatch } from '../../../Redux/store';
 import { scrollElementToBottom } from '../../../utils/helpers/scrollElementToBottom';
 import { Button, FormControl, IconButton, Textarea } from '@mui/joy';
 import { footerHeightReceived } from '../../../Redux/app/appReducer';
-import { selectContactData, selectMessages } from '../../../Redux/chat/selectors';
+import { selectChatsData, selectContactData, selectMessages } from '../../../Redux/chat/selectors';
 import { useUserData } from '../../../utils/hooks/useUserData';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
@@ -27,7 +27,8 @@ type PropsType = {
 	currValue?: string, 
 	ScrollBtn: HTMLButtonElement | null,
 	updateMessage: (value: string) => void,
-	uid2: string,
+	contactUid: string,
+	unreadCount: number,
 }
 
 type FieldValues = {
@@ -35,7 +36,7 @@ type FieldValues = {
 }
 
 export const NewMessageForm: React.FC<PropsType> = React.memo(({
-	authData, isMessageEdit, currValue, updateMessage, ScrollBtn, uid2
+	authData, isMessageEdit, currValue, updateMessage, ScrollBtn, contactUid, unreadCount
 }): ReactElement<any, any> => {
 	//react-hook-form
 	const { control, formState: {errors, isValid}, handleSubmit, reset, setValue, trigger, watch } = useForm<FieldValues>();
@@ -50,7 +51,7 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 
 	const accountData = useSelector(selectMyAccountData);
 	const messages = useSelector(selectMessages);
-	const contactData = useSelector(selectContactData);  
+	const contactData = useSelector(selectContactData);
 
 	//for autofocus
 	const messageField = useRef<HTMLDivElement>(null);
@@ -111,7 +112,7 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 
 	
 	const createChatInfo = async (
-		messageData: MessageDataType, secondUserData: ContactDataType, baseUid: string, secondUid: string
+		messageData: MessageDataType, contactData: ContactDataType, baseUid: string, secondUid: string
 	) => {
 		let chatInfo: ChatDataType | null = null;
 
@@ -119,7 +120,7 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 		//if we havent messages -> we havent chat in firebase -> create info
 		if(!messages || messages.length === 0) {
 			console.log('new chat info');
-			const userData = await secondUserData;
+			const userData = await contactData;
 			if(userData) {
 				chatInfo = {
 					lastMessageData: messageData,
@@ -136,7 +137,6 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 			chatInfo = {
 				lastMessageData: messageData,
 				lastMessageTime: messageData.createdAt,
-				unreadCount: 1,
 			}
 			dispatch(updateChatInfo(chatInfo, baseUid, secondUid));
 		}
@@ -162,17 +162,15 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 		setIsSendBtnShowing(false);
 
 		//if authed -> send message and set chat info
-		if(accountData) {
-			//uid1 -> uid2-> data (api)
-			if(contactData) {
-				createChatInfo(newMessageData, contactData, accountData.uid, uid2);
-			}
-			//uid2 -> uid1 -> data (api)
-			createChatInfo(newMessageData, accountData, uid2, accountData.uid);
-			//uid1->uid2->messages
-			dispatch(sendMessage(newMessageData, accountData.uid, uid2));
-			//uid1->uid2->messages
-			await dispatch(sendMessage(newMessageData, uid2, accountData.uid));
+		console.log('contactdata', contactData);
+		if(accountData && contactData) {
+			console.log('have account data');
+			//uid1 -> contactUid-> data (api)
+			createChatInfo(newMessageData, contactData, accountData.uid, contactUid);
+			//uid1->contactUid->messages
+			dispatch(sendMessage(newMessageData, accountData.uid, contactUid));
+			//uid1->contactUid->messages
+			await dispatch(sendMessage(newMessageData, contactUid, accountData.uid));
 		}
 	}
 

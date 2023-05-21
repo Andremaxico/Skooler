@@ -19,3 +19,7 @@ export const selectChatsData = (state: RootStateType) => {
 export const selectContactData = (state: RootStateType) => {
 	return state.messages.contactData;
 }
+
+export const selectCurrChatData = (state: RootStateType) => {
+	return state.messages.currChatData;
+}

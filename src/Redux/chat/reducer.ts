@@ -11,6 +11,7 @@ export type ChatStateType = {
 	currMessageWhoReadList: null | ReceivedAccountDataType[],
 	chatsData: ChatDataType[] | null,
 	contactData: ReceivedAccountDataType | null,
+	currChatData: ChatDataType | null,
 }
 
 
@@ -21,6 +22,7 @@ export const currMessageWhoReadListReceived = createAction<ReceivedAccountDataTy
 export const newMessageReceived = createAction<MessageDataType>('chat/NEW_MESSAGE_RECEIVED');
 export const chatsDataReceived = createAction<ChatDataType[] | null>('chat/CHATS_DATA_RECEIVED');
 export const contactDataReceived = createAction<ReceivedAccountDataType | null>('chat/CONTACT_DATA_RECEIVED');
+export const currChatDataReceived = createAction<ChatDataType | null>('chat/CURR_CHAT_DATA_RECEIVED');
 
 //===========================REDUCER========================
 const initialState: ChatStateType = {
@@ -29,6 +31,7 @@ const initialState: ChatStateType = {
 	currMessageWhoReadList: null,
 	chatsData: [],
 	contactData: null,
+	currChatData: null,
 }
 
 const chatReducer = createReducer(initialState, (builder) => {
@@ -50,6 +53,9 @@ const chatReducer = createReducer(initialState, (builder) => {
 		})
 		.addCase(contactDataReceived, (state, action) => {
 			state.contactData = action.payload;
+		})
+		.addCase(currChatDataReceived, (state, action) => {
+			state.currChatData = action.payload;
 		})
 		.addDefaultCase((state, action) => {});
 });
@@ -76,7 +82,7 @@ const fetchingSubscriberCreator = (dispatch: AppDispatchType): FetchingSubscribe
 	dispatch(fetchingStatusChanged(value));
 } 
 
-export const startMessaging = (uid2: string) => (dispatch: AppDispatchType, getState: () => RootStateType) => {
+export const startMessaging = (contactUid: string) => (dispatch: AppDispatchType, getState: () => RootStateType) => {
 	const subscriber = (data: MessagesDataType) => {
 		//null = 'no messages', if no messages we set this to null for shoing an component with 'no messages     '
 		dispatch(messagesReceived(data.length == 0 ? null : data));
@@ -84,7 +90,7 @@ export const startMessaging = (uid2: string) => (dispatch: AppDispatchType, getS
 	}
 	const uid1 = getState().account.myAccountData?.uid || '';
 
-	chatAPI.subscribe(subscriber, uid1, uid2);
+	chatAPI.subscribe(subscriber, uid1, contactUid);
 	chatAPI.fetchingSubscribe(fetchingSubscriberCreator(dispatch));
 }
 
@@ -93,23 +99,36 @@ export const stopMessaging = () => (dispatch: AppDispatchType) => {
 	chatAPI.unsubscribe();
 }
 
+export const subscribeOnChat = (uid1: string, contactUid: string) => async (dispatch: AppDispatchType) => {
+	const subscriber = (data: ChatDataType) => {
+		dispatch(currChatDataReceived);
+	}
+
+	chatAPI.subscribeOnChatInfo(uid1, contactUid, subscriber);
+}
+
+export const unsubscribeFromChat = () => async (dispatch: AppDispatchType) => {
+	dispatch(currChatDataReceived(null));
+	chatAPI.unsubscribeFromChatInfo();
+}
 
 //messages interaction
-export const sendMessage = (data: MessageDataType, uid1: string, uid2: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
+export const sendMessage = (data: MessageDataType, uid1: string, contactUid: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
 	console.log('send message');
 	const myUid = getState().account.myAccountData?.uid;
 	if(myUid === uid1) dispatch(newMessageReceived(data));
-	await chatAPI.sendMessage({...data, sent: true}, uid1, uid2);
+	await chatAPI.sendMessage({...data, sent: true}, uid1, contactUid);
 }
 
-export const markMessageAsRead = (messageId: string, uid: string, uid2: string) => async (dispatch: AppDispatchType) => {
-	await chatAPI.readMessage(messageId, uid, uid2);
+export const markMessageAsRead = (messageId: string, uid1: string, contactUid: string) => async (dispatch: AppDispatchType) => {
+	chatAPI.readMessage(messageId, uid1, contactUid);
+	chatAPI.decreaceUnreadCount(uid1, contactUid);
 }
 
-export const editMessage = (messageId: string, newText: string, uid1: string, uid2: string) => async (dispatch: AppDispatchType) => {
+export const editMessage = (messageId: string, newText: string, uid1: string, contactUid: string) => async (dispatch: AppDispatchType) => {
 	console.log('edit message', messageId, newText);
-	chatAPI.updateMessage(messageId, newText, uid1, uid2);
-	await chatAPI.updateMessage(messageId, newText, uid2, uid1);
+	chatAPI.updateMessage(messageId, newText, uid1, contactUid);
+	await chatAPI.updateMessage(messageId, newText, contactUid, uid1) ;
 } 
 
 export const deleteMessage = (messageId: string) => async (dispatch: AppDispatchType) => {
@@ -137,24 +156,27 @@ export const getChatsData = () => async (dispatch: AppDispatchType, getState: ()
 	}
 }
 
-export const setChatInfo = (data: ChatDataType, uid1: string, uid2: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
+export const setChatInfo = (data: ChatDataType, uid1: string, contactUid: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
 	const uid = getState().account.myAccountData?.uid;
 	if(uid) {
-		chatAPI.setChatInfo(data, uid1, uid2);
+		chatAPI.setChatInfo(data, uid1, contactUid);
 	}
 }
 
 export const setContactData = (uid: string) => async (dispatch: AppDispatchType) => {
 	const data = await usersAPI.getUserById(uid);
 	if(data) {
+		console.log('contact data', data);
 		dispatch(contactDataReceived(data));
 	}
 }
 
-export const updateChatInfo = (data: ChatDataType, uid1: string, uid2: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
-	const uid = getState().account.myAccountData?.uid;
-	if(uid) {
-		chatAPI.updateChatInfo(data, uid1, uid2);
+export const updateChatInfo = (data: ChatDataType, uid1: string, contactUid: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
+	if(uid1) {
+		console.log('update chat info');
+		chatAPI.increaceUnreadCount(uid1, contactUid);
+		chatAPI.updateChatInfo(data, uid1, contactUid);
+		chatAPI.updateChatInfo(data, contactUid, uid1);
 	}
 }
  

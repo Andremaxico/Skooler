@@ -8,13 +8,14 @@ import { NewMessageForm } from './NewMessageForm';
 import { Auth } from 'firebase/auth';
 import { MessageDataType } from '../../utils/types';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectIsMessagesFetching, selectMessages } from '../../Redux/chat/selectors';
-import { editMessage, startMessaging, stopMessaging } from '../../Redux/chat/reducer';
+import { selectCurrChatData, selectIsMessagesFetching, selectMessages } from '../../Redux/chat/selectors';
+import { contactDataReceived, editMessage, setContactData, startMessaging, stopMessaging, subscribeOnChat, unsubscribeFromChat } from '../../Redux/chat/reducer';
 import { AnyAction } from 'redux';
 import Preloader from '../../UI/Preloader';
 import { useAppDispatch } from '../../Redux/store';
 import { ScrollBtn } from '../../UI/ScrollBtn';
 import { selectMyAccountData, selectMyLoginData } from '../../Redux/account/account-selectors';
+import { useSelect } from '@mui/base';
 
 export type EditMessageDataType = {
 	value: string,
@@ -26,6 +27,7 @@ const Chat = () => {
 	const myAccountData = useSelector(selectMyAccountData);
 	const authData = useSelector(selectMyLoginData);
 	const isFetching = useSelector(selectIsMessagesFetching);
+	const chatData = useSelector(selectCurrChatData); 
 
 	//is existing messages now editing
 	const [isEdit, setIsEdit] = useState<boolean>(false);
@@ -35,10 +37,10 @@ const Chat = () => {
 	const params = useParams();
 	const navigate = useNavigate();
 
-	const uid2 = params.userId || '';
+	const contactUid = params.userId;
 
 	//fucking kostyl
-	if(uid2 === authData?.uid) navigate('/', {replace: true});
+	if(contactUid === authData?.uid) navigate('/', {replace: true});
 
 	//messages list ref
 	const scrollBtnRef = useRef<HTMLButtonElement>(null);
@@ -47,22 +49,37 @@ const Chat = () => {
 
 	const dispatch = useAppDispatch();
 
+	//subscribe on chat data
+	useEffect(() => {
+		console.log('subscribe on chat changes');
+		if(myAccountData && contactUid) {
+			dispatch(subscribeOnChat(myAccountData.uid, contactUid));
+		}
+		return () => {
+			dispatch(unsubscribeFromChat());
+		}
+
+	}, [myAccountData, contactUid]);
 	
-	//update message
+	//cancel changes
 	const cancelEdit = () => {
 		setIsEdit(false);
 		setEditMessageData(null);
 	}
 
+	//update message
 	const sendUpdatedMessage = (value: string) => {
-		if(editMessageData?.id && myAccountData?.uid) {
+		if(editMessageData && myAccountData && contactUid) {
 			cancelEdit();
-			dispatch(editMessage(editMessageData.id, value, myAccountData.uid, uid2));
+			dispatch(editMessage(editMessageData.id, value, myAccountData.uid, contactUid));
 		}
 	}
 
+	//start messaging
 	useEffect(() => {
-		dispatch(startMessaging(uid2));
+		if(contactUid) {
+			dispatch(startMessaging(contactUid));
+		}
 		return () => {
 			dispatch(stopMessaging());
 		}
@@ -70,17 +87,25 @@ const Chat = () => {
 
 	//set unread messages count
 	useEffect(() => {
-		const unreadCount = messagesData?.filter((data: MessageDataType) => !data.isRead && data.uid !== myAccountData?.uid).length;
+		const unreadCount = chatData?.unreadCount;
 
 		setUnreadMessagesCount(unreadCount || null);
+	}, [chatData]);
 
-		console.log('unread count', unreadCount);
-	}, [messagesData?.length])
+	useEffect(() => {
+		if(contactUid) {
+			console.log('set contact data');
+			dispatch(setContactData(contactUid));
+		}
 
-	console.log('messages data', messagesData);
+		return () => {
+			dispatch(contactDataReceived(null));
+		}
+	}, [contactUid]);	
+
 
 	if(isFetching || messagesData?.length === 0) return <Preloader fixed={true} />;
-	console.log('message sdata', messagesData, 'myAccountdata', myAccountData);
+	
 	if(!authData) return <Navigate to='/login' replace={true}/>	
 
 	return (
@@ -88,7 +113,7 @@ const Chat = () => {
 			{messagesData !== null ? 
 				<Messages 
 					ref={scrollBtnRef} 
-					contactId={uid2}
+					contactId={contactUid || ''}
 					messagesData={messagesData}
 					setEditMessageData={(data: EditMessageDataType) => {
 						setEditMessageData(data);
@@ -108,12 +133,13 @@ const Chat = () => {
 				/>
 			}
 			<NewMessageForm 
-				uid2={uid2}
+				contactUid={contactUid || ''}
 				authData={authData} 
 				ScrollBtn={scrollBtnRef.current} 
 				isMessageEdit={isEdit} 
 				updateMessage={sendUpdatedMessage} 
 				currValue={editMessageData?.value}
+				unreadCount={unreadMessagesCount || 0}
 			/>
 		</div>
 	)
