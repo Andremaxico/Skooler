@@ -19,6 +19,7 @@ export const ScrollBtn = React.forwardRef<HTMLButtonElement, PropsType>(({elemen
 	const remainingScroll = body.scrollHeight - (element.scrollTop + element.clientHeight);
 	const [isBottom, setIsBottom ] = useState<boolean>(remainingScroll < 100);
 	const [isShowing, setIsShowing] = useState<boolean>(false);
+	const [prevUnreadCount, setPrevUnreadCount] = useState<number | undefined>(unreadCount);
 	//const [prevScroll, setPrevScroll] = useState<number>(scrollToBottomHeight);
 
 	useEffect(() => {
@@ -52,6 +53,14 @@ export const ScrollBtn = React.forwardRef<HTMLButtonElement, PropsType>(({elemen
 		}
 	}, [element]);  
 
+	useEffect(() => {
+		if((unreadCount || 0) > (prevUnreadCount || 0) && !isBottom) {
+			setIsShowing(true);
+			setTimeout(() => {
+				setIsShowing(false);
+			}, 500)
+		} 
+	}, [unreadCount]);
 
 	const scrollBottom = () => {
 		scrollElementToBottom(element, scrollToBottomHeight);

@@ -83,7 +83,7 @@ const Chat = () => {
 		return () => {
 			dispatch(stopMessaging());
 		}
-	}, [myAccountData?.uid]);
+	}, [contactUid]);
 
 	//set unread messages count
 	useEffect(() => {

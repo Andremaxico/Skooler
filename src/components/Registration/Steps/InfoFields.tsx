@@ -1,14 +1,13 @@
-import {  Form } from 'antd';
 import React from 'react';
 import { Control, Controller, FieldErrors } from 'react-hook-form';
 import { RegistrationFieldValues } from '../Registration';
 import classes from './Steps.module.scss';
 import aboutImg from '../../../assets/images/about_img.png';
-import TextArea from 'antd/lib/input/TextArea';
-import { FormControl, IconButton, Input } from '@mui/joy';
+import { FormControl, IconButton, Input, TextField, Textarea } from '@mui/joy';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import EastIcon from '@mui/icons-material/East';
+import dayjs from 'dayjs';
 
 
 type PropsType = {
@@ -18,15 +17,18 @@ type PropsType = {
 };
 
 export const InfoFields: React.FC<PropsType> = ({control, nextStep, errors}) => {
+	const day = dayjs('2022-04-22');
+
+
 	return (
 		<div className={classes.Step}>
-			<h2 className={classes.title}>Напишіть про себе</h2>
+			<h2 className={classes.title}>Напишіть про себ е</h2>
 			<div className={classes.image}>
 				<img src={aboutImg} />
 			</div>
 			<form className={classes.form}>
 				{/* @ts-ignore */}
-				{/* <Controller 
+				<Controller 
 					control={control}
 					name={'birthDate'}
 					render={({field: {value, onChange}}) => (
@@ -34,21 +36,30 @@ export const InfoFields: React.FC<PropsType> = ({control, nextStep, errors}) => 
 							className={classes.fieldWrapper}
 						>
 							<LocalizationProvider dateAdapter={AdapterDayjs}>
-								<DatePicker
-									label='Дата народження'
-									value={value}
+								<DatePicker 
+								//@ts-ignore
 									onChange={onChange}
-									renderInput={
-										(params) => <Input {...params} />
-									}
+									value={value}
+									renderInput={({
+										value, 
+										defaultValue,
+										...other
+									}) => (
+										//@ts-ignore
+										<TextField 
+											value={value as string}  
+											defaultValue={defaultValue as string}
+											{...other}
+										/>
+									)}
 								/>
 							</LocalizationProvider>
 						</FormControl>
 					)}
-				/> */}
+				/>
 
 				{/* @ts-ignore */}
-				{/* <Controller 
+				<Controller 
 					control={control}
 					name={'aboutMe'}
 					rules={{
@@ -58,18 +69,12 @@ export const InfoFields: React.FC<PropsType> = ({control, nextStep, errors}) => 
 						<FormControl
 							className={classes.fieldWrapper}
 						>
-							<Input
-								error={Boolean(errors.aboutMe)}
-								multiline
-								maxRows={6}
-								minRows={4}
-								label="Про себе"
+							<Textarea
 								defaultValue={undefined || ''}
-								variant='outlined'
 							/>
 						</FormControl>
 					)}
-				/> */}
+				/>
 			</form>
 			<button className={classes.btn} onClick={nextStep}>
 				<span>Далі</span>

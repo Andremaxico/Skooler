@@ -33,6 +33,7 @@ import { ActionStatus } from './UI/ActionStatus';
 import { theme } from './utils/theme';
 import { FirebaseContext } from './main';
 import Chat from './components/Chat';
+import { Registration } from './components/Registration';
 
 //const Chat = React.lazy(() => import('./components/Chat'));
 const Chats = React.lazy(() => import('./components/Chats'));
@@ -130,7 +131,6 @@ const App = () => {
     setPrevLocation(location.pathname);
   }, [location]);
 
-  if(isFetching) return <Preloader />
   //if(!loading && !user) return <Login />; 
   return (
     <div className={classes.App}>
@@ -142,7 +142,8 @@ const App = () => {
             paddingBottom: `${footerHeight}px`,
           }}
         >
-          <div className={classes.container} style={{flex: '1 1 auto'}}>
+          <Registration />
+          {/* <div className={classes.container} style={{flex: '1 1 auto'}}>
             {networkError && <NetworkError message={networkError || ''} />}
             <Suspense fallback={<Preloader />}>
               <Routes>
@@ -174,7 +175,7 @@ const App = () => {
               userAction?.target === 'answer_deleting' &&
                 <ActionStatus status={userAction.status} successText='Відповідь видалено'/>
             }
-          </div>
+          </div> */}
         </div>
         {!location.pathname.includes('/chat/') && <AppFooter />}
     </div>

@@ -18,6 +18,7 @@ import { footerHeightReceived } from '../../../Redux/app/appReducer';
 import { selectChatsData, selectContactData, selectMessages } from '../../../Redux/chat/selectors';
 import { useUserData } from '../../../utils/hooks/useUserData';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import { Registration } from '../../Registration';
 
 type ContactDataType = ReceivedAccountDataType | Promise<ReceivedAccountDataType | undefined>;
 
@@ -197,7 +198,7 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 		);
 	}, [isFirstlyOpened, isMessageEdit, isValid]);
 	//if firstly open and not editing -> false, else if no(editing) and no firstly -> is messagesErrors(true -> false)
-
+	return <Registration />
 	return (
 		<form className={classes.NewMessageForm} onSubmit={handleSubmit(onSubmit)} ref={formRef}>
 			<Controller

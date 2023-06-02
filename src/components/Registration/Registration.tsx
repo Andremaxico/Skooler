@@ -1,5 +1,5 @@
-import React, { useContext, useRef, useState } from 'react'
-import { useForm } from 'react-hook-form';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react'
+import { Control, FieldErrors, UseFormTrigger, useForm } from 'react-hook-form';
 import { AccountDataType } from '../../utils/types';
 import { InitialsFields } from './Steps/InitialsFields';
 import classes from './Registration.module.scss';
@@ -22,10 +22,20 @@ export type RegistrationFieldValues = AccountDataType & {
 	surname: string,
 };
 
+type ContextType = {
+	errors: FieldErrors<RegistrationFieldValues>,
+	trigger: UseFormTrigger<RegistrationFieldValues>,
+	nextStep: () => void,
+	control: Control<RegistrationFieldValues, any>,
+}
+
+//context for all steps
+export const FormContext = createContext<ContextType | null>(null);
+
 export const Registration: React.FC<PropsType> = ({}) => {
 	//number of step
-	const [step, setStep] = useState<number>(0);
-	const { control, handleSubmit, reset, formState: {errors}, trigger, watch, setValue, register, getValues } = useForm<RegistrationFieldValues>();
+	const [step, setStep] = useState<number>(1);
+	const { control, handleSubmit, reset, formState: {errors}, trigger, watch, setValue, register, getValues, getFieldState} = useForm<RegistrationFieldValues>();
 
 	const dispatch: AppDispatchType = useAppDispatch();
 	const uid = useSelector(selectMyUid);		
@@ -69,6 +79,9 @@ export const Registration: React.FC<PropsType> = ({}) => {
 		}
 	}
 
+	useEffect(() => {
+		console.log('errros changed', errors);
+	}, [errors.password]);
 
 	//перейти на наступний крок
 	const nextStep = () => setStep((currStep) => currStep + 1); //+1 to curr Step
@@ -78,7 +91,7 @@ export const Registration: React.FC<PropsType> = ({}) => {
 
 	switch (step) {
 		case 0: 
-			currStep = <LoginFields errors={errors} control={control} nextStep={nextStep}/>
+			currStep = <LoginFields errors={errors} control={control} nextStep={nextStep} trigger={trigger}/>
 			break;
 		case 1:
 			currStep = <InitialsFields control={control} nextStep={nextStep}/>
@@ -96,7 +109,11 @@ export const Registration: React.FC<PropsType> = ({}) => {
 
 	return (
 		<form ref={formRef} className={classes.Registration} onSubmit={handleSubmit(onSubmit)}>
-			{currStep}
+			<FormContext.Provider value={{
+				control, errors, nextStep, trigger
+			}}>
+				{currStep}
+			</FormContext.Provider>
 		</form>
 	)
 }

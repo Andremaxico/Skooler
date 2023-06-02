@@ -6,6 +6,7 @@ import { FieldValue} from 'firebase/firestore';
 import { Value } from 'sass';
 import { BirthDateObject } from '../../Redux/account/account-reducer';
 import { AnyMxRecord } from 'dns';
+import dayjs from 'dayjs';
 
 export type LinkDataType = {
 	path: PathsType,
@@ -110,7 +111,7 @@ export type AccountDataType = {
 	schoolId: number,
 	fullName: string,
 	status: 'teacher' | 'schoolboy',
-	birthDate: moment.Moment | null, 
+	birthDate: dayjs.Dayjs | null, 
 	aboutMe: string | null,
 	avatar?: File,
 	email: string,

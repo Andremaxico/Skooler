@@ -56,6 +56,8 @@ const chatAPI = {
 			(querySnapshot) => {
 				let messages: DocumentData = [];
 
+				console.log('snapshot');
+
 				querySnapshot.forEach((doc) => {
 					messages.push({...doc.data(), id: doc.id});
 				});
