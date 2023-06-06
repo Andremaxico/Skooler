@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { Control, Controller } from 'react-hook-form';
+import { Control, Controller, FieldErrors } from 'react-hook-form';
 import { FormContext, RegistrationFieldValues } from '../Registration';
 import classes from './Steps.module.scss';
 import { FormControl, FormHelperText, FormLabel, Input } from '@mui/joy';
@@ -8,14 +8,15 @@ import Preloader from '../../../UI/Preloader/Preloader';
 
 type PropsType = {
 	control: Control<RegistrationFieldValues, any>,
+	errors: FieldErrors<RegistrationFieldValues>,
 	nextStep: () => void,
 };  
-export const InitialsFields: React.FC<PropsType> = ({}) => {
-	const [isValid, setIsValid] = useState<boolean>(false);
-
-	const {errors, control, nextStep, trigger} = useContext(FormContext) || {};
+export const InitialsFields: React.FC<PropsType> = ({errors}) => {
+	const {control, nextStep, trigger} = useContext(FormContext) || {};
 
 	if(!control || !nextStep || !errors || !trigger) return <Preloader />
+
+	console.log('errors in fields', errors);
 
 	return (
 		<section className={classes.Step}>
@@ -35,6 +36,7 @@ export const InitialsFields: React.FC<PropsType> = ({}) => {
 						<FormControl className={classes.fieldWrapper} required>
 							<FormLabel className={classes.label} htmlFor='name'>Ім'я</FormLabel>
 							<Input
+								error={!!errors.name}
 								id='name'
 								placeholder={`Ім'я`}
 								value={value}
@@ -61,6 +63,7 @@ export const InitialsFields: React.FC<PropsType> = ({}) => {
 						<FormControl className={classes.fieldWrapper} required>
 							<FormLabel className={classes.label} htmlFor='surname'>Прізвище</FormLabel>
 							<Input
+								error={!!errors.surname}
 								id='surname'
 								placeholder={`Прізвище`}
 								value={value}

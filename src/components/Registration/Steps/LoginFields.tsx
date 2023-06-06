@@ -154,9 +154,7 @@ export const LoginFields: React.FC<PropsType> = ({control, errors, nextStep, tri
 
 			<SaveBtn 
 				className={classes.btn}
-				nextStep={nextStep}
 				errors={errors}
-				trigger={trigger}
 				fieldsNames={['email', 'password']}
 			/>
 		</section>

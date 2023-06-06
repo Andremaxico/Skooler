@@ -34,7 +34,7 @@ export const FormContext = createContext<ContextType | null>(null);
 
 export const Registration: React.FC<PropsType> = ({}) => {
 	//number of step
-	const [step, setStep] = useState<number>(1);
+	const [step, setStep] = useState<number>(0);
 	const { control, handleSubmit, reset, formState: {errors}, trigger, watch, setValue, register, getValues, getFieldState} = useForm<RegistrationFieldValues>();
 
 	const dispatch: AppDispatchType = useAppDispatch();
@@ -80,8 +80,8 @@ export const Registration: React.FC<PropsType> = ({}) => {
 	}
 
 	useEffect(() => {
-		console.log('errros changed', errors);
-	}, [errors.password]);
+		console.log('errros changed in registration', errors);
+	}, [errors.name]);
 
 	//перейти на наступний крок
 	const nextStep = () => setStep((currStep) => currStep + 1); //+1 to curr Step
@@ -94,7 +94,7 @@ export const Registration: React.FC<PropsType> = ({}) => {
 			currStep = <LoginFields errors={errors} control={control} nextStep={nextStep} trigger={trigger}/>
 			break;
 		case 1:
-			currStep = <InitialsFields control={control} nextStep={nextStep}/>
+			currStep = <InitialsFields errors={errors} control={control} nextStep={nextStep}/>
 			break;
 		case 2:
 			currStep = <InfoFields errors={errors} control={control} nextStep={nextStep} />

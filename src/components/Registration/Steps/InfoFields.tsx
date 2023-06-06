@@ -37,7 +37,6 @@ export const InfoFields: React.FC<PropsType> = ({control, nextStep, errors}) => 
 						>
 							<LocalizationProvider dateAdapter={AdapterDayjs}>
 								<DatePicker 
-								//@ts-ignore
 									onChange={onChange}
 									value={value}
 									renderInput={({
@@ -45,7 +44,6 @@ export const InfoFields: React.FC<PropsType> = ({control, nextStep, errors}) => 
 										defaultValue,
 										...other
 									}) => (
-										//@ts-ignore
 										<TextField 
 											value={value as string}  
 											defaultValue={defaultValue as string}
