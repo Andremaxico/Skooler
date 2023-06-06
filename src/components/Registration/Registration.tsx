@@ -13,6 +13,7 @@ import { useSelector } from 'react-redux';
 import { selectMyUid } from '../../Redux/account/account-selectors';
 import { FirebaseContext } from '../../main';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { AboutField } from './Steps/AboutField';
 
 type PropsType = {};
 
@@ -34,7 +35,7 @@ export const FormContext = createContext<ContextType | null>(null);
 
 export const Registration: React.FC<PropsType> = ({}) => {
 	//number of step
-	const [step, setStep] = useState<number>(0);
+	const [step, setStep] = useState<number>(2);
 	const { control, handleSubmit, reset, formState: {errors}, trigger, watch, setValue, register, getValues, getFieldState} = useForm<RegistrationFieldValues>();
 
 	const dispatch: AppDispatchType = useAppDispatch();
@@ -97,7 +98,7 @@ export const Registration: React.FC<PropsType> = ({}) => {
 			currStep = <InitialsFields errors={errors} control={control} nextStep={nextStep}/>
 			break;
 		case 2:
-			currStep = <InfoFields errors={errors} control={control} nextStep={nextStep} />
+			currStep = <AboutField errors={errors} />
 			break;
 		case 3:
 			currStep = <SchoolFields setValue={setValue} errors={errors} control={control} nextStep={nextStep} trigger={trigger}/>

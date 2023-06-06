@@ -51,5 +51,13 @@
 			}
 		}
 	}
+
+	.form {
+		.textarea {
+			@media (max-width: $md2) {
+				min-width: 260px;
+			}
+		}
+	}
 }
 

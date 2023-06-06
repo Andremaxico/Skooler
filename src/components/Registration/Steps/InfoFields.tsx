@@ -41,12 +41,10 @@ export const InfoFields: React.FC<PropsType> = ({control, nextStep, errors}) => 
 									value={value}
 									renderInput={({
 										value, 
-										defaultValue,
 										...other
 									}) => (
 										<TextField 
 											value={value as string}  
-											defaultValue={defaultValue as string}
 											{...other}
 										/>
 									)}
