@@ -7,6 +7,8 @@ const instance = axios.create({
 
 export const schoolsAPI = {
 	async getSchoolsByName(name: string) {
+		console.log('get schools by name', name);
+
 		const res = await instance.get<SchoolSearchItemType[]>(`school-search/?ut=3&lc=&ns=${name || ''}`);
 		return res.data;
 	},

@@ -16,7 +16,7 @@ type PropsType = {
 
 export const SaveBtn: React.FC<PropsType> = ({className,fieldsNames, errors}) => {
 	// we use trigger and nextStep, because they dont changing
-	const {trigger, nextStep, control} = useContext(FormContext) || {};
+	const {trigger, nextStep, control, setValue} = useContext(FormContext) || {};
 	//const [errorsDeps, setErrorsDeps] = useState(second)
 
 	let errorsDeps = fieldsNames.map(name => errors[name]);
@@ -26,44 +26,35 @@ export const SaveBtn: React.FC<PropsType> = ({className,fieldsNames, errors}) =>
 		name: fieldsNames
 	});
 
-	console.log('use watch value', values);
-
-	console.log('errors', errors, 'trigger', !!trigger, 'nextStep', !!nextStep);
-
-	console.log('errors deps', errorsDeps);
-
 	const [isValid, setIsValid] = useState<boolean>(false);
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 	const [isTriggerred, setIsTriggerred] = useState<boolean>(false);
 
 	//set is valid after errors changing
 	useEffect(() => { 
-		console.log('errors deps changed', errors);
 
 		let isError: boolean = false;
 
 		//we check errors by fieldsNames
 		fieldsNames.forEach(name => {
-			console.log('errors', errors);
-
 			if(errors) {
 				isError = !!errors[name];
 			}
-			console.log('is error', isError);
 		});
 
-		if(!isError) {
-			console.log('change validity true');
-			setIsValid(true);
-		} else {
-			console.log('change validity false');
-			setIsValid(false);
+		if(isTriggerred) {
+			if(!isError) {
+				console.log('set is valid', true);
+				setIsValid(true);
+			} else {
+				setIsValid(false);
+			}
 		}
 	}, [errorsDeps]);
 
 	//if we are submitting and isValid changed -> checkValidity and submit
 	useEffect(() => {
-		console.log('isSubmitting(validity changed)', isSubmitting, isValid);
+		console.log('vaditity chnaged', isSubmitting, isValid);
 		if(isSubmitting) {
 			setIsSubmitting(false);
 			checkValidity();
@@ -71,13 +62,23 @@ export const SaveBtn: React.FC<PropsType> = ({className,fieldsNames, errors}) =>
 	}, [isValid]);
 
 	useEffect(() => {
-		console.log('values changed', values);
 		if(trigger && isTriggerred) trigger(fieldsNames);
 	}, [values, isTriggerred])
 
 	//if isValid -> nextStep
 	const checkValidity = () => {
-		if(isValid && nextStep) nextStep();
+		if(isValid && nextStep) {
+			//we turned off submit
+			//have to set values menually
+			for (let i = 0; i < fieldsNames.length; i++) {
+				//values - array based on fieldsNames, so order is right
+				//setValue can be null
+				if(setValue) {
+					setValue(fieldsNames[i], values[i]);
+				}
+			}
+			nextStep();
+		};
 	}
 
 

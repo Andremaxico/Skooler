@@ -1,7 +1,5 @@
-import { IconButton } from '@mui/material';
-import Avatar from '@mui/material/Avatar/Avatar';
 import React, { ChangeEvent, useEffect, useState } from 'react';
-import { UseFormGetValues, UseFormRegister, UseFormSetValue } from 'react-hook-form';
+import { FieldErrors, UseFormGetValues, UseFormRegister, UseFormSetValue } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 import { selectCurrAvatarUrl, selectMyUid } from '../../../../Redux/account/account-selectors';
 import { RegistrationFieldValues } from '../../Registration';
@@ -13,12 +11,14 @@ import AvatarEdit from 'react-avatar-edit';
 import { SaveBtn } from '../../../../UI/SaveBtn';
 import { CloseBtn } from '../../../../UI/CloseBtn';
 import { dataURItoBlob } from '../../../../utils/helpers/converters';
+import { Avatar } from '@mui/joy';
 
 
 type PropsType = {
 	register: UseFormRegister<RegistrationFieldValues>,
 	getValues: UseFormGetValues<RegistrationFieldValues>, 
 	setValue: UseFormSetValue<RegistrationFieldValues>,
+	errors: FieldErrors<RegistrationFieldValues>,
 	submit: () => void,
 };
 
@@ -52,7 +52,7 @@ function stringAvatar(name: string) {
 	};
 }
 
-export const AvatarUpload: React.FC<PropsType> = ({register, getValues, setValue, submit}) => {
+export const AvatarUpload: React.FC<PropsType> = ({register, getValues, setValue, submit, errors}) => {
 	const [isCutting, setIsCutting] = useState<boolean>(false);
 	const [localImgSrc, setLocalImgSrc] = useState<null | string>(null);
 
@@ -146,7 +146,11 @@ export const AvatarUpload: React.FC<PropsType> = ({register, getValues, setValue
 							//onBeforeFileLoad={onBeforeFileLoad}
 							src={localImgSrc}
 						/>
-						<SaveBtn onClick={save} />
+						<SaveBtn 
+							errors={errors}
+							fieldsNames={['avatar']}
+							className={classes.saveBtn}
+						/>
 					</div>
 				</Modal>
 			}
@@ -169,8 +173,12 @@ export const AvatarUpload: React.FC<PropsType> = ({register, getValues, setValue
 						//{...register('avatar')}
 					/>
 				</div>
-			</div>
-			<SaveBtn onClick={submit}/>
+			</div>              
+			<SaveBtn 
+				errors={errors}
+				fieldsNames={['avatar']}
+				className={classes.saveBtn}
+			/>
 		</div>
 	)
 }

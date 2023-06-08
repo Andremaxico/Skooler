@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react'
-import { Control, FieldErrors, UseFormTrigger, useForm } from 'react-hook-form';
+import { Control, FieldErrors, UseFormSetValue, UseFormTrigger, useForm } from 'react-hook-form';
 import { AccountDataType } from '../../utils/types';
 import { InitialsFields } from './Steps/InitialsFields';
 import classes from './Registration.module.scss';
@@ -28,6 +28,7 @@ type ContextType = {
 	trigger: UseFormTrigger<RegistrationFieldValues>,
 	nextStep: () => void,
 	control: Control<RegistrationFieldValues, any>,
+	setValue:  UseFormSetValue<RegistrationFieldValues>,
 }
 
 //context for all steps
@@ -35,7 +36,7 @@ export const FormContext = createContext<ContextType | null>(null);
 
 export const Registration: React.FC<PropsType> = ({}) => {
 	//number of step
-	const [step, setStep] = useState<number>(2);
+	const [step, setStep] = useState<number>(4);
 	const { control, handleSubmit, reset, formState: {errors}, trigger, watch, setValue, register, getValues, getFieldState} = useForm<RegistrationFieldValues>();
 
 	const dispatch: AppDispatchType = useAppDispatch();
@@ -111,7 +112,7 @@ export const Registration: React.FC<PropsType> = ({}) => {
 	return (
 		<form ref={formRef} className={classes.Registration} onSubmit={handleSubmit(onSubmit)}>
 			<FormContext.Provider value={{
-				control, errors, nextStep, trigger
+				control, errors, nextStep, trigger, setValue
 			}}>
 				{currStep}
 			</FormContext.Provider>
