@@ -1,6 +1,6 @@
 import { setDoc, addDoc, collection, doc, updateDoc, Unsubscribe, onSnapshot } from 'firebase/firestore';
 import { UserType, AccountDataType, ReceivedAccountDataType } from '../utils/types/index';
-import { getAuth } from 'firebase/auth';
+import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
 import { firestore, storage } from '../firebase/firebaseApi';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
@@ -16,6 +16,7 @@ export const accountAPI = {
 	},
 
 	async sendAvatar(file: File | Blob, uid: string) {
+		console.log('send avatar (api)');
 		//get storage reference
 		const storageRef = ref(storage, `images/${uid}-avatar.png`);
 
@@ -65,4 +66,21 @@ export const accountAPI = {
 			})
 	},
 	
+	async createAccountByEmail(email: string, password: string) {
+		const auth = getAuth();
+		try {
+			const {user} = await createUserWithEmailAndPassword(auth, email, password);
+
+			return user;
+		} catch(error: any) {
+			//TODO:
+			//use errors messages
+
+			const errorCode = error.code;
+			const errorMessage = error.message;
+
+			console.log('create account error', error);
+			// ..
+		}
+	} 
 }

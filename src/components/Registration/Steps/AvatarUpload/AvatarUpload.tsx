@@ -13,6 +13,8 @@ import { CloseBtn } from '../../../../UI/CloseBtn';
 import { dataURItoBlob } from '../../../../utils/helpers/converters';
 import { Avatar } from '@mui/joy';
 
+//TODO:
+//Add new avatar cropping
 
 type PropsType = {
 	register: UseFormRegister<RegistrationFieldValues>,
@@ -52,12 +54,24 @@ function stringAvatar(name: string) {
 	};
 }
 
+const getLocalImgSrc = (
+	setLocalImgSrc: (src: string) => void, 
+	setIsCutting: (bool: boolean) => void,
+	selectedFile: File | Blob,
+) => {
+	const reader = new FileReader();
+	reader.addEventListener('load', async () => { 
+		setLocalImgSrc(reader.result as string);
+		setIsCutting(true);
+	});
+	reader.readAsDataURL(selectedFile);
+}
+
+
 export const AvatarUpload: React.FC<PropsType> = ({register, getValues, setValue, submit, errors}) => {
 	const [isCutting, setIsCutting] = useState<boolean>(false);
 	const [localImgSrc, setLocalImgSrc] = useState<null | string>(null);
 
-
-	//@ts-ignore
 	const userFullname = `${getValues('name')} ${getValues('surname')}`;
 	console.log('fullname:', userFullname);
 	const avatarUrl = useSelector(selectCurrAvatarUrl);
@@ -70,39 +84,29 @@ export const AvatarUpload: React.FC<PropsType> = ({register, getValues, setValue
 
 		//TODO:
 		//it's in other paart of component (avatr cut)
-			//треба отримати шлях до обраного зображення
+		//треба отримати шлях до обраного зображення
 
 		if (e.target.files && e.target.files.length > 0) {
 			console.log('file... :', e.target.files[0]);
 			const selectedFile: File = e.target.files[0]; 
 
 			//end function
-			//check if file is too big
-			if(e.target.files[0].size > 71680){
+			//check if file is too big -> stop
+			if(selectedFile.size > 71680){
 				alert("File is too big!");
 				e.target.value = "";
 				return;
 			};
 
-			//set local url
-			// if (e.target.files && e.target.files.length > 0) {
-			// 	const reader = new FileReader();
-			// 	reader.addEventListener('load', async () => {
-			// 	  setLocalImgSrc(e.target.value);
-			// 	  setIsCutting(true);
-			// 	});
-			// 	reader.readAsDataURL(e.target.files[0]);
-			//  }
-
+			//its for cropping image
+			//getLocalImgSrc(setLocalImgSrc, setIsCutting, selectedFile); 
+				
+			//set avatar to the firestore
 			if(uid) {
+				console.log('send my current avatar');
 				dispatch(sendMyCurrentAvatar(e.target.files[0], uid));
 			}
 		 }
-
-		// //@ts-ignore // капець із цим каллером !!!
-		// console.log('uploadig file', getValues('avatar'), 'uid', uid);
-
-		// console.log('event', e.target.files ? e.target.files[0] : null);
 	}
 
 	//очистити все
@@ -112,15 +116,15 @@ export const AvatarUpload: React.FC<PropsType> = ({register, getValues, setValue
 	}
 
 	// надіслати файл на сервер
-	const save = () => {
-		if(localImgSrc) {
-			const blob = dataURItoBlob(localImgSrc);
-			if(uid && blob) {
-				dispatch(sendMyCurrentAvatar(blob, uid));
-			}
-		}
-		close();
-	}
+	// const save = () => {
+	// 	if(localImgSrc) {
+	// 		const blob = dataURItoBlob(localImgSrc);
+	// 		if(uid && blob) {
+	// 			dispatch(sendMyCurrentAvatar(blob, uid));
+	// 		}
+	// 	}
+	// 	close();
+	// }
 
 	//зберегти проміжкову версію кропу
 	const onCrop = (preview: string) => {
@@ -134,13 +138,13 @@ export const AvatarUpload: React.FC<PropsType> = ({register, getValues, setValue
 	return (
 		<div className={`${classes.AvatarUpload} ${classes.Step}`}>
 			<h2 className={classes.title}>{`Бажаєте ${ avatarUrl ? 'змінити' : `додати`} своє фото?`}</h2>
-			{localImgSrc &&
+			{/* {localImgSrc &&
 				<Modal isShow={isCutting}>
 					<div className={classes.cutAvatar}>
 						<CloseBtn onClick={close} className={classes.closeBtn} />
 						<AvatarEdit
-							width={390}
-							height={295}
+							height={100}
+							width={100}
 							onCrop={onCrop}
 							onClose={close}
 							//onBeforeFileLoad={onBeforeFileLoad}
@@ -153,7 +157,7 @@ export const AvatarUpload: React.FC<PropsType> = ({register, getValues, setValue
 						/>
 					</div>
 				</Modal>
-			}
+			} */}
 			<div className={classes.currentAvatar}>
 				{avatarUrl ?
 					<Avatar className={classes.avatar} src={avatarUrl ||  undefined} />

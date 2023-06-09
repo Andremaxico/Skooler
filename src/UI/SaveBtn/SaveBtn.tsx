@@ -5,6 +5,8 @@ import cn from 'classnames';
 import { IconButton } from '@mui/joy';
 import { FieldErrors, UseFormTrigger, useWatch } from 'react-hook-form';
 import { FormContext, RegistrationFieldValues } from '../../components/Registration/Registration';
+import { useAppDispatch } from '../../Redux/store';
+import { createAccountByEmail } from '../../Redux/account/account-reducer';
 
 type KeysType = keyof RegistrationFieldValues;
 
@@ -26,9 +28,13 @@ export const SaveBtn: React.FC<PropsType> = ({className,fieldsNames, errors}) =>
 		name: fieldsNames
 	});
 
-	const [isValid, setIsValid] = useState<boolean>(false);
+	//we set null as a initial value of valid status 
+	//for effect with isValid dependency work for the first time
+	const [isValid, setIsValid] = useState<boolean | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 	const [isTriggerred, setIsTriggerred] = useState<boolean>(false);
+
+	const dispatch = useAppDispatch();
 
 	//set is valid after errors changing
 	useEffect(() => { 
@@ -77,18 +83,36 @@ export const SaveBtn: React.FC<PropsType> = ({className,fieldsNames, errors}) =>
 					setValue(fieldsNames[i], values[i]);
 				}
 			}
+
+			//we havent submit handler in LoginFields component so we do this here
+			if(fieldsNames.includes('password') && fieldsNames.includes('email')) {
+				//strict order adherence(достримання)
+				//if fieldNames includes these, then values including only strings
+				//but i cant axplain this to ts and have to add ts-ignore
+				console.log('field names includes', fieldsNames);
+				//@ts-ignore
+				dispatch(createAccountByEmail(values[0], values[1]));
+			}
+
 			nextStep();
 		};
 	}
 
 
 	const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+		//we cant check validity from first time
+		//beacause validity status cant update in time
+		//so from first we set submitting and triggering
+		//for the next times we triggering after every update in inputs
 		if(!isTriggerred && trigger) {
 			setIsSubmitting(true);
 			setIsTriggerred(true);
 		} else {
 			checkValidity();
 		}
+	
+
+		//for preventing untimely submitting of whole form
 		e.preventDefault();
 	}
 

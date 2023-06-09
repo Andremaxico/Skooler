@@ -36,7 +36,7 @@ export const FormContext = createContext<ContextType | null>(null);
 
 export const Registration: React.FC<PropsType> = ({}) => {
 	//number of step
-	const [step, setStep] = useState<number>(4);
+	const [step, setStep] = useState<number>(0);
 	const { control, handleSubmit, reset, formState: {errors}, trigger, watch, setValue, register, getValues, getFieldState} = useForm<RegistrationFieldValues>();
 
 	const dispatch: AppDispatchType = useAppDispatch();
@@ -105,7 +105,7 @@ export const Registration: React.FC<PropsType> = ({}) => {
 			currStep = <SchoolFields setValue={setValue} errors={errors} control={control} nextStep={nextStep} trigger={trigger}/>
 			break;
 		case 4:
-			currStep = <AvatarUpload register={register} getValues={getValues} setValue={setValue} submit={submit}/>
+			currStep = <AvatarUpload register={register} getValues={getValues} setValue={setValue} submit={submit} errors={errors}/>
 			break;
 	}
 

@@ -11,6 +11,7 @@ import { values } from 'lodash';
 import { SaveBtn } from '../../../UI/SaveBtn';
 import { FormControl, FormHelperText, FormLabel, Input, TextField } from '@mui/joy';
 import IconButton from '@mui/joy/IconButton';
+import { useAppDispatch } from '../../../Redux/store';
 
 
 type PropsType = {
@@ -24,26 +25,15 @@ export const LoginFields: React.FC<PropsType> = ({control, errors, nextStep, tri
 	const passwordInpRef = useRef<null | HTMLInputElement>(null);
 
 	const [showPassword, setShowPassword] = useState<boolean>(false);
-	const [isValid, setIsValid] = useState<boolean>(false);
-	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-	const [isTriggerred, setIsTriggerred] = useState<boolean>(false);
 
-
-	useEffect(() => { 
-		console.log('errors', errors);
-		if(!errors.password && !errors.email) {
-			console.log('change validity true');
-			setIsValid(true);
-		} else {
-			console.log('change validity false');
-			setIsValid(false);
-		}
-	}, [errors.password, errors.email]);
+	const dispatch = useAppDispatch();
 
 	const handleClickShowPassword = () => {
 		if(passwordInpRef.current) {
 			//givno code
 			const input = passwordInpRef.current.querySelector('input');
+			//TODO:
+			//focus in the end of text on input
 			if(input) {
 				const end = input.value.length;
 				const value = input.value;
@@ -55,32 +45,6 @@ export const LoginFields: React.FC<PropsType> = ({control, errors, nextStep, tri
 
 		setShowPassword((isShow) => !isShow);
 	};
-
-	//if isValid -> nextStep
-	const checkValidity = () => {
-		console.log('is valid', isValid);
-		if(isValid) nextStep();
-	}
-
-	//if we are submitting and isValid changed -> checkValidity and submit
-	useEffect(() => {
-		console.log('isSubmitting', isSubmitting);
-		if(isSubmitting) {
-			setIsSubmitting(false);
-			checkValidity();
-		}
-	}, [isValid]);
-
-	const handleSubmit = async () => {
-		if(!isTriggerred) {
-			setIsSubmitting(true);
-			await trigger('password');
-			await trigger('email');
-			setIsTriggerred(true);
-		} else {
-			checkValidity();
-		}
-	}
 
 	return (
 		<section className={classes.Step}>
@@ -155,6 +119,7 @@ export const LoginFields: React.FC<PropsType> = ({control, errors, nextStep, tri
 			<SaveBtn 
 				className={classes.btn}
 				errors={errors}
+				//strict order adherence(достримання) for firebase functions(-> array)
 				fieldsNames={['email', 'password']}
 			/>
 		</section>

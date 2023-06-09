@@ -6,7 +6,7 @@ import { AccountDataType, ReceivedAccountDataType, UserType, SchoolInfoType, Use
 import { createReducer, createAction, AnyAction } from '@reduxjs/toolkit';
 import { schoolsAPI } from '../../api/schoolsApi';
 import { usersAPI } from '../../api/usersApi';
-import { User } from 'firebase/auth';
+import { User, createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
 import { idText } from 'typescript';
 
 export type AccountStateType = {
@@ -197,10 +197,20 @@ export const sendMyAccountData = (data: AccountDataType | null) => async (dispat
 
 }
 
+export const createAccountByEmail = (email: string, password: string) => async (dispatch: AppDispatchType) => {
+	const user = await accountAPI.createAccountByEmail(email, password);	
+
+	if(user) {
+		console.log('we got user', user);
+		dispatch(loginDataReceived(user));
+	}
+
+}
 
 export const sendMyCurrentAvatar = (file: File | Blob | undefined, uid: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
 	console.log('send avatar file', file);
 	if(file) {
+		console.log('send avatar(redux)')
 		await accountAPI.sendAvatar(file, uid);
 		const avatarUrl = await accountAPI.getAvatarUrl(uid);
 		dispatch(currMyAvatarUrlReceived(avatarUrl));
