@@ -28,10 +28,8 @@ const Login: React.FC<PropsType> = ({}) => {
 
 	const dispatch = useAppDispatch();
 	const setAccountData = (data: UserType) => {
-		startTransition(() => {
-			dispatch(loginDataReceived(data));
-			dispatch(sendMyAccountData(null));
-		})
+		dispatch(loginDataReceived(data));
+		dispatch(sendMyAccountData(null));
 	}
 
 	const navigate = useNavigate();

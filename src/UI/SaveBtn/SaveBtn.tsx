@@ -14,9 +14,10 @@ type PropsType = {
 	className?: string,
 	errors: FieldErrors<RegistrationFieldValues>,
 	fieldsNames: Array<KeysType>,
+	submit?: boolean,
 }
 
-export const SaveBtn: React.FC<PropsType> = ({className,fieldsNames, errors}) => {
+export const SaveBtn: React.FC<PropsType> = ({className,fieldsNames, errors, submit}) => {
 	// we use trigger and nextStep, because they dont changing
 	const {trigger, nextStep, control, setValue} = useContext(FormContext) || {};
 	//const [errorsDeps, setErrorsDeps] = useState(second)
@@ -111,9 +112,10 @@ export const SaveBtn: React.FC<PropsType> = ({className,fieldsNames, errors}) =>
 			checkValidity();
 		}
 	
-
-		//for preventing untimely submitting of whole form
-		e.preventDefault();
+		if(!submit) {
+			//for preventing untimely submitting of whole form
+			e.preventDefault();
+		}
 	}
 
 

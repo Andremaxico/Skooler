@@ -12,6 +12,7 @@ import { SaveBtn } from '../../../../UI/SaveBtn';
 import { CloseBtn } from '../../../../UI/CloseBtn';
 import { dataURItoBlob } from '../../../../utils/helpers/converters';
 import { Avatar } from '@mui/joy';
+import Preloader from '../../../../UI/Preloader/Preloader';
 
 //TODO:
 //Add new avatar cropping
@@ -71,13 +72,20 @@ const getLocalImgSrc = (
 export const AvatarUpload: React.FC<PropsType> = ({register, getValues, setValue, submit, errors}) => {
 	const [isCutting, setIsCutting] = useState<boolean>(false);
 	const [localImgSrc, setLocalImgSrc] = useState<null | string>(null);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	const userFullname = `${getValues('name')} ${getValues('surname')}`;
 	console.log('fullname:', userFullname);
 	const avatarUrl = useSelector(selectCurrAvatarUrl);
 
 	const dispatch: AppDispatchType = useAppDispatch();
-	const uid = useSelector(selectMyUid);
+	const uid = 'oukhfPsHp4MVlvl2xfuLiuLUZYs2';  //useSelector(selectMyUid);
+
+	useEffect(() => {
+		if(avatarUrl) {
+			setIsLoading(false);
+		}
+	}, [avatarUrl]);
 
 	//when user selected file
 	const inputChangeHandler = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -104,6 +112,7 @@ export const AvatarUpload: React.FC<PropsType> = ({register, getValues, setValue
 			//set avatar to the firestore
 			if(uid) {
 				console.log('send my current avatar');
+				setIsLoading(true);
 				dispatch(sendMyCurrentAvatar(e.target.files[0], uid));
 			}
 		 }
@@ -127,10 +136,10 @@ export const AvatarUpload: React.FC<PropsType> = ({register, getValues, setValue
 	// }
 
 	//зберегти проміжкову версію кропу
-	const onCrop = (preview: string) => {
-		console.log('preview', preview);
-		setLocalImgSrc(preview);
-	}
+	// const onCrop = (preview: string) => {
+	// 	console.log('preview', preview);
+	// 	setLocalImgSrc(preview);
+	// }
 
 	console.log('avatarUrl', avatarUrl);
 	console.log('img src', localImgSrc);
@@ -159,10 +168,12 @@ export const AvatarUpload: React.FC<PropsType> = ({register, getValues, setValue
 				</Modal>
 			} */}
 			<div className={classes.currentAvatar}>
-				{avatarUrl ?
+				{avatarUrl && !isLoading ?
 					<Avatar className={classes.avatar} src={avatarUrl ||  undefined} />
-				:
+				: !isLoading ?
 					<Avatar className={classes.avatar} {...stringAvatar(userFullname)} />
+				: 
+					<Preloader />
 				}
 				<div className={classes.addAvatar}>
 					<label htmlFor='avatar' className={classes.label}>
