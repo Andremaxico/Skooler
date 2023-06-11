@@ -8,6 +8,7 @@ import { schoolsAPI } from '../../api/schoolsApi';
 import { usersAPI } from '../../api/usersApi';
 import { User, createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
 import { idText } from 'typescript';
+import { errorToText } from '../../firebase/firebaseErrorsConverter';
 
 export type AccountStateType = {
 	myAccountData: ReceivedAccountDataType | null,
@@ -17,6 +18,7 @@ export type AccountStateType = {
 	isFetching: boolean,
 	currMyAvatarUrl: string | null,
 	isAuthed: boolean,
+	authError: string | null,
 }
 type _ThunkType = ThunkAction<void, AccountStateType, unknown, AnyAction>;
 
@@ -33,6 +35,7 @@ export const newQuestionLiked = createAction<string>('account/NEW_QUESTION_LIKED
 export const questionUnliked = createAction<string>('account/QESTION_UNLIKED');
 export const authStatusChanged = createAction<boolean>('account/AUTH_STATUS_CHANGED');
 export const currUserQuestionsReceived = createAction<PostDataType[] | null>('account/CURR_USER_QUESTIONS_RECEIVED');
+export const authErrorReceived = createAction<string | null>('auth/AUTH_ERROR_RECEIVED');
 
 const initialState: AccountStateType = {
 	myAccountData: null,
@@ -42,6 +45,7 @@ const initialState: AccountStateType = {
 	isFetching: false,
 	currMyAvatarUrl: null,
 	isAuthed: false,
+	authError: null,
 }
 
 //uses in ReceivedAccountDataType
@@ -98,6 +102,9 @@ const accountReducer = createReducer(initialState, (builder) => {
 		})
 		.addCase(currUserQuestionsReceived, (state, action) => {
 			state.currUserQuestions = action.payload;
+		})
+		.addCase(authErrorReceived, (state, action) => {
+			state.authError = action.payload;
 		})
 		.addDefaultCase((state, action) => {});
 });
@@ -205,6 +212,26 @@ export const createAccountByEmail = (email: string, password: string) => async (
 		dispatch(loginDataReceived(user));
 	}
 
+}
+
+export const signInByEmail = (email: string, password: string) => async (dispatch: AppDispatchType) => {
+	try {
+		const user = await accountAPI.signInWithEmail(email, password);
+		
+		if(user) {
+			dispatch(loginDataReceived(user));
+		}
+	} catch(error: any) {
+		//catching auth error
+		//in api it harder to realize
+		console.log('sign in error', error.code)
+		dispatch(authErrorReceived(errorToText(error.code)));
+	}
+
+	// if(user) {
+	// 	console.log('sign in', user);
+	// 	dispatch(loginDataReceived);
+	// }
 }
 
 export const sendMyCurrentAvatar = (file: File | Blob | undefined, uid: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {

@@ -1,6 +1,6 @@
 import { setDoc, addDoc, collection, doc, updateDoc, Unsubscribe, onSnapshot } from 'firebase/firestore';
 import { UserType, AccountDataType, ReceivedAccountDataType } from '../utils/types/index';
-import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
+import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { firestore, storage } from '../firebase/firebaseApi';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
@@ -82,5 +82,12 @@ export const accountAPI = {
 			console.log('create account error', error);
 			// ..
 		}
-	} 
+	},
+
+	async signInWithEmail(email: string, password: string) {
+		const auth = getAuth();
+		const {user} = await signInWithEmailAndPassword(auth, email, password);
+
+		return user;
+	}
 }

@@ -1,10 +1,11 @@
 @import '../../global-styles';
 
 .Login {
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	@include column-align;
 	height: 100%;
+	.loginForm {
+
+	}
 	.loginBtn {
 		@include row-align;
 		justify-content: center;
