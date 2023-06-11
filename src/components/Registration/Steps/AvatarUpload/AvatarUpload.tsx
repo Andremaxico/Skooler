@@ -8,7 +8,7 @@ import { sendMyCurrentAvatar } from '../../../../Redux/account/account-reducer';
 import { AppDispatchType, useAppDispatch } from '../../../../Redux/store';
 import { Modal } from '../../../../UI/Modal';
 import AvatarEdit from 'react-avatar-edit';
-import { SaveBtn } from '../../../../UI/SaveBtn';
+import { SaveBtn } from '../../SaveBtn';
 import { CloseBtn } from '../../../../UI/CloseBtn';
 import { dataURItoBlob } from '../../../../utils/helpers/converters';
 import { Avatar } from '@mui/joy';
@@ -73,13 +73,14 @@ export const AvatarUpload: React.FC<PropsType> = ({register, getValues, setValue
 	const [isCutting, setIsCutting] = useState<boolean>(false);
 	const [localImgSrc, setLocalImgSrc] = useState<null | string>(null);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [selectedFile, setSelectedFile] = useState<File | Blob | null>(null);
 
 	const userFullname = `${getValues('name')} ${getValues('surname')}`;
 	console.log('fullname:', userFullname);
 	const avatarUrl = useSelector(selectCurrAvatarUrl);
 
 	const dispatch: AppDispatchType = useAppDispatch();
-	const uid = 'oukhfPsHp4MVlvl2xfuLiuLUZYs2';  //useSelector(selectMyUid);
+	const uid = useSelector(selectMyUid);
 
 	useEffect(() => {
 		if(avatarUrl) {
@@ -96,28 +97,37 @@ export const AvatarUpload: React.FC<PropsType> = ({register, getValues, setValue
 
 		if (e.target.files && e.target.files.length > 0) {
 			console.log('file... :', e.target.files[0]);
-			const selectedFile: File = e.target.files[0]; 
-
+			setSelectedFile(e.target.files[0])
 			//end function
+
 			//check if file is too big -> stop
-			if(selectedFile.size > 71680){
+			if(selectedFile && selectedFile.size > 71680){
 				alert("File is too big!");
 				e.target.value = "";
 				return;
 			};
-
-			//its for cropping image
-			//getLocalImgSrc(setLocalImgSrc, setIsCutting, selectedFile); 
-				
-			//set avatar to the firestore
-			if(uid) {
-				console.log('send my current avatar');
-				setIsLoading(true);
-				dispatch(sendMyCurrentAvatar(e.target.files[0], uid));
-			}
 		 }
 	}
 
+	useEffect(() => {
+		//its for cropping image
+		if(selectedFile) {
+			getLocalImgSrc(setLocalImgSrc, setIsCutting, selectedFile); 
+		}
+	}, [selectedFile])
+
+	//run after positive validiting in SaveBtn
+	const handleSubmit = () => {
+		//set avatar to the firestore
+	
+		//we do it here, becouse in SaveBtn we must throw too many props
+		if(uid && selectedFile) {
+			console.log('send my current avatar');
+			setIsLoading(true);
+			dispatch(sendMyCurrentAvatar(selectedFile, uid));
+		}
+	}
+ 
 	//очистити все
 	const close = () => {
 		setIsCutting(false);
@@ -143,6 +153,7 @@ export const AvatarUpload: React.FC<PropsType> = ({register, getValues, setValue
 
 	console.log('avatarUrl', avatarUrl);
 	console.log('img src', localImgSrc);
+	console.log('selected file', selectedFile);
 
 	return (
 		<div className={`${classes.AvatarUpload} ${classes.Step}`}>
@@ -168,8 +179,8 @@ export const AvatarUpload: React.FC<PropsType> = ({register, getValues, setValue
 				</Modal>
 			} */}
 			<div className={classes.currentAvatar}>
-				{avatarUrl && !isLoading ?
-					<Avatar className={classes.avatar} src={avatarUrl ||  undefined} />
+				{localImgSrc && !isLoading ?
+					<Avatar className={classes.avatar} src={localImgSrc ||  undefined} />
 				: !isLoading ?
 					<Avatar className={classes.avatar} {...stringAvatar(userFullname)} />
 				: 
@@ -193,6 +204,7 @@ export const AvatarUpload: React.FC<PropsType> = ({register, getValues, setValue
 				errors={errors}
 				fieldsNames={['avatar']}
 				className={classes.saveBtn}
+				onSubmit={handleSubmit}
 			/>
 		</div>
 	)

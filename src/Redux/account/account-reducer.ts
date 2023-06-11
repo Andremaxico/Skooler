@@ -107,7 +107,7 @@ export const searchSchool = async (value: string) => {
 	return data;
 }
 
-export const setMyAccount = (authData: UserType) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
+export const setMyAccountData = (authData: UserType) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
 	dispatch(isFetchingStatusChanged(true));
 	const data: ReceivedAccountDataType | undefined = await usersAPI.getUserById(authData.uid as string);
 
@@ -177,10 +177,10 @@ export const sendMyAccountData = (data: AccountDataType | null) => async (dispat
 		}
 
 		//server send account data
-		await accountAPI.setMyAccountData(accountData, uid);
+		await accountAPI.setMyAccountDataData(accountData, uid);
 		if(loginData) {
 			//set data to state
-			dispatch(setMyAccount(loginData));
+			dispatch(setMyAccountData(loginData));
 		}
 
 		//subscribe on changes

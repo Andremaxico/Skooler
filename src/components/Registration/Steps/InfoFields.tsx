@@ -43,7 +43,7 @@ export const InfoFields: React.FC<PropsType> = ({control, nextStep, errors}) => 
 										value, 
 										...other
 									}) => (
-										<TextField 
+										<TextField
 											value={value as string}  
 											{...other}
 										/>

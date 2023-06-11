@@ -10,7 +10,7 @@ import { Provider, useSelector } from 'react-redux';
 
 import { store, useAppDispatch } from './Redux/store';
 import { networkErrorStatusChanged, prevPageChanged } from './Redux/app/appReducer';
-import { loginDataReceived, setMyAccount } from './Redux/account/account-reducer';
+import { loginDataReceived, setMyAccountData } from './Redux/account/account-reducer';
 
 import Preloader from './UI/Preloader';
 import { useAuthState } from 'react-firebase-hooks/auth';
@@ -93,7 +93,7 @@ const App = () => {
   //   const getLoginData = async () => {
   //     if(user) {
   //       dispatch(loginDataReceived({...user}));
-  //       await dispatch(setMyAccount(user));	
+  //       await dispatch(setMyAccountData(user));	
   //     }
   //   }
   //   getLoginData();
@@ -104,7 +104,7 @@ const App = () => {
       onAuthStateChanged(auth, async (user) => {
         if (user) {
           dispatch(loginDataReceived({...user}));
-          await dispatch(setMyAccount(user));	
+          await dispatch(setMyAccountData(user));	
         } else {
           console.log('logout');
         }
@@ -142,8 +142,7 @@ const App = () => {
             paddingBottom: `${footerHeight}px`,
           }}
         >
-          <Registration />
-          {/* <div className={classes.container} style={{flex: '1 1 auto'}}>
+          <div className={classes.container} style={{flex: '1 1 auto'}}>
             {networkError && <NetworkError message={networkError || ''} />}
             <Suspense fallback={<Preloader />}>
               <Routes>
@@ -156,7 +155,7 @@ const App = () => {
                   <Route path=':userId'/>
                 </Route> 
                 <Route path='/post/:postId' element={<Post />} />
-                
+                <Route path='/registration' element={<Registration />} />
                 <Route path='/myschool' element={<MySchool />}/>
                 <Route path='/new-post' element={<NewPost />} />
                 <Route path='/' element={<Stream />} />
@@ -175,7 +174,7 @@ const App = () => {
               userAction?.target === 'answer_deleting' &&
                 <ActionStatus status={userAction.status} successText='Відповідь видалено'/>
             }
-          </div> */}
+          </div>
         </div>
         {!location.pathname.includes('/chat/') && <AppFooter />}
     </div>

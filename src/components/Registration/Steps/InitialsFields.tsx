@@ -3,7 +3,7 @@ import { Control, Controller, FieldErrors } from 'react-hook-form';
 import { FormContext, RegistrationFieldValues } from '../Registration';
 import classes from './Steps.module.scss';
 import { FormControl, FormHelperText, FormLabel, Input } from '@mui/joy';
-import { SaveBtn } from '../../../UI/SaveBtn';
+import { SaveBtn } from '../SaveBtn';
 import Preloader from '../../../UI/Preloader/Preloader';
 
 type PropsType = {

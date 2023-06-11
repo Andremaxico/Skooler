@@ -8,7 +8,7 @@ import { Control, Controller, FieldErrors, UseFormTrigger } from 'react-hook-for
 import { RegistrationFieldValues } from '../Registration';
 import { VisibilityOff, Visibility } from '@mui/icons-material';
 import { values } from 'lodash';
-import { SaveBtn } from '../../../UI/SaveBtn';
+import { SaveBtn } from '../SaveBtn';
 import { FormControl, FormHelperText, FormLabel, Input, TextField } from '@mui/joy';
 import IconButton from '@mui/joy/IconButton';
 import { useAppDispatch } from '../../../Redux/store';

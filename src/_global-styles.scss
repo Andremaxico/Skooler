@@ -72,6 +72,9 @@ $smBoxShadow: 3px 5px 22px -1px $gray;
   @media (max-width: $md2) {
     @include font-style(32px, 140%, 700);
   }
+  @media (max-width: $md3) {
+    font-size: 28px;
+  }
 }
 //general styles
 .container {

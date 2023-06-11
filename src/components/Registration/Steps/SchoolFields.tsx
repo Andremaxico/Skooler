@@ -6,7 +6,7 @@ import { Control, FieldErrors, Controller, UseFormTrigger, UseFormSetValue } fro
 import { RegistrationFieldValues } from '../Registration';
 import { ControllerFieldType, SchoolSearchItemType } from '../../../utils/types';
 import { searchSchool } from '../../../Redux/account/account-reducer';
-import { SaveBtn } from '../../../UI/SaveBtn';
+import { SaveBtn } from '../SaveBtn';
 import Autocomplete from '@mui/joy/Autocomplete/Autocomplete';
 import { CircularProgress, FormControl, FormHelperText, FormLabel, Input, MenuItem, Select } from '@mui/joy';
 

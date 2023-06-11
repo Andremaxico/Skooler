@@ -87,10 +87,14 @@ export const PostCard: React.FC<PropsType> = ({data, isOpen, answeringQuestionId
 	}
 
 	const handleCommentBtnClick = () => {
-		if(setAnsweringQuestionId) {
-			setAnsweringQuestionId(data.id);
+		if(isAuthed) {
+			if(setAnsweringQuestionId) {
+				setAnsweringQuestionId(data.id);
+			}
+			setIsAnswerAdding(true);
+		} else {
+			navigate('/login');
 		}
-		setIsAnswerAdding(true);
 	}
 
 	return (

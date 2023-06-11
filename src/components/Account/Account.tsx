@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
 import classes from './Account.module.scss';
 import { Navigate, useParams } from 'react-router-dom';
-import { setAnotherUserAccount, setMyAccount } from '../../Redux/account/account-reducer';
+import { setAnotherUserAccount, setMyAccountData } from '../../Redux/account/account-reducer';
 import { selectAccountIsFetching, selectAuthedStatus, selectCurrUserAccountData, selectMyAccountData, selectMyLoginData } from '../../Redux/account/account-selectors';
 import { useAppDispatch } from '../../Redux/store';
 import Preloader from '../../UI/Preloader';

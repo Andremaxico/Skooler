@@ -10,7 +10,7 @@ export const accountAPI = {
 		return getAuth().currentUser;
 	},
 
-	async setMyAccountData(data: ReceivedAccountDataType | null, uid: string) {
+	async setMyAccountDataData(data: ReceivedAccountDataType | null, uid: string) {
 		//send account data to database
 		await setDoc(doc(firestore, 'users', uid), data);
 	},
