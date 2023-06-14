@@ -1,17 +1,25 @@
 @import '../../global-styles';
 
 .Login {
-	@include column-align;
+	@include center-align;
 	height: 100%;
-	.loginForm {
-
-	}
-	.loginBtn {
-		@include row-align;
-		justify-content: center;
-		max-width: 600px;
-		.googleIcon {
-			@include size(20px);
+	.content {
+		@include column-align;
+		max-width: 400px;
+		.title {
+			@include title;
+			margin-bottom: 12px;
+		}
+		.loginForm {
+			margin-bottom: 12px;
+		}
+		.loginBtn {
+			@include row-align;
+			justify-content: center;
+			max-width: 600px;
+			.googleIcon {
+				@include size(20px);
+			}
 		}
 	}
 }

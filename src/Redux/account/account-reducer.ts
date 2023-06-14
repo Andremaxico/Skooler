@@ -1,3 +1,4 @@
+import { message } from 'antd';
 import { streamAPI } from './../../api/streamApi';
 import { accountAPI } from './../../api/accountApi';
 import { AppDispatchType, RootStateType } from './../store';
@@ -104,7 +105,9 @@ const accountReducer = createReducer(initialState, (builder) => {
 			state.currUserQuestions = action.payload;
 		})
 		.addCase(authErrorReceived, (state, action) => {
-			state.authError = action.payload;
+			const errorMessage = errorToText(action.payload || '');
+
+			state.authError = errorMessage;
 		})
 		.addDefaultCase((state, action) => {});
 });
@@ -220,18 +223,33 @@ export const signInByEmail = (email: string, password: string) => async (dispatc
 		
 		if(user) {
 			dispatch(loginDataReceived(user));
+			dispatch(authErrorReceived(null));
 		}
 	} catch(error: any) {
 		//catching auth error
 		//in api it harder to realize
 		console.log('sign in error', error.code)
-		dispatch(authErrorReceived(errorToText(error.code)));
+		dispatch(authErrorReceived(error.code));
 	}
 
 	// if(user) {
 	// 	console.log('sign in', user);
 	// 	dispatch(loginDataReceived);
 	// }
+}
+
+export const loginWithFacebook = () => async (dispatch: AppDispatchType) => {
+	try {
+		const user = await accountAPI.loginWithFacebook();
+
+		if(user) {
+			dispatch(loginDataReceived(user));
+		}
+	} catch(error: any) {
+		//TODO
+		//create new errors state
+		dispatch(authErrorReceived(error.code));
+	}
 }
 
 export const sendMyCurrentAvatar = (file: File | Blob | undefined, uid: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {

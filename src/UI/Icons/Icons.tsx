@@ -1,4 +1,4 @@
-import Icon, { HomeOutlined } from '@ant-design/icons';
+import { HomeOutlined } from '@ant-design/icons';
 import type { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon';
 import SvgIcon, { SvgIconProps } from '@mui/joy/SvgIcon';
 import errorIcon from '../../assets/images/error-icon.png';
@@ -12,12 +12,22 @@ const googleSvg = () => (
 		<clipPath id="b">
 			<use xlinkHref="#a" overflow="visible"/>
 		</clipPath>
-		<path clip-path="url(#b)" fill="#FBBC05" d="M0 37V11l17 13z"/>
-		<path clip-path="url(#b)" fill="#EA4335" d="M0 11l17 13 7-6.1L48 14V0H0z"/>
-		<path clip-path="url(#b)" fill="#34A853" d="M0 37l30-23 7.9 1L48 0v48H0z"/>
-		<path clip-path="url(#b)" fill="#4285F4" d="M48 48L17 24l-4-3 35-10z"/>
+		<path clipPath="url(#b)" fill="#FBBC05" d="M0 37V11l17 13z"/>
+		<path clipPath="url(#b)" fill="#EA4335" d="M0 11l17 13 7-6.1L48 14V0H0z"/>
+		<path clipPath="url(#b)" fill="#34A853" d="M0 37l30-23 7.9 1L48 0v48H0z"/>
+		<path clipPath="url(#b)" fill="#4285F4" d="M48 48L17 24l-4-3 35-10z"/>
 	</svg>
 );
+
+const facebookSvg = () => (
+	<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48" width="48px" height="48px">
+		<linearGradient id="Ld6sqrtcxMyckEl6xeDdMa" x1="9.993" x2="40.615" y1="9.993" y2="40.615" gradientUnits="userSpaceOnUse">
+			<stop offset="0" stop-color="#2aa4f4"/>
+			<stop offset="1" stop-color="#007ad9"/>
+		</linearGradient><path fill="url(#Ld6sqrtcxMyckEl6xeDdMa)" d="M24,4C12.954,4,4,12.954,4,24s8.954,20,20,20s20-8.954,20-20S35.046,4,24,4z"/>
+		 <path fill="#fff" d="M26.707,29.301h5.176l0.813-5.258h-5.989v-2.874c0-2.184,0.714-4.121,2.757-4.121h3.283V12.46 c-0.577-0.078-1.797-0.248-4.102-0.248c-4.814,0-7.636,2.542-7.636,8.334v3.498H16.06v5.258h4.948v14.452 C21.988,43.9,22.981,44,24,44c0.921,0,1.82-0.084,2.707-0.204V29.301z"/>
+	</svg>
+)  
 
 const errorSvg = () => (
 	//@ts-ignore
@@ -107,13 +117,17 @@ const studySvg = () => (
 	</svg>
 )
 
-export const GoogleIcon = (props: Partial<CustomIconComponentProps>) => (
-	<Icon component={googleSvg} {...props}/>
+export const   GoogleIcon = (props: Partial<CustomIconComponentProps>) => (
+	<SvgIcon component={googleSvg} {...props} />
 );
 
 export const SignoutIcon = (props: Partial<CustomIconComponentProps>) => (
-	<Icon component={signoutSvg} {...props}/>
+	<SvgIcon component={signoutSvg} {...props}/>
 );
+
+export const FacebookIcon = (props: Partial<CustomIconComponentProps>) => (
+	<SvgIcon component={facebookSvg} {...props}/>
+)
 
 export const ErrorIcon = (props: Partial<CustomIconComponentProps>) => (
 	<div {...props}>
@@ -123,11 +137,11 @@ export const ErrorIcon = (props: Partial<CustomIconComponentProps>) => (
 );
 
 export const StudyIcon = (props: Partial<CustomIconComponentProps>) => (
-	<Icon component={studySvg} {...props}/>
+	<SvgIcon component={studySvg} {...props}/>
 )
 
 export const EmptyIcon = (props: Partial<CustomIconComponentProps>) => (
-	<Icon component={emptySvg} {...props}/>
+	<SvgIcon component={emptySvg} {...props}/>
 )
 
 
