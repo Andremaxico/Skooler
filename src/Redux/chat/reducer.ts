@@ -88,10 +88,12 @@ export const startMessaging = (contactUid: string) => (dispatch: AppDispatchType
 		dispatch(messagesReceived(data.length == 0 ? null : data));
 		console.log('new messages received, reducer subscriber');
 	}
-	const uid1 = getState().account.myAccountData?.uid || '';
+	const uid1 = getState().account.myAccountData?.uid || getState().account.myLoginData?.uid;
 
-	chatAPI.subscribe(subscriber, uid1, contactUid);
-	chatAPI.fetchingSubscribe(fetchingSubscriberCreator(dispatch));
+	if(uid1) {
+		chatAPI.subscribe(subscriber, uid1, contactUid);
+		chatAPI.fetchingSubscribe(fetchingSubscriberCreator(dispatch));
+	}
 }
 
 export const stopMessaging = () => (dispatch: AppDispatchType) => {

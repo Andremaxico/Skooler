@@ -8,6 +8,7 @@ export const isLoadingStatusChanged = createAction<boolean>('app/LOADING_STATUS_
 export const footerHeightReceived = createAction<number>('app/FOOTER_HEIGHT_RECEIVED');
 export const headerHeightReceived = createAction<number>('app/HEADER_HEIGHT_RECEIVED');
 export const prevPageChanged = createAction<string>('app/PREV_PAGE_CHANGED');
+export const returnBtnShowStatusChanged = createAction<boolean>('app/RETURN_BTN_SHOW_STATUS_CHANGED');
 
 //==================	REDUCER===================
 type AppStateType = {
@@ -16,6 +17,7 @@ type AppStateType = {
 	footerHeight: number | null,
 	headerHeight: number | null,
 	prevPage: string | null,
+	isReturnBtnShow: boolean, 
 };
 
 const initialState: AppStateType = {
@@ -24,6 +26,7 @@ const initialState: AppStateType = {
 	footerHeight: null,
 	headerHeight: null,
 	prevPage: null,
+	isReturnBtnShow: false,
 };
 
 export const appReducer = createReducer(initialState, (builder) => {
@@ -42,6 +45,9 @@ export const appReducer = createReducer(initialState, (builder) => {
 		})
 		.addCase(prevPageChanged, (state, action) => {
 			state.prevPage = action.payload;
+		})
+		.addCase(returnBtnShowStatusChanged, (state, action) => {
+			state.isReturnBtnShow = action.payload;
 		})
 		.addDefaultCase((state, action) => {})
 });

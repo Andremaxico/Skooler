@@ -105,7 +105,7 @@ const accountReducer = createReducer(initialState, (builder) => {
 			state.currUserQuestions = action.payload;
 		})
 		.addCase(authErrorReceived, (state, action) => {
-			const errorMessage = errorToText(action.payload || '');
+			const errorMessage = action.payload ? errorToText(action.payload) : null;
 
 			state.authError = errorMessage;
 		})

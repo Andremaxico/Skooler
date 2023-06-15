@@ -1,21 +1,15 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
-import { useAuthState } from 'react-firebase-hooks/auth'
+import { useEffect, useRef, useState } from 'react'
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
-import { FirebaseContext } from '../..';
 import Messages from './Messages';
 import classes from './Chat.module.scss';
 import { NewMessageForm } from './NewMessageForm';
-import { Auth } from 'firebase/auth';
-import { MessageDataType } from '../../utils/types';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { selectCurrChatData, selectIsMessagesFetching, selectMessages } from '../../Redux/chat/selectors';
 import { contactDataReceived, editMessage, setContactData, startMessaging, stopMessaging, subscribeOnChat, unsubscribeFromChat } from '../../Redux/chat/reducer';
-import { AnyAction } from 'redux';
 import Preloader from '../../UI/Preloader';
 import { useAppDispatch } from '../../Redux/store';
 import { ScrollBtn } from '../../UI/ScrollBtn';
 import { selectMyAccountData, selectMyLoginData } from '../../Redux/account/account-selectors';
-import { useSelect } from '@mui/base';
 
 export type EditMessageDataType = {
 	value: string,
@@ -83,7 +77,7 @@ const Chat = () => {
 		return () => {
 			dispatch(stopMessaging());
 		}
-	}, [contactUid]);
+	}, [myAccountData, contactUid]);
 
 	//set unread messages count
 	useEffect(() => {

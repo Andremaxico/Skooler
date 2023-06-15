@@ -34,4 +34,7 @@
 			}
 		}
 	}
+	.buttons {
+		@include row-align;
+	}
 }

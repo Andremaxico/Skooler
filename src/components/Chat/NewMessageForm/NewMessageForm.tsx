@@ -1,24 +1,18 @@
-import React, { FocusEvent, ReactElement, useEffect, useRef, useState } from 'react';
+import React, { ReactElement, useEffect, useRef, useState } from 'react';
 
 import SendIcon from '@mui/icons-material/Send';
 import classes from './NewMessageForm.module.scss';
-import Preloader from '../../../UI/Preloader';
 import { ChatDataType, MessageDataType, ReceivedAccountDataType, UserType } from '../../../utils/types';
 import { serverTimestamp } from 'firebase/firestore';
-import { useDispatch, useSelector } from 'react-redux';
-import { editMessage, sendMessage, setChatInfo, updateChatInfo } from '../../../Redux/chat/reducer';
-import { AnyAction } from 'redux';
+import { useSelector } from 'react-redux';
+import { sendMessage, setChatInfo, updateChatInfo } from '../../../Redux/chat/reducer';
 import { selectMyAccountData } from '../../../Redux/account/account-selectors';
 import { Controller, useForm } from 'react-hook-form';
 import { v1 } from 'uuid';
 import { useAppDispatch } from '../../../Redux/store';
-import { scrollElementToBottom } from '../../../utils/helpers/scrollElementToBottom';
-import { Button, FormControl, IconButton, Textarea } from '@mui/joy';
+import { FormControl, IconButton, Textarea } from '@mui/joy';
 import { footerHeightReceived } from '../../../Redux/app/appReducer';
-import { selectChatsData, selectContactData, selectMessages } from '../../../Redux/chat/selectors';
-import { useUserData } from '../../../utils/hooks/useUserData';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import { Registration } from '../../Registration';
+import { selectContactData, selectMessages } from '../../../Redux/chat/selectors';
 
 type ContactDataType = ReceivedAccountDataType | Promise<ReceivedAccountDataType | undefined>;
 
@@ -198,7 +192,6 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 		);
 	}, [isFirstlyOpened, isMessageEdit, isValid]);
 	//if firstly open and not editing -> false, else if no(editing) and no firstly -> is messagesErrors(true -> false)
-	return <Registration />
 	return (
 		<form className={classes.NewMessageForm} onSubmit={handleSubmit(onSubmit)} ref={formRef}>
 			<Controller

@@ -147,6 +147,7 @@ const App = () => {
             <Suspense fallback={<Preloader />}>
               <Routes>
                 <Route path='/login' element={<Login />}/>
+                <Route path='/registration' element={<Registration />} />
                 <Route path='/chat' element={<Chat />}>
                   <Route path=':userId'/>
                 </Route>
@@ -155,7 +156,6 @@ const App = () => {
                   <Route path=':userId'/>
                 </Route> 
                 <Route path='/post/:postId' element={<Post />} />
-                <Route path='/registration' element={<Registration />} />
                 <Route path='/myschool' element={<MySchool />}/>
                 <Route path='/new-post' element={<NewPost />} />
                 <Route path='/' element={<Stream />} />

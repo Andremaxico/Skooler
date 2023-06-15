@@ -37,7 +37,7 @@ export const FormContext = createContext<ContextType | null>(null);
 
 export const Registration: React.FC<PropsType> = ({}) => {
 	//number of step
-	const [step, setStep] = useState<number>(5);
+	const [step, setStep] = useState<number>(0);
 	const { control, handleSubmit, reset, formState: {errors}, trigger, watch, setValue, register, getValues, getFieldState} = useForm<RegistrationFieldValues>();
 
 	const dispatch: AppDispatchType = useAppDispatch();
