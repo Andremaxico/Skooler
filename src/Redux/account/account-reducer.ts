@@ -3,7 +3,7 @@ import { streamAPI } from './../../api/streamApi';
 import { accountAPI } from './../../api/accountApi';
 import { AppDispatchType, RootStateType } from './../store';
 import { ThunkAction } from 'redux-thunk';
-import { AccountDataType, ReceivedAccountDataType, UserType, SchoolInfoType, UserRatingsType, PostDataType } from './../../utils/types/index';
+import { AccountDataType, ReceivedAccountDataType, UserType, SchoolInfoType, UserRatingsType, PostDataType, AuthErrorsType, AuthErrorType, AuthErrorsTypesType } from './../../utils/types/index';
 import { createReducer, createAction, AnyAction } from '@reduxjs/toolkit';
 import { schoolsAPI } from '../../api/schoolsApi';
 import { usersAPI } from '../../api/usersApi';
@@ -19,7 +19,7 @@ export type AccountStateType = {
 	isFetching: boolean,
 	currMyAvatarUrl: string | null,
 	isAuthed: boolean,
-	authError: string | null,
+	authErrors: AuthErrorsType,
 }
 type _ThunkType = ThunkAction<void, AccountStateType, unknown, AnyAction>;
 
@@ -36,7 +36,8 @@ export const newQuestionLiked = createAction<string>('account/NEW_QUESTION_LIKED
 export const questionUnliked = createAction<string>('account/QESTION_UNLIKED');
 export const authStatusChanged = createAction<boolean>('account/AUTH_STATUS_CHANGED');
 export const currUserQuestionsReceived = createAction<PostDataType[] | null>('account/CURR_USER_QUESTIONS_RECEIVED');
-export const authErrorReceived = createAction<string | null>('auth/AUTH_ERROR_RECEIVED');
+export const authErrorReceived = createAction<AuthErrorType>('auth/AUTH_ERROR_RECEIVED');
+export const authErrorRemoved = createAction<AuthErrorsTypesType>('auth/AUTH_ERROR_REMOVED');
 
 const initialState: AccountStateType = {
 	myAccountData: null,
@@ -46,18 +47,18 @@ const initialState: AccountStateType = {
 	isFetching: false,
 	currMyAvatarUrl: null,
 	isAuthed: false,
-	authError: null,
+	authErrors: {},
 }
 
-//uses in ReceivedAccountDataType
+//using in ReceivedAccountDataType
 export type BirthDateObject = {
 	date: number,
 	hours?: number,
 	miliseconds?: number,
 	minutes?: number,
-	months: number,
+	months?: number,
 	seconds?: number,
-	years: number,
+	years?: number,
 }
 
 
@@ -105,9 +106,14 @@ const accountReducer = createReducer(initialState, (builder) => {
 			state.currUserQuestions = action.payload;
 		})
 		.addCase(authErrorReceived, (state, action) => {
-			const errorMessage = action.payload ? errorToText(action.payload) : null;
+			const errorMessage = errorToText(action.payload.message);
 
-			state.authError = errorMessage;
+			state.authErrors[action.payload.type] = {
+				...action.payload, message: errorMessage
+			};
+		})
+		.addCase(authErrorRemoved, (state, action) => {
+			delete state.authErrors[action.payload];
 		})
 		.addDefaultCase((state, action) => {});
 });
@@ -165,7 +171,7 @@ export const sendMyAccountData = (data: AccountDataType | null) => async (dispat
 		const schoolData = data.schoolId ? await schoolsAPI.getSchoolInfo(data.schoolId) : null;
 
 		//formatting birthdate
-		const birthDate: BirthDateObject = Object.assign({}, restData?.birthDate?.toObject());
+		const birthDate = Object.assign({}, restData?.birthDate);
 
 		//send avatar file to server
 		if(avatar) {
@@ -223,13 +229,17 @@ export const signInByEmail = (email: string, password: string) => async (dispatc
 		
 		if(user) {
 			dispatch(loginDataReceived(user));
-			dispatch(authErrorReceived(null));
+			dispatch(authErrorRemoved('signin_error'));
 		}
 	} catch(error: any) {
 		//catching auth error
 		//in api it harder to realize
-		console.log('sign in error', error.code)
-		dispatch(authErrorReceived(error.code));
+		console.log('sign in error', error.code);
+
+		dispatch(authErrorReceived({
+			message: error.code,
+			type: 'signin_error'
+		}));
 	}
 
 	// if(user) {
@@ -248,7 +258,21 @@ export const loginWithFacebook = () => async (dispatch: AppDispatchType) => {
 	} catch(error: any) {
 		//TODO
 		//create new errors state
-		dispatch(authErrorReceived(error.code));
+		dispatch(authErrorReceived({
+			message: error.code,
+			type: 'signin_error',
+		}));
+	}
+}
+
+export const sendPasswordResetEmail = (email: string) => async (dispatch: AppDispatchType) => {
+	try {
+		await accountAPI.sendPasswordResetEmail(email);
+	} catch(error: any) {
+		dispatch(authErrorReceived({
+			message: error.code,
+			type: 'reset_password_error',
+		}))
 	}
 }
 

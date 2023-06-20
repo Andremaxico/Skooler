@@ -6,7 +6,7 @@ import { FieldValue} from 'firebase/firestore';
 import { Value } from 'sass';
 import { BirthDateObject } from '../../Redux/account/account-reducer';
 import { AnyMxRecord } from 'dns';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 
 export type LinkDataType = {
 	path: PathsType,
@@ -111,7 +111,7 @@ export type AccountDataType = {
 	schoolId: number,
 	fullName: string,
 	status: 'teacher' | 'schoolboy',
-	birthDate: dayjs.Dayjs | null, 
+	birthDate: Dayjs | null, 
 	aboutMe: string | null,
 	avatar?: File,
 	email: string,
@@ -124,7 +124,7 @@ export type ReceivedAccountDataType = {
 	fullName: string,
 	status: 'teacher' | 'schoolboy',
 	rating: UserRatingsType,
-	birthDate: BirthDateObject, 
+	birthDate: Dayjs, 
 	aboutMe: string | null,
 	avatarUrl?: string,
 	uid: string,
@@ -171,3 +171,18 @@ export type EventDataType = {
 export type UserType = User;
 
 
+//ERRORS====================================
+export type AuthErrorsTypesType = 
+	'signin_error' | 'register_error' |
+	'reset_password_error'
+;
+
+export type AuthErrorType = {
+	message: string,
+	type: AuthErrorsTypesType,
+}
+
+//for many kinds of errors in one state object
+export type AuthErrorsType = {
+	[key in AuthErrorsTypesType]?: AuthErrorType
+}

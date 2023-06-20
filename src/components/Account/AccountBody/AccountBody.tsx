@@ -13,6 +13,9 @@ import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import MessageIcon from '@mui/icons-material/Message';
 import { Avatar, Button } from '@mui/joy';
 import { Link } from 'react-router-dom';
+import { AccountInfo } from './AccountInfo';
+import { AccountHeader } from './AccountHeader';
+import { MessageBtn } from './MessageBtn';
 
 type PropsType = {
 	accountData: ReceivedAccountDataType,
@@ -22,56 +25,22 @@ type PropsType = {
 
 export const AccountBody: React.FC<PropsType> = React.memo(({accountData, isMy}) => {
 	const {
-		fullName, birthDate, class: classNum, school, status, aboutMe, avatarUrl, rating, uid
+		fullName, aboutMe, avatarUrl, uid
 	} = accountData;
-	const loginData = useSelector(selectMyLoginData);
-
-
-	const date = new Date(birthDate.years, birthDate.months, birthDate.date)
-	const birthDayDate = getStringDate(date.getTime());
-
 
 	return (
 		<div className={classes.AccountBody}>
-			<div className={classes.AccountHeader}>
-				<div className={classes.cover}>
-					<div className={classes.editBtn}>
-						<EditRoundedIcon className={classes.icon} />
-					</div>
-					<h1 className={classes.fullName}>{fullName}</h1>
-				</div>
-				<Avatar
-					className={classes.avatar}
-					src={ avatarUrl } alt='Фото користувача'
-				/>
-			</div>
+			<AccountHeader
+				avatarUrl={avatarUrl}
+				fullName={fullName}
+				className={classes.header}
+			/>
+
 			<p className={classes.about}>{aboutMe}</p>
-			{ !isMy &&
-				<div className={classes.buttons}>
-					<Button color='primary' variant='outlined' startDecorator={<MessageIcon />} className={classes.btn}>
-						<Link className={classes.link} to={`/chat/${uid}`}>
-							Написати повідомлення
-						</Link>
-					</Button>
-				</div>
-			}
-			<ul className={classes.AccountInfo}>
-				<h3 className={classes.title}>Інформація</h3>
-				<li className={classes.classNum}>
-					<p>{classNum}</p>
-				</li>
-				<li className={classes.birthDate}>
-					<span>{birthDayDate}</span> 
-				</li>
-				<li className={classes.rating}>
-					<p>{rating}</p>
-				</li>
-				<li className={classes.AccountSchool}>
-					<Link to={school.website} title='Сайт школи' target='_blank' className={classes.school} >
-						{school.institution_name}
-					</Link>
-				</li>
-			</ul>
+
+			{ !isMy && <MessageBtn uid={uid} className={classes.messageBtn}/>}
+
+			<AccountInfo accountData={accountData} className={classes.info}/>
 		</div>
 	)
 });

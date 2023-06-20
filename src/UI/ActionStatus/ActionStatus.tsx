@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import classes from './ActionStatus.module.scss';
 import cn from 'classnames';
@@ -13,29 +13,50 @@ import { selectFooterHeight } from '../../Redux/app/appSelectors';
 
 type PropsType = {
 	successText: string,
-	status: UserActionStatusType,
+	errorText?: string,
+	status: UserActionStatusType | null,
 };
 
-export const ActionStatus: React.FC<PropsType> = ({successText, status}) => {
+export const ActionStatus: React.FC<PropsType> = ({successText, status, errorText}) => {
+	const [isShow, setIsShow] = useState<boolean>(!!successText);
+
 	const footerHeight = useSelector(selectFooterHeight);
 
-	console.log('success text', successText);
+	//text for every status
 	const statusTextObj: {[key in UserActionStatusType]: string} = {
-		'error': 'Сталася помилка', 
+		'error': `Сталася помилка${errorText ? ': ' + errorText : ''}`, 
 		'loading': 'Опрацювання',
 		'success': successText,
 	}
+
+	//icons next to text
 	const statusIconsObj: {[key in UserActionStatusType]: ReactElement} = {
 		'error': <ErrorOutlineOutlinedIcon className={classes.icon} />,
 		'loading': <CircularProgress className={classes.icon} size={'sm'} />,
 		'success': <DoneOutlinedIcon className={classes.icon} />,
 	}
+
+	//change status -> change styles
 	const statusClassname = status === 'loading' ? classes._loading :
 		status === 'error' ? classes._error : classes._success;
 
+	//hide after 3s from show
+	useEffect(() => {
+		if(status === 'loading') {
+			setTimeout(() => {
+				setIsShow(false);
+			}, 2000)
+		} 
+	}, [status]);
+
+	//change visibility with status
+	useEffect(() => {
+		setIsShow(!!status);
+	}, [status])
+	
 	return (
 		<div 
-			className={cn(classes.ActionStatus, status !== null ? `${classes._show} ${statusClassname}` : '')}
+			className={cn(classes.ActionStatus, isShow ? `${classes._show} ${statusClassname}` : '')}
 			style={{
 				bottom: `${footerHeight || 0 + 16}px`,
 			}}

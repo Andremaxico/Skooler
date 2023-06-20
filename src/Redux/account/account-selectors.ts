@@ -32,6 +32,6 @@ export const selectCurrUserQuestions = (state: RootStateType) => {
 	return state.account.currUserQuestions;
 }
 
-export const selectAuthError = (state: RootStateType) => {
-	return state.account.authError;
+export const selectAuthErrors = (state: RootStateType) => {
+	return state.account.authErrors;
 }

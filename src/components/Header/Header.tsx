@@ -1,5 +1,5 @@
 import React, {useRef, useEffect} from 'react'
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { AccountInfo } from './AccountInfo';
 import classes from './Header.module.scss';
 import { useSelector } from 'react-redux';
@@ -23,6 +23,10 @@ const AppHeader: React.FC<PropsType> = ({}) => {
 
 	const headerRef = useRef<HTMLDivElement>(null);
 
+	const location = useLocation();
+
+	console.log('location', location);
+
 	const dispatch = useAppDispatch();
 
 	useEffect(() => {
@@ -31,10 +35,13 @@ const AppHeader: React.FC<PropsType> = ({}) => {
 	}, [headerRef]);
 
 	useEffect(() => {
-		if(prevPage) {
+		console.log('prev page', prevPage === location.pathname);
+		if(prevPage === location.pathname)  {
+			dispatch(returnBtnShowStatusChanged(false));
+		} else {
 			dispatch(returnBtnShowStatusChanged(true));
 		}
-	}, [prevPage])
+	}, [prevPage, location])
 
 	return (
 		<header className={classes.AppHeader} ref={headerRef}>

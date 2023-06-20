@@ -2,7 +2,7 @@
 import React, { useContext, useEffect } from 'react';
 import { FirebaseContext } from '../../main';
 import classes from './Login.module.scss';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../../Redux/store';
 import { useSelector } from 'react-redux';
 import { selectAuthedStatus, selectMyLoginData } from '../../Redux/account/account-selectors';
@@ -51,9 +51,17 @@ const Login: React.FC<PropsType> = ({}) => {
 				<h1 className={classes.title}>З поверненням!</h1>
 				<SignInForm />
 				<OtherLoginMethods />
-				<Button onClick={toNavigation} className={classes.registerBtn} variant={'solid'}>
-					Зареєструватися
-				</Button>
+				<div className={classes.Links}>
+					<div className={classes.registerLink}></div>
+					<div className={classes.forgotPasswordLink}>
+						<Link to={'reset-password'} replace={true}>
+							Забули пароль?
+						</Link>
+					</div>
+					<Link to={'/registration'} replace={true} className={classes.registerBtn}>
+						Зареєструватися
+					</Link>
+				</div>
 			</div>
 		</div>
 	)

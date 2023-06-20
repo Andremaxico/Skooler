@@ -1,6 +1,6 @@
 import { setDoc, addDoc, collection, doc, updateDoc, Unsubscribe, onSnapshot } from 'firebase/firestore';
 import { UserType, AccountDataType, ReceivedAccountDataType } from '../utils/types/index';
-import { FacebookAuthProvider, createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
+import { FacebookAuthProvider, createUserWithEmailAndPassword, getAuth, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import { auth, firestore, storage } from '../firebase/firebaseApi';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
@@ -98,5 +98,9 @@ export const accountAPI = {
 		const accessToken = credential?.accessToken;
 
 		return result.user;
-	}
+	},
+
+	async sendPasswordResetEmail(email: string) {
+		await sendPasswordResetEmail(auth, email);
+	},
 }

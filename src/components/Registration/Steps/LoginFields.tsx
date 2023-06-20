@@ -23,30 +23,6 @@ type PropsType = {
 };
 
 export const LoginFields: React.FC<PropsType> = ({control, errors, nextStep, trigger}) => {
-	const passwordInpRef = useRef<null | HTMLInputElement>(null);
-
-	const [showPassword, setShowPassword] = useState<boolean>(false);
-
-	const dispatch = useAppDispatch();
-
-	const handleClickShowPassword = () => {
-		if(passwordInpRef.current) {
-			//givno code
-			const input = passwordInpRef.current.querySelector('input');
-			//TODO:
-			//focus in the end of text on input
-			if(input) {
-				const end = input.value.length;
-				const value = input.value;
-
-  				input.focus();
-
-			}
-		}
-
-		setShowPassword((isShow) => !isShow);
-	};
-
 	return (
 		<section className={classes.Step}>
 			<h2 className={classes.title}>Уведіть дані акаунту</h2>
