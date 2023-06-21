@@ -7,6 +7,7 @@ import { Value } from 'sass';
 import { BirthDateObject } from '../../Redux/account/account-reducer';
 import { AnyMxRecord } from 'dns';
 import dayjs, { Dayjs } from 'dayjs';
+import { UserActionStatusType } from '../../Redux/stream/stream-reducer';
 
 export type LinkDataType = {
 	path: PathsType,
@@ -172,17 +173,22 @@ export type UserType = User;
 
 
 //ERRORS====================================
-export type AuthErrorsTypesType = 
-	'signin_error' | 'register_error' |
-	'reset_password_error'
+export type AuthActionsTypesType = 
+	'signin' | 'register' |
+	'reset_password'
 ;
 
 export type AuthErrorType = {
 	message: string,
-	type: AuthErrorsTypesType,
+	type: AuthActionsTypesType,
 }
 
 //for many kinds of errors in one state object
 export type AuthErrorsType = {
-	[key in AuthErrorsTypesType]?: AuthErrorType
+	[key in AuthActionsTypesType]?: AuthErrorType
 }
+
+export type AuthActionsType = {
+	[key in AuthActionsTypesType]?: UserActionStatusType
+}
+

@@ -15,9 +15,10 @@ type PropsType = {
 	successText: string,
 	errorText?: string,
 	status: UserActionStatusType | null,
+	autoHide?: boolean,
 };
 
-export const ActionStatus: React.FC<PropsType> = ({successText, status, errorText}) => {
+export const ActionStatus: React.FC<PropsType> = ({successText, status, errorText, autoHide = true}) => {
 	const [isShow, setIsShow] = useState<boolean>(!!successText);
 
 	const footerHeight = useSelector(selectFooterHeight);
@@ -40,9 +41,9 @@ export const ActionStatus: React.FC<PropsType> = ({successText, status, errorTex
 	const statusClassname = status === 'loading' ? classes._loading :
 		status === 'error' ? classes._error : classes._success;
 
-	//hide after 3s from show
+	//hide after 3s from show  
 	useEffect(() => {
-		if(status === 'loading') {
+		if(status === 'success' && autoHide) {
 			setTimeout(() => {
 				setIsShow(false);
 			}, 2000)
