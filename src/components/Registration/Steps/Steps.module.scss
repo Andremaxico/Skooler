@@ -53,11 +53,26 @@
 	}
 
 	.form {
+		margin-bottom: 12px;
 		.textarea {
 			@media (max-width: $md2) {
 				min-width: 260px;
 			}
 		}
+		.radioGroup {
+			@include row-align;
+			flex-direction: row;
+			gap: 8px;
+			.radio {
+				margin: 0;
+			}
+		}
+	}
+
+	.buttons {
+		width: 100%;
+		@include row-align;
+		justify-content: space-between;
 	}
 }
 

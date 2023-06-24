@@ -9,6 +9,7 @@ import { searchSchool } from '../../../Redux/account/account-reducer';
 import { SaveBtn } from '../SaveBtn';
 import Autocomplete from '@mui/joy/Autocomplete/Autocomplete';
 import { CircularProgress, FormControl, FormHelperText, FormLabel, Input, MenuItem, Select } from '@mui/joy';
+import { ReturnBtn } from '../ReturnBtn/ReturnBtn';
 
 
 type PropsType = {
@@ -186,11 +187,14 @@ export const SchoolFields: React.FC<PropsType> = ({control, errors, nextStep, tr
 					)}
 				/>
 			</div>
-			<SaveBtn 
-				className={classes.btn} 
-				errors={errors}
-				fieldsNames={['class', 'schoolId']}
-			/>
+			<div className={classes.buttons}>
+				<ReturnBtn />
+				<SaveBtn 
+					className={classes.btn} 
+					errors={errors}
+					fieldsNames={['class', 'schoolId']}
+				/>
+			</div>
 		</section>
 	)
 }

@@ -6,7 +6,7 @@ import classes from './Registration.module.scss';
 import { InfoFields } from './Steps/InfoFields';
 import { SchoolFields } from './Steps/SchoolFields';
 import { AppDispatchType, useAppDispatch } from '../../Redux/store';
-import { loginDataReceived, myAccountDataReceived, sendMyAccountData } from '../../Redux/account/account-reducer';
+import { createAccountByEmail, loginDataReceived, myAccountDataReceived, sendMyAccountData } from '../../Redux/account/account-reducer';
 import { LoginFields } from './Steps/LoginFields';
 import { AvatarUpload } from './Steps/AvatarUpload/AvatarUpload';
 import { useSelector } from 'react-redux';
@@ -32,6 +32,7 @@ type ContextType = {
 	lastStep: number,
 	currStep: number,
 	setError: UseFormSetError<RegistrationFieldValues>,
+	prevStep: () => void,
 }
 
 //context for all steps
@@ -51,7 +52,7 @@ export const Registration: React.FC<PropsType> = ({}) => {
 	const prevPage = useSelector(selectPrevPage);
 	const isAuthed = useSelector(selectAuthedStatus);
 
-	const registerError = authErrors['register'];
+	const serverError = authErrors['register'];
 
 	const dispatch: AppDispatchType = useAppDispatch();
 
@@ -83,6 +84,7 @@ export const Registration: React.FC<PropsType> = ({}) => {
 	const onSubmit = async (data: AccountDataType) => {
 		console.log('submit data', data);
 		//another properties setting in redux
+		await dispatch(createAccountByEmail(data.email, data.password));
 		dispatch(sendMyAccountData(data));
 		//account register in firestore run after 1 step 
 		//because we need new uid in 5 step(avatarupload )
@@ -95,8 +97,13 @@ export const Registration: React.FC<PropsType> = ({}) => {
 
 	//перейти на наступний крок
 	const nextStep = () => {
-		if(!registerError) setStep((currStep) => currStep + 1);
+		if(!serverError) setStep((currStep) => currStep + 1);
 	}; //+1 to curr Step
+
+	//return to previous step
+	const prevStep = () => {
+		if(step > 0) setStep((currStep) => currStep - 1);
+	}
 
 	//step element
 	let currStep: JSX.Element | null = null;
@@ -129,7 +136,7 @@ export const Registration: React.FC<PropsType> = ({}) => {
 		<form ref={formRef} className={classes.Registration} onSubmit={handleSubmit(onSubmit)}>
 			<FormContext.Provider value={{
 				control, errors, nextStep, trigger, setValue,
-				lastStep, currStep: step, setError
+				lastStep, currStep: step, setError, prevStep
 			}}>
 				{currStep}
 				<ActionStatus 

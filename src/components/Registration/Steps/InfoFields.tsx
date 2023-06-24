@@ -3,7 +3,7 @@ import { Control, Controller, FieldErrors } from 'react-hook-form';
 import { FormContext, RegistrationFieldValues } from '../Registration';
 import classes from './Steps.module.scss';
 import aboutImg from '../../../assets/images/about_img.png';
-import { FormControl, FormHelperText, FormLabel, IconButton, Input, TextField, Textarea } from '@mui/joy';
+import { FormControl, FormHelperText, FormLabel, IconButton, Input, Radio, RadioGroup, TextField, Textarea } from '@mui/joy';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import EastIcon from '@mui/icons-material/East';
@@ -13,6 +13,7 @@ import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { SaveBtn } from '../SaveBtn';
 import { DateValidationError } from '@mui/x-date-pickers/models';
+import { ReturnBtn } from '../ReturnBtn/ReturnBtn';
 
 
 type PropsType = {
@@ -66,18 +67,24 @@ export const InfoFields: React.FC<PropsType> = ({errors}) => {
 
 				<Controller 
 					control={control}
-					name={'aboutMe'}
+					name={'gender'}
 					rules={{
 						required: "Це поле є обов'язковим",
 					}}
-					render={({}) => (
+					render={({field: {value, onChange}}) => (
 						<FormControl
 							className={classes.fieldWrapper}
 						>
 							<FormLabel className={classes.label}>Ваша стать</FormLabel>
-							<Textarea
-								defaultValue={undefined || ''}
-							/>
+							<RadioGroup 
+								value={value} 
+								onChange={onChange} 
+								name="gender-radio-group"
+								className={classes.radioGroup}
+							>
+								<Radio value="male" label="Чоловік" className={classes.radio}/>
+								<Radio value="female" label="Жінка" className={classes.radio}/>
+							</RadioGroup>
 							{errors.gender &&
 								<FormHelperText className={classes.errorText}>
 									{errors.gender.message}
@@ -87,11 +94,14 @@ export const InfoFields: React.FC<PropsType> = ({errors}) => {
 					)}
 				/>
 			</div>
-			<SaveBtn
-				errors={errors}
-				fieldsNames={['birthDate']}
-				className={classes.saveBtn}
-			/>
+			<div className={classes.buttons}>
+				<ReturnBtn />
+				<SaveBtn
+					errors={errors}
+					fieldsNames={['birthDate']}
+					className={classes.saveBtn}
+				/>
+			</div>
 		</div>
 	)
 }  

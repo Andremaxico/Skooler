@@ -5,6 +5,7 @@ import classes from './Steps.module.scss';
 import { FormControl, FormHelperText, FormLabel, Input } from '@mui/joy';
 import { SaveBtn } from '../SaveBtn';
 import Preloader from '../../../UI/Preloader/Preloader';
+import { ReturnBtn } from '../ReturnBtn/ReturnBtn';
 
 type PropsType = {
 	control: Control<RegistrationFieldValues, any>,
@@ -77,11 +78,14 @@ export const InitialsFields: React.FC<PropsType> = ({errors}) => {
 					)}
 				/>
 			</div>
-			<SaveBtn 
-				className={classes.btn}
-				errors={errors}
-				fieldsNames={['name', 'surname']}
-			/>
+			<div className={classes.buttons}>
+				<ReturnBtn />
+				<SaveBtn 
+					className={classes.btn}
+					errors={errors}
+					fieldsNames={['name', 'surname']}
+				/>
+			</div>
 		</section>
 	)
 }
