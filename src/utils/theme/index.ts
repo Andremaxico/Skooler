@@ -2,6 +2,10 @@ import { createTheme } from "@mui/material";
 import { extendTheme as extendJoyTheme } from '@mui/joy/styles';
 import { blue, grey } from "@mui/material/colors";
 import { deepmerge } from "@mui/utils";
+import {
+	Experimental_CssVarsProvider as MaterialCssVarsProvider,
+	experimental_extendTheme as extendMaterialTheme,
+ } from "@mui/material/styles";
 
 const primaryCol = {
 	50: '#d0d6c9',
@@ -15,19 +19,22 @@ const primaryCol = {
  }
  
  //mui theme
- const muiTheme = createTheme({
-	palette: {
-	  primary: {
-		 main: '#61764B',
-		 dark: '#4e5e3c',
-		 light: '#81916f',
-	  },
-	  secondary: {
-		 main: '#9BA17B',
-	  },
-	  
-	},
- });
+ const muiTheme = extendMaterialTheme({
+	colorSchemes: {
+		light: {
+			palette: {
+				primary: {
+				  main: '#61764B',
+				  dark: '#4e5e3c',
+				  light: '#81916f',
+				},
+				secondary: {
+				  main: '#9BA17B',
+				},
+			 },
+		}
+	}
+});
  
  // Note: you can't put `joyTheme` inside Material UI's `extendMuiTheme(joyTheme)`
  // because some of the values in the Joy UI theme refers to CSS variables and

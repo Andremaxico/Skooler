@@ -11,6 +11,7 @@ export const accountAPI = {
 	},
 
 	async setMyAccountDataData(data: ReceivedAccountDataType | null, uid: string) {
+		console.log('send my account data', data);
 		//send account data to database
 		await setDoc(doc(firestore, 'users', uid), data);
 	},
@@ -67,20 +68,9 @@ export const accountAPI = {
 	},
 	
 	async createAccountByEmail(email: string, password: string) {
-		try {
-			const {user} = await createUserWithEmailAndPassword(auth, email, password);
+		const {user} = await createUserWithEmailAndPassword(auth, email, password);
 
-			return user;
-		} catch(error: any) {
-			//TODO:
-			//use errors messages
-
-			const errorCode = error.code;
-			const errorMessage = error.message;
-
-			console.log('create account error', error);
-			// ..
-		}
+		return user;
 	},
 
 	async signInWithEmail(email: string, password: string) {

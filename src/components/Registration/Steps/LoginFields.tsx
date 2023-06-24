@@ -39,7 +39,7 @@ export const LoginFields: React.FC<PropsType> = ({control, errors, nextStep, tri
 			<SaveBtn 
 				className={classes.btn}
 				errors={errors}
-				//strict order adherence(достримання) for firebase functions(-> array)
+				//strict order adherence(дотримання) for firebase functions(-> array)
 				fieldsNames={['email', 'password']}
 			/>
 		</section>

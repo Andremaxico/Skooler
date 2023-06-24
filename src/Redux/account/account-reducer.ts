@@ -38,8 +38,17 @@ export const newQuestionLiked = createAction<string>('account/NEW_QUESTION_LIKED
 export const questionUnliked = createAction<string>('account/QESTION_UNLIKED');
 export const authStatusChanged = createAction<boolean>('account/AUTH_STATUS_CHANGED');
 export const currUserQuestionsReceived = createAction<PostDataType[] | null>('account/CURR_USER_QUESTIONS_RECEIVED');
-export const authErrorReceived = createAction<AuthErrorType>('auth/AUTH_ERROR_RECEIVED');
+
+export const authErrorReceived = createAction('auth/AUTH_ERROR_RECEIVED', (type: AuthActionsTypesType, message: string) => {
+	return {
+		payload: {
+			type,
+			message
+		}
+	}	
+});
 export const authErrorRemoved = createAction<AuthActionsTypesType>('auth/AUTH_ERROR_REMOVED');
+
 export const authActionStatusUpdated = createAction('auth/AUTH_ACTION_STATUS_UPDATED', (type: AuthActionsTypesType, status: UserActionStatusType) => {
 	return {
 		payload: {
@@ -184,6 +193,8 @@ export const sendMyAccountData = (data: AccountDataType | null) => async (dispat
 	const uid = getState().account.myLoginData?.uid;
 	const loginData = getState().account.myLoginData;
 
+	console.log('uid', uid, data);
+
 	if(uid && data) {
 		let accountData: ReceivedAccountDataType | null = null;
 		const { avatar, ...restData } = data;
@@ -191,10 +202,15 @@ export const sendMyAccountData = (data: AccountDataType | null) => async (dispat
 		//get large data about school
 		const schoolData = data.schoolId ? await schoolsAPI.getSchoolInfo(data.schoolId) : null;
 
+		console.log('schoolData', schoolData);
+
 		//formatting birthdate
 		const birthDate = Object.assign({}, restData?.birthDate);
 
+		console.log('birthdate', birthDate);
+
 		//send avatar file to server
+		//but we do it in AvatarUpload after submitting
 		if(avatar) {
 			await accountAPI.sendAvatar(avatar, uid);
 		}
@@ -202,10 +218,14 @@ export const sendMyAccountData = (data: AccountDataType | null) => async (dispat
 		//get avatar url 
 		const avatarUrl = await accountAPI.getAvatarUrl(uid);
 
+		console.log('avatarUrl', avatarUrl);
+
 		//set new account data
 		if(schoolData && data) {
 			accountData = {
-				...restData, school: schoolData, birthDate: birthDate,
+				...restData,
+				school: schoolData, 
+				birthDate: birthDate,
 				avatarUrl: avatarUrl, uid: uid,
 				rating: 'Ніхто',
 				liked: [],
@@ -213,8 +233,11 @@ export const sendMyAccountData = (data: AccountDataType | null) => async (dispat
 			}; 
 		}
 
+		console.log('accountData', accountData);
+
 		//server send account data
 		await accountAPI.setMyAccountDataData(accountData, uid);
+
 		if(loginData) {
 			//set data to state
 			dispatch(setMyAccountData(loginData));
@@ -235,11 +258,20 @@ export const sendMyAccountData = (data: AccountDataType | null) => async (dispat
 }
 
 export const createAccountByEmail = (email: string, password: string) => async (dispatch: AppDispatchType) => {
-	const user = await accountAPI.createAccountByEmail(email, password);	
+	try {
+		dispatch(authActionStatusUpdated('register', 'loading'));
+		const user = await accountAPI.createAccountByEmail(email, password);	
+		dispatch(authActionStatusUpdated('register', 'success'));
+		dispatch(authErrorRemoved('register'));
 
-	if(user) {
-		console.log('we got user', user);
-		dispatch(loginDataReceived(user));
+		if(user) {
+			console.log('we got user', user);
+			dispatch(loginDataReceived(user));
+		}
+	} catch(error: any) {
+		console.log('error', error.code);
+		dispatch(authErrorReceived('register', error.code));
+		dispatch(authActionStatusUpdated('register', 'error'));
 	}
 
 }
@@ -257,10 +289,7 @@ export const signInByEmail = (email: string, password: string) => async (dispatc
 		//in api it harder to realize
 		console.log('sign in error', error.code);
 
-		dispatch(authErrorReceived({
-			message: error.code,
-			type: 'signin'
-		}));
+		dispatch(authErrorReceived('signin', error.code));
 	}
 
 	// if(user) {
@@ -279,10 +308,7 @@ export const loginWithFacebook = () => async (dispatch: AppDispatchType) => {
 	} catch(error: any) {
 		//TODO
 		//create new errors state
-		dispatch(authErrorReceived({
-			message: error.code,
-			type: 'signin',
-		}));
+		dispatch(authErrorReceived('signin', error.code));
 	}
 }
 
@@ -292,10 +318,7 @@ export const sendPasswordResetEmail = (email: string) => async (dispatch: AppDis
 		await accountAPI.sendPasswordResetEmail(email);
 		dispatch(authActionStatusUpdated('reset_password', 'success'));
 	} catch(error: any) {
-		dispatch(authErrorReceived({
-			message: error.code,
-			type: 'reset_password',
-		}));
+		dispatch(authErrorReceived('reset_password', error.code));
 		dispatch(authActionStatusUpdated('reset_password', 'error'))
 	}
 }

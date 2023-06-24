@@ -14,13 +14,9 @@ import { OtherLoginMethods } from './OtherLoginMethods';
 type PropsType = {}
 
 const Login: React.FC<PropsType> = ({}) => {
-	const { auth } = useContext(FirebaseContext);
-
 	const authData = useSelector(selectMyLoginData);
 	const isAuthed = useSelector(selectAuthedStatus);
 	const prevPage = useSelector(selectPrevPage);
-
-	const dispatch = useAppDispatch();
 
 	const navigate = useNavigate();
 

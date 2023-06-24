@@ -1,24 +1,36 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Control, Controller, FieldErrors } from 'react-hook-form';
-import { RegistrationFieldValues } from '../Registration';
+import { FormContext, RegistrationFieldValues } from '../Registration';
 import classes from './Steps.module.scss';
 import aboutImg from '../../../assets/images/about_img.png';
-import { FormControl, IconButton, Input, TextField, Textarea } from '@mui/joy';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { FormControl, FormHelperText, FormLabel, IconButton, Input, TextField, Textarea } from '@mui/joy';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import EastIcon from '@mui/icons-material/East';
 import dayjs from 'dayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider/LocalizationProvider';
+import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import { SaveBtn } from '../SaveBtn';
+import { DateValidationError } from '@mui/x-date-pickers/models';
 
 
 type PropsType = {
-	control: Control<RegistrationFieldValues, any>,
 	errors: FieldErrors<RegistrationFieldValues>,
-	nextStep: () => void,
 };
 
-export const InfoFields: React.FC<PropsType> = ({control, nextStep, errors}) => {
-	const day = dayjs('2022-04-22');
+export const InfoFields: React.FC<PropsType> = ({errors}) => {
+	const { nextStep, control, setError } = useContext(FormContext) || {};
 
+	const fiveYearsAgo = dayjs().set('year', dayjs().year() - 5);
+
+	const handleError = (error: DateValidationError) => {
+		console.log('error', error);  
+		if(setError) setError('birthDate', {
+			type: 'max', 
+			message: `Вам повинно бути більше чотирьох років`
+		});
+	}
 
 	return (
 		<div className={classes.Step}>
@@ -26,35 +38,32 @@ export const InfoFields: React.FC<PropsType> = ({control, nextStep, errors}) => 
 			<div className={classes.image}>
 				<img src={aboutImg} />
 			</div>
-			<form className={classes.form}>
-				{/* @ts-ignore */}
+			<div className={classes.form}>
 				<Controller 
 					control={control}
 					name={'birthDate'}
+					rules={{
+						
+					}}
 					render={({field: {value, onChange}}) => (
 						<FormControl
 							className={classes.fieldWrapper}
 						>
 							<LocalizationProvider dateAdapter={AdapterDayjs}>
 								<DatePicker 
-									onChange={onChange}
 									value={value}
-									renderInput={({
-										value, 
-										...other
-									}) => (
-										<TextField
-											value={value as string}  
-											{...other}
-										/>
-									)}
+									onChange={onChange}
+									onError={handleError}
+									disableFuture
+									defaultValue={fiveYearsAgo }
+									maxDate={fiveYearsAgo}
+									label='Дата народження'
 								/>
 							</LocalizationProvider>
 						</FormControl>
 					)}
 				/>
 
-				{/* @ts-ignore */}
 				<Controller 
 					control={control}
 					name={'aboutMe'}
@@ -65,19 +74,24 @@ export const InfoFields: React.FC<PropsType> = ({control, nextStep, errors}) => 
 						<FormControl
 							className={classes.fieldWrapper}
 						>
+							<FormLabel className={classes.label}>Ваша стать</FormLabel>
 							<Textarea
 								defaultValue={undefined || ''}
 							/>
+							{errors.gender &&
+								<FormHelperText className={classes.errorText}>
+									{errors.gender.message}
+								</FormHelperText>
+							}
 						</FormControl>
 					)}
 				/>
-			</form>
-			<button className={classes.btn} onClick={nextStep}>
-				<span>Далі</span>
-				<IconButton className={classes.iconWrapper}>
-					<EastIcon color='primary' />
-				</IconButton>
-			</button>
+			</div>
+			<SaveBtn
+				errors={errors}
+				fieldsNames={['birthDate']}
+				className={classes.saveBtn}
+			/>
 		</div>
 	)
 }  

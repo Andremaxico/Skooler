@@ -16,8 +16,6 @@ export const InitialsFields: React.FC<PropsType> = ({errors}) => {
 
 	if(!control || !nextStep || !errors || !trigger) return <Preloader />
 
-	console.log('errors in fields', errors);
-
 	return (
 		<section className={classes.Step}>
 			<h2 className={classes.title}>Як Вас звуть?</h2>

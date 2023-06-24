@@ -61,11 +61,9 @@ const App = () => {
   //internet check
   const offlineHandler = () => {
     dispatch(networkErrorStatusChanged(`Перевірте з'єднання з мережею`));
-    console.log('browser is offline');
   }
   const onlineHandler = () => {
     dispatch(networkErrorStatusChanged(null));
-    console.log('browser is online');
   }
 
   //online/ofline listeners
@@ -129,11 +127,16 @@ const App = () => {
 
   const [prevLocation, setPrevLocation] = useState<string>(location.pathname)
 
+  //set prev page
   useEffect(() => {
-    dispatch(prevPageChanged(prevLocation));
-
-    //update location
-    setPrevLocation(location.pathname);
+    //if we on some page -> login -> login/... -> we logging and return to login/.. 
+    //but have return to some page
+    //so when we have login or registration in pathname, we dont setting prevPage 
+    if(!location.pathname.includes('login') && !location.pathname.includes('registration')) {
+      dispatch(prevPageChanged(prevLocation));
+      //update location
+      setPrevLocation(location.pathname);
+    }
   }, [location]);
 
   //if on main page -> hide return btn

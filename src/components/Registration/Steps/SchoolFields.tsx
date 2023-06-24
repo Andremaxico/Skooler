@@ -177,6 +177,7 @@ export const SchoolFields: React.FC<PropsType> = ({control, errors, nextStep, tr
 								className={classes.input}
 								placeholder='Ваш клас'
 								error={!!errors.schoolId}
+								type='number'
 							/>
 							{!!errors.class && 
 								<FormHelperText className={classes.errorText}>{errors.class.message}</FormHelperText>

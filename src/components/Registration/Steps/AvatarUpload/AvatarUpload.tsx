@@ -76,7 +76,7 @@ export const AvatarUpload: React.FC<PropsType> = ({register, getValues, setValue
 	const [selectedFile, setSelectedFile] = useState<File | Blob | null>(null);
 
 	const userFullname = `${getValues('name')} ${getValues('surname')}`;
-	console.log('fullname:', userFullname);
+
 	const avatarUrl = useSelector(selectCurrAvatarUrl);
 
 	const dispatch: AppDispatchType = useAppDispatch();
@@ -119,12 +119,13 @@ export const AvatarUpload: React.FC<PropsType> = ({register, getValues, setValue
 	//run after positive validiting in SaveBtn
 	const handleSubmit = () => {
 		//set avatar to the firestore
-	
+		console.log('handle Submit', uid, selectedFile);
 		//we do it here, becouse in SaveBtn we must throw too many props
 		if(uid && selectedFile) {
-			console.log('send my current avatar');
-			setIsLoading(true);
-			dispatch(sendMyCurrentAvatar(selectedFile, uid));
+			// console.log('send my current avatar');
+			// setIsLoading(true);
+			// dispatch(sendMyCurrentAvatar(selectedFile, uid));
+			setValue('avatar', selectedFile);
 		}
 	}
  
@@ -205,6 +206,7 @@ export const AvatarUpload: React.FC<PropsType> = ({register, getValues, setValue
 				fieldsNames={['avatar']}
 				className={classes.saveBtn}
 				onSubmit={handleSubmit}
+				submit={true}
 			/>
 		</div>
 	)

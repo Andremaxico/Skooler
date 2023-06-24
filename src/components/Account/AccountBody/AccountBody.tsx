@@ -25,14 +25,14 @@ type PropsType = {
 
 export const AccountBody: React.FC<PropsType> = React.memo(({accountData, isMy}) => {
 	const {
-		fullName, aboutMe, avatarUrl, uid
+		aboutMe, avatarUrl, uid, name, surname
 	} = accountData;
 
 	return (
 		<div className={classes.AccountBody}>
 			<AccountHeader
 				avatarUrl={avatarUrl}
-				fullName={fullName}
+				fullName={`${name} ${surname}`}
 				className={classes.header}
 			/>
 

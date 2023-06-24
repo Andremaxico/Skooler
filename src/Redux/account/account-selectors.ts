@@ -17,7 +17,7 @@ export const selectAccountIsFetching = (state: RootStateType) => {
 }
 
 export const selectMyUid = (state: RootStateType) => {
-	return state.account.myAccountData?.uid;
+	return state.account.myLoginData?.uid;
 }
 
 export const selectCurrAvatarUrl = (state: RootStateType) => {

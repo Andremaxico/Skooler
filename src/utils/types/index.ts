@@ -110,19 +110,23 @@ export type UserRatingsType =
 export type AccountDataType = {
 	class: string,
 	schoolId: number,
-	fullName: string,
 	status: 'teacher' | 'schoolboy',
 	birthDate: Dayjs | null, 
+	gender: 'male' | 'female',
 	aboutMe: string | null,
-	avatar?: File,
+	avatar: File | Blob,
 	email: string,
 	password: string,
+	name: string, 
+	surname: string,
 }
 
 export type ReceivedAccountDataType = { 
 	class: string,
 	school: SchoolInfoType,
-	fullName: string,
+	gender: 'male' | 'female',
+	name: string, 
+	surname: string,
 	status: 'teacher' | 'schoolboy',
 	rating: UserRatingsType,
 	birthDate: Dayjs, 
@@ -130,7 +134,6 @@ export type ReceivedAccountDataType = {
 	avatarUrl?: string,
 	uid: string,
 	email: string,
-	password: string,
 	liked: string[],
 	correctAnswersCount: number,
 }

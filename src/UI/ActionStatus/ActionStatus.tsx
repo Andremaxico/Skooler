@@ -25,7 +25,7 @@ export const ActionStatus: React.FC<PropsType> = ({successText, status, errorTex
 
 	//text for every status
 	const statusTextObj: {[key in UserActionStatusType]: string} = {
-		'error': `Сталася помилка${errorText ? ': ' + errorText : ''}`, 
+		'error': errorText ? errorText : 'Сталася помилка', 
 		'loading': 'Опрацювання',
 		'success': successText,
 	}
@@ -43,7 +43,7 @@ export const ActionStatus: React.FC<PropsType> = ({successText, status, errorTex
 
 	//hide after 3s from show  
 	useEffect(() => {
-		if(status === 'success' && autoHide) {
+		if(status === 'success' || status === 'error' && autoHide) {
 			setTimeout(() => {
 				setIsShow(false);
 			}, 2000)
@@ -52,6 +52,7 @@ export const ActionStatus: React.FC<PropsType> = ({successText, status, errorTex
 
 	//change visibility with status
 	useEffect(() => {
+		console.log('status changed');
 		setIsShow(!!status);
 	}, [status])
 	

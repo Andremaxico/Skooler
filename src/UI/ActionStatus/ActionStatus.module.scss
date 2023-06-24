@@ -3,10 +3,8 @@
 .ActionStatus {
 	position: fixed;
 	left: 50%;
-	padding: 6px 12px;
-	background-color: #fff;
-	box-shadow: $smBoxShadow;
-	border-radius: 12px;
+	width: 100%;
+	padding: 0 16px;
 	transform: translateX(-50%) scale(0.5);
 	opacity: 0;
 	transition: 0.1s;
@@ -17,9 +15,14 @@
 	}
 	.body {
 		@include row-align;
+		justify-content: center;
+		padding: 6px 12px;
+		background-color: #fff;
+		box-shadow: $smBoxShadow;
+		border-radius: 12px;
 		.text {
 			margin-right: 4px;
-			white-space: nowrap;
+			text-align: center;
 		}
 	}
 	&._loading {
