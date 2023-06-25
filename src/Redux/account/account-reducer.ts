@@ -188,40 +188,36 @@ export const setMyAvatarUrl = (file: File | Blob) => async (dispatch: AppDispatc
 
 } 
 
-export const sendMyAccountData = (data: AccountDataType | null) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
+export const sendMyAccountData = (data: AccountDataType) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
 	dispatch(isFetchingStatusChanged(true));
 	const uid = getState().account.myLoginData?.uid;
 	const loginData = getState().account.myLoginData;
 
-	console.log('uid', uid, data);
+	console.log('uid', uid, data.avatar );
 
-	if(uid && data) {
+	if(uid) {
 		let accountData: ReceivedAccountDataType | null = null;
 		const { avatar, ...restData } = data;
 
 		//get large data about school
 		const schoolData = data.schoolId ? await schoolsAPI.getSchoolInfo(data.schoolId) : null;
 
-		console.log('schoolData', schoolData);
+		console.log('data', restData, restData.birthDate.toDate());
 
 		//formatting birthdate
-		const birthDate = Object.assign({}, restData?.birthDate);
+		//we do it for avoid firebase error with custom object
+		const birthDate = Object.assign({}, restData.birthDate.toDate());
 
-		console.log('birthdate', birthDate);
+		console.log('birth date', birthDate);
 
 		//send avatar file to server
-		//but we do it in AvatarUpload after submitting
-		if(avatar) {
-			await accountAPI.sendAvatar(avatar, uid);
-		}
+		await accountAPI.sendAvatar(avatar, uid);
 
 		//get avatar url 
 		const avatarUrl = await accountAPI.getAvatarUrl(uid);
 
-		console.log('avatarUrl', avatarUrl);
-
 		//set new account data
-		if(schoolData && data) {
+		if(schoolData  ) {
 			accountData = {
 				...restData,
 				school: schoolData, 
@@ -233,10 +229,8 @@ export const sendMyAccountData = (data: AccountDataType | null) => async (dispat
 			}; 
 		}
 
-		console.log('accountData', accountData);
-
 		//server send account data
-		await accountAPI.setMyAccountDataData(accountData, uid);
+		await accountAPI.setMyAccountData(accountData, uid);
 
 		if(loginData) {
 			//set data to state
@@ -248,7 +242,7 @@ export const sendMyAccountData = (data: AccountDataType | null) => async (dispat
 		const accountSubscriber = (data: ReceivedAccountDataType)  => {
 			console.log('subscriber work');
 			dispatch(myAccountDataReceived(data));
-		}
+		} 
 
 		accountAPI.subscribeOnChanges(uid, accountSubscriber);
 	}
@@ -274,6 +268,18 @@ export const createAccountByEmail = (email: string, password: string) => async (
 		dispatch(authActionStatusUpdated('register', 'error'));
 	}
 
+}
+
+export const removeAccount = () => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
+	const user = getState().account.myLoginData;
+
+	if(user) {
+		await accountAPI.deleteUser(user);
+		await accountAPI.deleteUserData(user.uid);
+		
+		dispatch(loginDataReceived(null));
+		dispatch(myAccountDataReceived(null));
+	}
 }
 
 export const signInByEmail = (email: string, password: string) => async (dispatch: AppDispatchType) => {
@@ -322,6 +328,8 @@ export const sendPasswordResetEmail = (email: string) => async (dispatch: AppDis
 		dispatch(authActionStatusUpdated('reset_password', 'error'))
 	}
 }
+
+
 
 export const sendMyCurrentAvatar = (file: File | Blob | undefined, uid: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
 	console.log('send avatar file', file);

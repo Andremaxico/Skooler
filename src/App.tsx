@@ -1,16 +1,19 @@
-import React, { Suspense } from 'react';
+import React, { StrictMode, Suspense } from 'react';
 import { useContext, useEffect, useState } from 'react';
 import './nullstyle.scss';
 import classes from './App.module.scss';
 
 import AppHeader from './components/Header';
+
 import { HashRouter, Route, Routes, useLocation } from 'react-router-dom';
+import { unstable_HistoryRouter as HistoryRouter } from "react-router-dom";
+import { createBrowserHistory } from 'history';
 
 import { Provider, useSelector } from 'react-redux';
 
 import { store, useAppDispatch } from './Redux/store';
 import { networkErrorStatusChanged, prevPageChanged, returnBtnShowStatusChanged } from './Redux/app/appReducer';
-import { loginDataReceived, setMyAccountData } from './Redux/account/account-reducer';
+import { loginDataReceived, sendMyAccountData, setMyAccountData } from './Redux/account/account-reducer';
 
 import Preloader from './UI/Preloader';
 import { useAuthState } from 'react-firebase-hooks/auth';
@@ -35,6 +38,7 @@ import { FirebaseContext } from './main';
 import Chat from './components/Chat';
 import { Registration } from './components/Registration';
 import { ResetPassword } from './components/Login/ResetPassword';
+import dayjs from 'dayjs';
 
 //const Chat = React.lazy(() => import('./components/Chat'));
 const Chats = React.lazy(() => import('./components/Chats'));
@@ -202,14 +206,19 @@ const App = () => {
 
 const AppContainer = () => {
   return (
-    <HashRouter>
-      <Provider store={store}>
-        <CssVarsProvider theme={theme}>
-          <App />
-        </CssVarsProvider>
-      </Provider>
-    </HashRouter>
-  )
+    <StrictMode>  
+      {/* <HashRouter> */}
+        <Provider store={store}>
+          <CssVarsProvider theme={theme}>
+            {/* @ts-expect-error */}
+            <HistoryRouter history={createBrowserHistory()}>
+              <App />
+            </HistoryRouter>
+          </CssVarsProvider>
+        </Provider>
+      {/* </HashRouter> */}
+    </StrictMode>
+  )  
 }
 
 export default AppContainer;

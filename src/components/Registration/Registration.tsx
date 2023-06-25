@@ -6,7 +6,7 @@ import classes from './Registration.module.scss';
 import { InfoFields } from './Steps/InfoFields';
 import { SchoolFields } from './Steps/SchoolFields';
 import { AppDispatchType, useAppDispatch } from '../../Redux/store';
-import { createAccountByEmail, loginDataReceived, myAccountDataReceived, sendMyAccountData } from '../../Redux/account/account-reducer';
+import { authActionStatusRemoved, authErrorRemoved, createAccountByEmail, loginDataReceived, myAccountDataReceived, removeAccount, sendMyAccountData } from '../../Redux/account/account-reducer';
 import { LoginFields } from './Steps/LoginFields';
 import { AvatarUpload } from './Steps/AvatarUpload/AvatarUpload';
 import { useSelector } from 'react-redux';
@@ -18,6 +18,7 @@ import { Welcoming } from './Steps/Welcoming';
 import { ActionStatus } from '../../UI/ActionStatus';
 import { selectPrevPage } from '../../Redux/app/appSelectors';
 import { useNavigate } from 'react-router-dom';
+import { returnBtnShowStatusChanged } from '../../Redux/app/appReducer';
 
 type PropsType = {};
 
@@ -41,7 +42,7 @@ export const FormContext = createContext<ContextType | null>(null);
 export const Registration: React.FC<PropsType> = ({}) => {
 	//number of step
 	const [isLoading, setIsLoading] = useState<boolean>(true);
-	const [step, setStep] = useState<number>(3);
+	const [step, setStep] = useState<number>(0);
 	const { 
 		control, handleSubmit, reset, formState: {errors}, 
 		trigger, watch, setValue, register, getValues, 
@@ -80,20 +81,39 @@ export const Registration: React.FC<PropsType> = ({}) => {
 		setIsLoading(false);
 	}, [isAuthed]);
 
+	useEffect(() => {
+		console.log('avatar value', watch('avatar'));
+	}, [watch('avatar')]);
+
 	//надсилання даних на сервер
 	const onSubmit = async (data: AccountDataType) => {
 		console.log('submit data', data);
+		setIsLoading(true);
 		//another properties setting in redux
-		await dispatch(createAccountByEmail(data.email, data.password));
-		dispatch(sendMyAccountData(data));
+		await dispatch(sendMyAccountData(data));
+		setIsLoading(false);
 		//account register in firestore run after 1 step 
 		//because we need new uid in 5 step(avatarupload )
 
 	}
 
+	const clearAfterRegistration = () => {
+		dispatch(authActionStatusRemoved('register'));
+		dispatch(authErrorRemoved('register'));
+		reset();
+	}
+
+	const cancelRegistration = () => {
+		clearAfterRegistration();
+		dispatch(removeAccount());
+	}
+
 	useEffect(() => {
-		console.log('errros changed in registration', errors);
-	}, [errors.name]);
+		dispatch(returnBtnShowStatusChanged(false));
+		return () => {
+			clearAfterRegistration();
+		}
+	}, []);
 
 	//перейти на наступний крок
 	const nextStep = () => {
@@ -128,7 +148,7 @@ export const Registration: React.FC<PropsType> = ({}) => {
 			currStep = <AvatarUpload register={register} getValues={getValues} setValue={setValue} submit={submit} errors={errors}/>
 			break;
 		case 6:
-			currStep = <Welcoming />
+			currStep = <Welcoming isLoading={isLoading} />
 			break; 
 	}
 

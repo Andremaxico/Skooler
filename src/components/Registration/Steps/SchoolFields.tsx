@@ -108,56 +108,56 @@ export const SchoolFields: React.FC<PropsType> = ({control, errors, nextStep, tr
 						required: "Це поле є обов'язковим",
 					}}
 					render={({field: {value, onChange}} : ControllerFieldType) => (
-							<FormControl className={classes.fieldWrapper} required>
-								<FormLabel className={classes.label}>Заклад освіти</FormLabel>
-								<Autocomplete
-									open={open}
-									onOpen={() => {
-										setOpen(true);
-									}}
+						<FormControl className={classes.fieldWrapper} required>
+							<FormLabel className={classes.label}>Заклад освіти</FormLabel>
+							<Autocomplete
+								open={open}
+								onOpen={() => {
+									setOpen(true);
+								}}
 
-									onClose={() => {
-										setOpen(false);
-									}}
-									
-									getOptionLabel={(option) => option.name}
-									noOptionsText={'Навчальних закладів не знайдено або спробуйте точніше'}
-									loadingText='Завантаження...'
-									placeholder='Шукайте тут'
+								onClose={() => {
+									setOpen(false);
+								}}
+								
+								error={!!errors.schoolId}
 
-									options={schoolsOptions}
-									value={value}
-									onChange={(e, value) => {
-										if(value.id) {
-											setValue('schoolId', value.id);
-										}
-									}}
-									onInputChange={(e, value) => {
-										console.log(value, typeof value);
-										//after blur we got 'undefined' value
-										if(value === 'undefined') return;
+								getOptionLabel={(option) => option.name}
+								noOptionsText={'Навчальних закладів не знайдено або спробуйте точніше'}
+								loadingText='Завантаження...'
+								placeholder='Шукайте тут'
 
-										if(value.replace(' ', '').length > 2) {
-											handleSearchChange(value);
-										} else if(value.length < (inputValue?.length || 0)) {
-											clearAutocomplete();
-										}
-										setInputValue(value);
-									}}
-									onBlur={handleBlur}
-									inputValue={inputValue || ''}
-									loading={loading}  
-								/>
-								{!!errors.schoolId && 
-									<FormHelperText className={classes.errorText}>{errors.schoolId.message}</FormHelperText>
-								}
-							</FormControl>
-						)
-					}
+								options={schoolsOptions}
+								value={value}
+								onChange={(e, value) => {
+									if(value.id) {
+										setValue('schoolId', value.id);
+									}
+								}}
+								onInputChange={(e, value) => {
+									console.log(value, typeof value);
+									//after blur we got 'undefined' value
+									if(value === 'undefined') return;
+
+									if(value.replace(' ', '').length > 2) {
+										handleSearchChange(value);
+									} else if(value.length < (inputValue?.length || 0)) {
+										clearAutocomplete();
+									}
+									setInputValue(value);
+								}}
+								onBlur={handleBlur}
+								inputValue={inputValue || ''}
+								loading={loading}  
+							/>
+							{!!errors.schoolId && 
+								<FormHelperText className={classes.errorText}>{errors.schoolId.message}</FormHelperText>
+							}
+						</FormControl>
+					)}
 				/>
 
 				{/* Номер класу */}
-				{/* @ts-ignore */}
 				<Controller 
 					control={control}
 					name={'class'}

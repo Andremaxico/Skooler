@@ -108,10 +108,10 @@ export type UserRatingsType =
 	'Сенсей' 	//>150
 
 export type AccountDataType = {
-	class: string,
+	class: number,
 	schoolId: number,
 	status: 'teacher' | 'schoolboy',
-	birthDate: Dayjs | null, 
+	birthDate: Dayjs, 
 	gender: 'male' | 'female',
 	aboutMe: string | null,
 	avatar: File | Blob,
@@ -122,14 +122,14 @@ export type AccountDataType = {
 }
 
 export type ReceivedAccountDataType = { 
-	class: string,
+	class: number,
 	school: SchoolInfoType,
 	gender: 'male' | 'female',
 	name: string, 
 	surname: string,
 	status: 'teacher' | 'schoolboy',
 	rating: UserRatingsType,
-	birthDate: Dayjs, 
+	birthDate: Date, 
 	aboutMe: string | null,
 	avatarUrl?: string,
 	uid: string,

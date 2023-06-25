@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
-import { FieldErrors, UseFormGetValues, UseFormRegister, UseFormSetValue } from 'react-hook-form';
+import { FieldErrors, UseFormGetValues, UseFormRegister, UseFormSetValue, useWatch } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 import { selectCurrAvatarUrl, selectMyUid } from '../../../../Redux/account/account-selectors';
 import { RegistrationFieldValues } from '../../Registration';
@@ -96,9 +96,16 @@ export const AvatarUpload: React.FC<PropsType> = ({register, getValues, setValue
 		//треба отримати шлях до обраного зображення
 
 		if (e.target.files && e.target.files.length > 0) {
-			console.log('file... :', e.target.files[0]);
-			setSelectedFile(e.target.files[0])
-			//end function
+			const currFile = e.target.files[0];
+			console.log('file... :', currFile);
+			setSelectedFile(currFile)
+			//set value of avatar 
+			if(currFile) {
+				setValue('avatar', currFile);
+	
+				console.log('value of avatar setted', currFile);
+			}
+
 
 			//check if file is too big -> stop
 			if(selectedFile && selectedFile.size > 71680){
@@ -119,13 +126,14 @@ export const AvatarUpload: React.FC<PropsType> = ({register, getValues, setValue
 	//run after positive validiting in SaveBtn
 	const handleSubmit = () => {
 		//set avatar to the firestore
-		console.log('handle Submit', uid, selectedFile);
 		//we do it here, becouse in SaveBtn we must throw too many props
-		if(uid && selectedFile) {
+		if(selectedFile) {
 			// console.log('send my current avatar');
 			// setIsLoading(true);
-			// dispatch(sendMyCurrentAvatar(selectedFile, uid));
+			//dispatch(sendMyCurrentAvatar(selectedFile, uid));
 			setValue('avatar', selectedFile);
+
+			console.log('value of avatar setted', selectedFile);
 		}
 	}
  

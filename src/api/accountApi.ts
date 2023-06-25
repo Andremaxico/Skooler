@@ -1,6 +1,6 @@
-import { setDoc, addDoc, collection, doc, updateDoc, Unsubscribe, onSnapshot } from 'firebase/firestore';
+import { setDoc, addDoc, collection, doc, updateDoc, Unsubscribe, onSnapshot, deleteDoc } from 'firebase/firestore';
 import { UserType, AccountDataType, ReceivedAccountDataType } from '../utils/types/index';
-import { FacebookAuthProvider, createUserWithEmailAndPassword, getAuth, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
+import { FacebookAuthProvider, User, createUserWithEmailAndPassword, deleteUser, getAuth, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import { auth, firestore, storage } from '../firebase/firebaseApi';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
@@ -10,21 +10,20 @@ export const accountAPI = {
 		return getAuth().currentUser;
 	},
 
-	async setMyAccountDataData(data: ReceivedAccountDataType | null, uid: string) {
+	async setMyAccountData(data: ReceivedAccountDataType | null, uid: string) {
 		console.log('send my account data', data);
 		//send account data to database
 		await setDoc(doc(firestore, 'users', uid), data);
 	},
 
-	async sendAvatar(file: File | Blob, uid: string) {
-		console.log('send avatar (api)');
+	async  sendAvatar(file: File | Blob, uid: string) {
+		console.log('send avatar (api)', file);
 		//get storage reference
 		const storageRef = ref(storage, `images/${uid}-avatar.png`);
 
 		//send avatar to storage
-		uploadBytes(storageRef, file).then((snapshot) => {
-			console.log('Uploaded a blob or file!');
-		 });
+		await uploadBytes(storageRef, file);
+		console.log('uploaded avatar');
 	},
 
 	async getAvatarUrl(uid: string) {
@@ -33,6 +32,8 @@ export const accountAPI = {
 
 		//get avatar url
 		const url = await getDownloadURL(storageRef);
+
+		console.log('url');
 
 		return url;
 	},
@@ -71,6 +72,14 @@ export const accountAPI = {
 		const {user} = await createUserWithEmailAndPassword(auth, email, password);
 
 		return user;
+	},
+
+	async deleteUser(user: User) {
+		await deleteUser(user)
+	},
+
+	async deleteUserData(uid: string) {
+		await deleteDoc(doc(firestore, "users", uid));
 	},
 
 	async signInWithEmail(email: string, password: string) {
