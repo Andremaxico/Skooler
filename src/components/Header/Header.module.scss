@@ -37,4 +37,12 @@
 	.buttons {
 		@include row-align;
 	}
+
+	.loginLink {
+		@include center-align;
+		.icon {
+			font-size: 20px;
+			color: $darkGray;
+		}
+	}
 }

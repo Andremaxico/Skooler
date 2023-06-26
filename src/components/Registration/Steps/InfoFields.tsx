@@ -7,7 +7,7 @@ import { FormControl, FormHelperText, FormLabel, IconButton, Input, Radio, Radio
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import EastIcon from '@mui/icons-material/East';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider/LocalizationProvider';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
@@ -21,7 +21,7 @@ type PropsType = {
 };
 
 export const InfoFields: React.FC<PropsType> = ({errors}) => {
-	const { nextStep, control, setError } = useContext(FormContext) || {};
+	const { nextStep, control, setError, setValue } = useContext(FormContext) || {};
 
 	const fiveYearsAgo = dayjs().set('year', dayjs().year() - 5);
 
@@ -44,7 +44,7 @@ export const InfoFields: React.FC<PropsType> = ({errors}) => {
 					control={control}
 					name={'birthDate'}
 					rules={{
-						
+						required: `Це поле є обов'язковим`
 					}}
 					render={({field: {value, onChange}}) => (
 						<FormControl
@@ -53,10 +53,11 @@ export const InfoFields: React.FC<PropsType> = ({errors}) => {
 							<LocalizationProvider dateAdapter={AdapterDayjs}>
 								<DatePicker 
 									value={value}
-									onChange={onChange}
+									onChange={(value: Dayjs | null) => {
+										if(value && setValue) setValue('birthDate', value)
+									}}
 									onError={handleError}
 									disableFuture
-									defaultValue={fiveYearsAgo }
 									maxDate={fiveYearsAgo}
 									label='Дата народження'
 								/>

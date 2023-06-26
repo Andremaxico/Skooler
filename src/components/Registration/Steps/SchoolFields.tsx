@@ -2,7 +2,7 @@ import React, { ChangeEvent, SyntheticEvent, useEffect, useState } from 'react';
 import classes from './Steps.module.scss';
 import studyImg from '../../../assets/images/study-icon.png';
 import EastIcon from '@mui/icons-material/East';
-import { Control, FieldErrors, Controller, UseFormTrigger, UseFormSetValue } from 'react-hook-form';
+import { Control, FieldErrors, Controller, UseFormTrigger, UseFormSetValue, useWatch } from 'react-hook-form';
 import { RegistrationFieldValues } from '../Registration';
 import { ControllerFieldType, SchoolSearchItemType } from '../../../utils/types';
 import { searchSchool } from '../../../Redux/account/account-reducer';
@@ -26,13 +26,18 @@ export type SchoolOptionType = {
 };
 
 export const SchoolFields: React.FC<PropsType> = ({control, errors, nextStep, trigger, setValue}) => {
+	const schoolInfo = useWatch({
+		control,
+		name: 'schoolInfo',
+	})
+
 	//is user can search school
 	const [open, setOpen] = useState<boolean>(false)
 	//is schools fetching
 	const [loading, setLoading] = useState<boolean>(false);
 	//schools list
 	const [schoolsOptions, setSchoolsOptions] = useState<SchoolOptionType[]>([]);
-	const [inputValue, setInputValue] = useState<string | null>(null);
+	const [inputValue, setInputValue] = useState<string>(schoolInfo?.label || '');
 
 	const handleSearchChange = async (value: string) => {
 		setLoading(true);
@@ -63,8 +68,8 @@ export const SchoolFields: React.FC<PropsType> = ({control, errors, nextStep, tr
 
 	const clearAutocomplete = () => {
 		console.log('clear autocomplete');
-		setValue('schoolId', -1);
-		setInputValue(null);
+		setValue('schoolInfo', {id: -1, label: ''});
+		setInputValue('');
 		setSchoolsOptions([]);
 		setLoading(false);
 	}
@@ -87,12 +92,6 @@ export const SchoolFields: React.FC<PropsType> = ({control, errors, nextStep, tr
 		}
 	}, [schoolsOptions])
 
-	//масив номерів класів
-	const classesNums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-	const classesOptions = classesNums.map(num => (
-		<MenuItem>{num}</MenuItem>						
-	))
-
 	return (
 		<section className={classes.Step}>
 			<h2 className={classes.title}>Де Ви вчитеся?</h2>
@@ -103,7 +102,7 @@ export const SchoolFields: React.FC<PropsType> = ({control, errors, nextStep, tr
 				{/* Назва навчального закладу */}
 				<Controller 
 					control={control}
-					name={'schoolId'}
+					name={'schoolInfo'}
 					rules={{
 						required: "Це поле є обов'язковим",
 					}}
@@ -120,7 +119,7 @@ export const SchoolFields: React.FC<PropsType> = ({control, errors, nextStep, tr
 									setOpen(false);
 								}}
 								
-								error={!!errors.schoolId}
+								error={!!errors.schoolInfo}
 
 								getOptionLabel={(option) => option.name}
 								noOptionsText={'Навчальних закладів не знайдено або спробуйте точніше'}
@@ -129,16 +128,22 @@ export const SchoolFields: React.FC<PropsType> = ({control, errors, nextStep, tr
 
 								options={schoolsOptions}
 								value={value}
-								onChange={(e, value) => {
-									if(value.id) {
-										setValue('schoolId', value.id);
+								onChange={(e, value: SchoolOptionType) => {
+									console.log('autocomplete value', value);
+									if(value.id && value.name) {
+										setValue('schoolInfo', {
+											id: value.id,
+											label: value.name,
+										});
 									}
 								}}
+
 								onInputChange={(e, value) => {
 									console.log(value, typeof value);
 									//after blur we got 'undefined' value
 									if(value === 'undefined') return;
 
+									//when search changed -> get request to server	
 									if(value.replace(' ', '').length > 2) {
 										handleSearchChange(value);
 									} else if(value.length < (inputValue?.length || 0)) {
@@ -146,12 +151,13 @@ export const SchoolFields: React.FC<PropsType> = ({control, errors, nextStep, tr
 									}
 									setInputValue(value);
 								}}
+
 								onBlur={handleBlur}
-								inputValue={inputValue || ''}
+								inputValue={inputValue}
 								loading={loading}  
 							/>
-							{!!errors.schoolId && 
-								<FormHelperText className={classes.errorText}>{errors.schoolId.message}</FormHelperText>
+							{!!errors.schoolInfo && 
+								<FormHelperText className={classes.errorText}>{errors.schoolInfo.message}</FormHelperText>
 							}
 						</FormControl>
 					)}
@@ -177,7 +183,7 @@ export const SchoolFields: React.FC<PropsType> = ({control, errors, nextStep, tr
 								onChange={onChange}
 								className={classes.input}
 								placeholder='Ваш клас'
-								error={!!errors.schoolId}
+								error={!!errors.class}
 								type='number'
 							/>
 							{!!errors.class && 
@@ -192,7 +198,7 @@ export const SchoolFields: React.FC<PropsType> = ({control, errors, nextStep, tr
 				<SaveBtn 
 					className={classes.btn} 
 					errors={errors}
-					fieldsNames={['class', 'schoolId']}
+					fieldsNames={['schoolInfo', 'class']}
 				/>
 			</div>
 		</section>

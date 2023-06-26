@@ -3,7 +3,7 @@ import { streamAPI } from './../../api/streamApi';
 import { accountAPI } from './../../api/accountApi';
 import { AppDispatchType, RootStateType } from './../store';
 import { ThunkAction } from 'redux-thunk';
-import { AccountDataType, ReceivedAccountDataType, UserType, SchoolInfoType, UserRatingsType, PostDataType, AuthErrorsType, AuthErrorType, AuthActionsTypesType, AuthActionsType } from './../../utils/types/index';
+import { AccountDataType, ReceivedAccountDataType, UserType, SchoolDataType, UserRatingsType, PostDataType, AuthErrorsType, AuthErrorType, AuthActionsTypesType, AuthActionsType } from './../../utils/types/index';
 import { createReducer, createAction, AnyAction } from '@reduxjs/toolkit';
 import { schoolsAPI } from '../../api/schoolsApi';
 import { usersAPI } from '../../api/usersApi';
@@ -30,7 +30,7 @@ type _ThunkType = ThunkAction<void, AccountStateType, unknown, AnyAction>;
 export const myAccountDataReceived = createAction<ReceivedAccountDataType | null>('account/SET_MY_ACCOUNT_DATA');
 export const loginDataReceived = createAction<User | null>('account/LOGIN_DATA_RECEIVED');
 export const currUserAccountReceived = createAction<ReceivedAccountDataType | undefined>('account/CURR_USER_ACCOUNT_RECEIVED');
-export const schoolInfoReceived = createAction<SchoolInfoType>('account/SCHOOL_INFO_RECEIVED');
+export const schoolInfoReceived = createAction<SchoolDataType>('account/SCHOOL_INFO_RECEIVED');
 export const isFetchingStatusChanged = createAction<boolean>('account/IS_FETCHING_STATUS_CHANGED');
 export const avatarUrlReceived = createAction<string>('account/AVATAR_IMAGE_RECEIVED');
 export const currMyAvatarUrlReceived = createAction<string>('auth/CURR_MY_AVATAR_URL_RECEIVED');
@@ -200,7 +200,7 @@ export const sendMyAccountData = (data: AccountDataType) => async (dispatch: App
 		const { avatar, ...restData } = data;
 
 		//get large data about school
-		const schoolData = data.schoolId ? await schoolsAPI.getSchoolInfo(data.schoolId) : null;
+		const schoolData = data.schoolInfo?.id ? await schoolsAPI.getSchoolInfo(data.schoolInfo.id) : null;
 
 		console.log('data', restData, restData.birthDate.toDate());
 
@@ -211,10 +211,13 @@ export const sendMyAccountData = (data: AccountDataType) => async (dispatch: App
 		console.log('birth date', birthDate);
 
 		//send avatar file to server
-		await accountAPI.sendAvatar(avatar, uid);
+		//user can dont set avatar
+		if(avatar) {
+			await accountAPI.sendAvatar(avatar, uid);
+		}
 
 		//get avatar url 
-		const avatarUrl = await accountAPI.getAvatarUrl(uid);
+		const avatarUrl = avatar ? await accountAPI.getAvatarUrl(uid) : null;
 
 		//set new account data
 		if(schoolData  ) {

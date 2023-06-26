@@ -32,7 +32,8 @@ export const AccountBody: React.FC<PropsType> = React.memo(({accountData, isMy})
 		<div className={classes.AccountBody}>
 			<AccountHeader
 				avatarUrl={avatarUrl}
-				fullName={`${name} ${surname}`}
+				name={name}
+				surname={surname}
 				className={classes.header}
 			/>
 

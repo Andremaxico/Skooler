@@ -13,6 +13,8 @@ import { CloseBtn } from '../../../../UI/CloseBtn';
 import { dataURItoBlob } from '../../../../utils/helpers/converters';
 import { Avatar } from '@mui/joy';
 import Preloader from '../../../../UI/Preloader/Preloader';
+import { ReturnBtn } from '../../ReturnBtn';
+import { UserAvatar } from '../../../../UI/UserAvatar';
 
 //TODO:
 //Add new avatar cropping
@@ -45,16 +47,6 @@ function stringToColor(string: string) {
 	return color;
 }
 
-function stringAvatar(name: string) {
-	return {
-	  sx: {
-		 bgcolor: '#fff'
-	  },
-	  //взяти першу букву прізвища та імені
-	  children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
-	};
-}
-
 const getLocalImgSrc = (
 	setLocalImgSrc: (src: string) => void, 
 	setIsCutting: (bool: boolean) => void,
@@ -75,7 +67,8 @@ export const AvatarUpload: React.FC<PropsType> = ({register, getValues, setValue
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [selectedFile, setSelectedFile] = useState<File | Blob | null>(null);
 
-	const userFullname = `${getValues('name')} ${getValues('surname')}`;
+	const name = getValues('name');
+	const surname = getValues('surname');
 
 	const avatarUrl = useSelector(selectCurrAvatarUrl);
 
@@ -188,10 +181,8 @@ export const AvatarUpload: React.FC<PropsType> = ({register, getValues, setValue
 				</Modal>
 			} */}
 			<div className={classes.currentAvatar}>
-				{localImgSrc && !isLoading ?
-					<Avatar className={classes.avatar} src={localImgSrc ||  undefined} />
-				: !isLoading ?
-					<Avatar className={classes.avatar} {...stringAvatar(userFullname)} />
+				{!isLoading ?
+					<UserAvatar src={localImgSrc} name={name} surname={surname}/>
 				: 
 					<Preloader />
 				}
@@ -208,14 +199,17 @@ export const AvatarUpload: React.FC<PropsType> = ({register, getValues, setValue
 						//{...register('avatar')}
 					/>
 				</div>
-			</div>              
-			<SaveBtn 
-				errors={errors}
-				fieldsNames={['avatar']}
-				className={classes.saveBtn}
-				onSubmit={handleSubmit}
-				submit={true}
-			/>
+			</div>       
+			<div className={classes.buttons}>
+				<ReturnBtn />
+				<SaveBtn 
+					errors={errors}
+					fieldsNames={['avatar']}
+					className={classes.saveBtn}
+					onSubmit={handleSubmit}
+					submit={true}
+				/>
+			</div>       
 		</div>
 	)
 }

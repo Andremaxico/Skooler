@@ -2,7 +2,9 @@ import { setDoc, addDoc, collection, doc, updateDoc, Unsubscribe, onSnapshot, de
 import { UserType, AccountDataType, ReceivedAccountDataType } from '../utils/types/index';
 import { FacebookAuthProvider, User, createUserWithEmailAndPassword, deleteUser, getAuth, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import { auth, firestore, storage } from '../firebase/firebaseApi';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { deleteObject, getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+
+let unsubscribeFromMyAccountChanges: Unsubscribe | null = null;
 
 export const accountAPI = {
 	getAuthData(): UserType | null {
@@ -24,6 +26,12 @@ export const accountAPI = {
 		//send avatar to storage
 		await uploadBytes(storageRef, file);
 		console.log('uploaded avatar');
+	},
+
+	async deleteAvatar(uid: string) {
+		const objRef = ref(storage, `images/${uid}-avatar.png`);
+
+		await deleteObject(objRef);
 	},
 
 	async getAvatarUrl(uid: string) {
@@ -57,7 +65,7 @@ export const accountAPI = {
 	async subscribeOnChanges(uid: string, subscriber: (data: ReceivedAccountDataType) => void) {
 		const accountRef = doc(firestore, 'users', uid);
 
-		const unsubscribeFromMyAccountChanges = onSnapshot(accountRef, 
+		unsubscribeFromMyAccountChanges = onSnapshot(accountRef, 
 			(querySnap) => {
 				let updatedAccountData: null | ReceivedAccountDataType = null;
 				if(querySnap.exists()) {
@@ -65,7 +73,8 @@ export const accountAPI = {
 
 					subscriber(updatedAccountData);
 				}
-			})
+			}
+		)
 	},
 	
 	async createAccountByEmail(email: string, password: string) {

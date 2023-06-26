@@ -3,14 +3,15 @@ import { NavLink, unstable_useBlocker as useBlocker, useLocation } from 'react-r
 import { AccountInfo } from './AccountInfo';
 import classes from './Header.module.scss';
 import { useSelector } from 'react-redux';
-import { selectMyLoginData } from '../../Redux/account/account-selectors';
+import { selectMyAccountData, selectMyLoginData } from '../../Redux/account/account-selectors';
 import logo from '../../assets/images/logo.png';
 import { useAppDispatch } from '../../Redux/store';
 import { headerHeightReceived, returnBtnShowStatusChanged } from '../../Redux/app/appReducer';
 import { SearchQuestions } from './SearchQuestions';
 import { ReturnBtn } from './ReturnBtn';
 import { selectPrevPage, selectReturnBtnShowStatus } from '../../Redux/app/appSelectors';
-
+import LoginIcon from '@mui/icons-material/Login';
+import { IconButton } from '@mui/joy';
 
 
 
@@ -18,14 +19,15 @@ type PropsType = {};
 
 const AppHeader: React.FC<PropsType> = ({}) => {
 	const loginData = useSelector(selectMyLoginData);
+	const myAccountData = useSelector(selectMyAccountData);
 	const isReturnBtnShow = useSelector(selectReturnBtnShowStatus);
 	const prevPage = useSelector(selectPrevPage);
 
 	const headerRef = useRef<HTMLDivElement>(null);
 
-	const location = useLocation();
+	const	{ pathname } = useLocation();
 
-	console.log('location', location);
+	console.log('pathname', pathname);
 
 	const dispatch = useAppDispatch();
 
@@ -35,13 +37,13 @@ const AppHeader: React.FC<PropsType> = ({}) => {
 	}, [headerRef]);
 
 	useEffect(() => {
-		console.log('prev page', prevPage === location.pathname);
-		if(prevPage === location.pathname)  {
+		console.log('prev page', prevPage === pathname);
+		if(prevPage === pathname)  {
 			dispatch(returnBtnShowStatusChanged(false));
 		} else {
 			dispatch(returnBtnShowStatusChanged(true));
 		}
-	}, [prevPage, location])
+	}, [prevPage, pathname])
 
 	return (
 		<header className={classes.AppHeader} ref={headerRef}>
@@ -54,7 +56,13 @@ const AppHeader: React.FC<PropsType> = ({}) => {
 			</NavLink>
 			{/* <AppMenu mode='horizontal' /> */}
 			<div className={classes.accountLink}>
-				{loginData && <AccountInfo loginData={loginData} />}
+				{myAccountData ? 
+					<AccountInfo loginData={loginData} />
+				:
+					<NavLink to='/login' className={classes.loginLink}>
+						<LoginIcon className={classes.icon} />
+					</NavLink>
+				}
 			</div>
 		</header>
 	)

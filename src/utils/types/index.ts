@@ -107,14 +107,19 @@ export type UserRatingsType =
 	'Легенда' | //>100
 	'Сенсей' 	//>150
 
+export type SchoolInfoType = {
+	id: number,
+	label: string,
+}
+
 export type AccountDataType = {
 	class: number,
-	schoolId: number,
+	schoolInfo: SchoolInfoType,
 	status: 'teacher' | 'schoolboy',
 	birthDate: Dayjs, 
 	gender: 'male' | 'female',
 	aboutMe: string | null,
-	avatar: File | Blob,
+	avatar: File | Blob | undefined,
 	email: string,
 	password: string,
 	name: string, 
@@ -123,7 +128,7 @@ export type AccountDataType = {
 
 export type ReceivedAccountDataType = { 
 	class: number,
-	school: SchoolInfoType,
+	school: SchoolDataType,
 	gender: 'male' | 'female',
 	name: string, 
 	surname: string,
@@ -131,7 +136,7 @@ export type ReceivedAccountDataType = {
 	rating: UserRatingsType,
 	birthDate: Date, 
 	aboutMe: string | null,
-	avatarUrl?: string,
+	avatarUrl: string | null,
 	uid: string,
 	email: string,
 	liked: string[],
@@ -145,7 +150,7 @@ export type SchoolResultValueType = {
 	value: string,
 }
 
-export type SchoolInfoType = {
+export type SchoolDataType = {
 	website: string,
 	region_name: string,
 	email: string,

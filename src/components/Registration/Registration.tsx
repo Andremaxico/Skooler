@@ -82,8 +82,8 @@ export const Registration: React.FC<PropsType> = ({}) => {
 	}, [isAuthed]);
 
 	useEffect(() => {
-		console.log('avatar value', watch('avatar'));
-	}, [watch('avatar')]);
+		console.log('gender value', watch('gender'), watch('birthDate'));
+	}, [watch('gender'), watch('birthDate')]);
 
 	//надсилання даних на сервер
 	const onSubmit = async (data: AccountDataType) => {

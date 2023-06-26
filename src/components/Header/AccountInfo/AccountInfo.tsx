@@ -15,6 +15,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
+import { UserAvatar } from '../../../UI/UserAvatar';
 
 type PropsType = {
 	loginData: UserType | null,
@@ -52,9 +53,11 @@ export const AccountInfo: React.FC<PropsType> = ({loginData}) => {
 	return (
 		<div className={classes.AccountInfo}>
 			<Link to='/account'>
-				<Avatar 
+				<UserAvatar 
+					className={classes.avatar}
+					name={accountData?.name}
+					surname={accountData?.name}
 					src={accountData?.avatarUrl}
-					className={classes.avatar} 
 				/>
 			</Link>
 
