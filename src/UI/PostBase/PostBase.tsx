@@ -10,6 +10,7 @@ import { selectMyAccountData } from '../../Redux/account/account-selectors';
 import { ThreeDots } from './ThreeDots';
 import { selectUserActionStatus } from '../../Redux/stream/stream-selectors';
 import { ActionStatus } from '../ActionStatus';
+import { UserAvatar } from '../UserAvatar';
 //need default avatar
 
 type PropsType = {
@@ -21,9 +22,6 @@ type PropsType = {
 
 export const PostBase: React.FC<PropsType> = ({data, category, onClick, answerQId}) => {
 	const [isHower, setIsHower] = useState<boolean>(true);
-
-
-
 
 	const dotsRef = useRef<HTMLDivElement>(null); 
 	const menuRef = useRef<HTMLDivElement>(null);
@@ -44,7 +42,7 @@ export const PostBase: React.FC<PropsType> = ({data, category, onClick, answerQI
 
 	const isShowingForOwner = myAccountData?.uid === data.authorId;
 
-	const { authorAvatarUrl, authorFullname, text} = data;
+	const { authorAvatarUrl, authorName, authorSurname, text} = data;
 
 	const isTextCutted = text.substring(text.length - 3) === '...';
 
@@ -57,9 +55,15 @@ export const PostBase: React.FC<PropsType> = ({data, category, onClick, answerQI
 		>
 			<div className={classes.top}>
 				<div className={classes.author}>
-					<Avatar className={classes.avatar} src={authorAvatarUrl || undefined}/>
+					<UserAvatar
+						className={classes.avatar} 
+						name={myAccountData?.name}
+						surname={myAccountData?.surname}
+						src={authorAvatarUrl}
+						size='sm'
+					/>
 					<div className={classes.authorInfo}>
-						<p className={classes.name}>{authorFullname}</p>
+						<p className={classes.name}>{authorName} {authorSurname}</p>
 						<p className={classes.rating}>{data.authorRating}</p>
 					</div>
 				</div>

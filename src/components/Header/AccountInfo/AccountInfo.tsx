@@ -4,7 +4,7 @@ import { UserType } from '../../../utils/types';
 import classes from './AccountInfo.module.scss';
 import { FirebaseContext } from '../../../main';
 import { signOut } from 'firebase/auth';
-import { myAccountDataReceived, loginDataReceived, authStatusChanged } from '../../../Redux/account/account-reducer';
+import { myAccountDataReceived, loginDataReceived, authStatusChanged, logOut } from '../../../Redux/account/account-reducer';
 import { useAppDispatch } from '../../../Redux/store';
 import { useSelector } from 'react-redux';
 import { selectMyAccountData } from '../../../Redux/account/account-selectors';
@@ -30,15 +30,8 @@ export const AccountInfo: React.FC<PropsType> = ({loginData}) => {
 	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
 	const dispatch = useAppDispatch();
-	const signout = () => {
-		console.log('sign out ui');
-		dispatch(loginDataReceived(null));
-		dispatch(myAccountDataReceived(null));
-		dispatch(authStatusChanged(false));
-
-		if(auth) {
-			signOut(auth);
-		}
+	const signOut = () => {
+		dispatch(logOut( ));
 	}
 
 	const handleClose = () => {
@@ -56,8 +49,9 @@ export const AccountInfo: React.FC<PropsType> = ({loginData}) => {
 				<UserAvatar 
 					className={classes.avatar}
 					name={accountData?.name}
-					surname={accountData?.name}
+					surname={accountData?.surname}
 					src={accountData?.avatarUrl}
+					size='sm'
 				/>
 			</Link>
 
@@ -96,7 +90,7 @@ export const AccountInfo: React.FC<PropsType> = ({loginData}) => {
 
 							<MenuItem 
 								className={cn(classes.deleteBtn, classes.menuItem)}
-								onClick={signout}
+								onClick={signOut}
 							>
 								<LogoutOutlinedIcon className={classes.icon}/>
 								Вийти

@@ -74,7 +74,8 @@ export type QuestionCategoriesType = Array<
 
 export type PostBaseType = {
 	authorAvatarUrl: string | null,
-	authorFullname: string,
+	authorName: string,
+	authorSurname: string,
 	authorId: string,
 	authorRating: UserRatingsType,
 	text: string,

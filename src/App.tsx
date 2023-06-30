@@ -207,16 +207,15 @@ const App = () => {
 const AppContainer = () => {
   return (
     <StrictMode>  
-      {/* <HashRouter> */}
+      <HashRouter>
         <Provider store={store}>
           <CssVarsProvider theme={theme}>
-            {/* @ts-expect-error */}
-            <HistoryRouter history={createBrowserHistory()}>
+            {/* <HistoryRouter history={createBrowserHistory()}> */}
               <App />
-            </HistoryRouter>
+            {/* </HistoryRouter> */}
           </CssVarsProvider>
         </Provider>
-      {/* </HashRouter> */}
+      </HashRouter>
     </StrictMode>
   )  
 }

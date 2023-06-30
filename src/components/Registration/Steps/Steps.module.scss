@@ -26,33 +26,9 @@
 		@include smallTitle;
 		margin-bottom: 24px;
 	}
-	.btn {
-		width: 100%;
-		@include row-align;
-		justify-content: flex-end;
-		cursor: pointer;
-		span {
-			display: block;
-			margin-right: 4px;
-		}
-		.iconWrapper {
-			@include center-align;
-			@include size(40px);
-			background-color: $primary;
-			cursor: pointer;
-			&:hover, &:active {
-				.icon {
-					transform: translateX(4px);
-				}
-			}
-			.icon {
-				color: #fff;
-				transition: 0.2s;
-			}
-		}
-	}
 
 	.form {
+		width: 100%;
 		margin-bottom: 12px;
 		.textarea {
 			@media (max-width: $md2) {
@@ -73,6 +49,29 @@
 		width: 100%;
 		@include row-align;
 		justify-content: space-between;
+		.btn {
+			width: 100%;
+			cursor: pointer;
+			span {
+				display: block;
+				margin-right: 4px;
+			}
+			.iconWrapper {
+				@include center-align;
+				@include size(40px);
+				background-color: $primary;
+				cursor: pointer;
+				&:hover, &:active {
+					.icon {
+						transform: translateX(4px);
+					}
+				}
+				.icon {
+					color: #fff;
+					transition: 0.2s;
+				}
+			}
+		}
 	}
 }
 

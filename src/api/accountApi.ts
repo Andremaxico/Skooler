@@ -1,8 +1,10 @@
+import { checkEmailForExisting, sendEmailVerificationLink } from './../Redux/account/account-reducer';
 import { setDoc, addDoc, collection, doc, updateDoc, Unsubscribe, onSnapshot, deleteDoc } from 'firebase/firestore';
 import { UserType, AccountDataType, ReceivedAccountDataType } from '../utils/types/index';
-import { FacebookAuthProvider, User, createUserWithEmailAndPassword, deleteUser, getAuth, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
+import { FacebookAuthProvider, User, createUserWithEmailAndPassword, deleteUser, fetchSignInMethodsForEmail, getAuth, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup, signOut } from 'firebase/auth';
 import { auth, firestore, storage } from '../firebase/firebaseApi';
 import { deleteObject, getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import axios from 'axios';
 
 let unsubscribeFromMyAccountChanges: Unsubscribe | null = null;
 
@@ -17,6 +19,10 @@ export const accountAPI = {
 		//send account data to database
 		await setDoc(doc(firestore, 'users', uid), data);
 	},
+
+	async logOut() {
+		await signOut(auth);
+	},	
 
 	async  sendAvatar(file: File | Blob, uid: string) {
 		console.log('send avatar (api)', file);
@@ -81,6 +87,35 @@ export const accountAPI = {
 		const {user} = await createUserWithEmailAndPassword(auth, email, password);
 
 		return user;
+	},
+
+	async sendEmailVerificationLink(email: string) {
+		// axios.post('http://localhost:5000/send_email', email)
+		// 	.then(() => console.log('email sent'))
+		// 	.catch(error => console.log('error', error));
+
+		axios({
+			method: 'post',
+			url: 'http://localhost:5000/send_email',
+			data: email,
+			validateStatus: (status) => {
+				return true; // I'm always returning true, you may want to do it depending on the status received
+			},
+		})
+		.then(response => {
+			console.log('email sent', response);
+		})
+		.catch(error => {
+			console.log('error', error);
+		});
+
+		//axios.get('http://localhost:5000').then(res => console.log('res', res));
+	},
+
+	async checkEmailForExisting(email: string) {
+		const methods = await fetchSignInMethodsForEmail(auth, email);
+
+		return methods.length > 0;
 	},
 
 	async deleteUser(user: User) {

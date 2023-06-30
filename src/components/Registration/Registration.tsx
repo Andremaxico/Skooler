@@ -6,7 +6,7 @@ import classes from './Registration.module.scss';
 import { InfoFields } from './Steps/InfoFields';
 import { SchoolFields } from './Steps/SchoolFields';
 import { AppDispatchType, useAppDispatch } from '../../Redux/store';
-import { authActionStatusRemoved, authErrorRemoved, createAccountByEmail, loginDataReceived, myAccountDataReceived, removeAccount, sendMyAccountData } from '../../Redux/account/account-reducer';
+import { authActionStatusRemoved, authErrorRemoved, createAccountByEmail, logOut, loginDataReceived, myAccountDataReceived, removeAccount, sendMyAccountData } from '../../Redux/account/account-reducer';
 import { LoginFields } from './Steps/LoginFields';
 import { AvatarUpload } from './Steps/AvatarUpload/AvatarUpload';
 import { useSelector } from 'react-redux';
@@ -19,10 +19,14 @@ import { ActionStatus } from '../../UI/ActionStatus';
 import { selectPrevPage } from '../../Redux/app/appSelectors';
 import { useNavigate } from 'react-router-dom';
 import { returnBtnShowStatusChanged } from '../../Redux/app/appReducer';
+import { EmailField } from './Steps/EmailField';
+import { EmailVerirficationField } from './Steps/EmailVerirficationField';
 
 type PropsType = {};
 
-export type RegistrationFieldValues = AccountDataType;
+export type RegistrationFieldValues = AccountDataType & {
+	emailCode: number,
+};
 
 type ContextType = {
 	errors: FieldErrors<RegistrationFieldValues>,
@@ -109,6 +113,10 @@ export const Registration: React.FC<PropsType> = ({}) => {
 	}
 
 	useEffect(() => {
+		//TODO:
+		//delete this
+		dispatch(logOut());
+
 		dispatch(returnBtnShowStatusChanged(false));
 		return () => {
 			clearAfterRegistration();
@@ -130,10 +138,10 @@ export const Registration: React.FC<PropsType> = ({}) => {
 
 	switch (step) {
 		case 0: 
-			currStep = <LoginFields errors={errors} control={control} nextStep={nextStep} trigger={trigger}/>
+			currStep = <LoginFields errors={errors} />
 			break;
 		case 1:
-			currStep = <InitialsFields errors={errors} control={control} nextStep={nextStep}/>
+			currStep = <EmailVerirficationField errors={errors}/>
 			break;
 		case 2:
 			currStep = <AboutField errors={errors} />

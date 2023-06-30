@@ -254,6 +254,18 @@ export const sendMyAccountData = (data: AccountDataType) => async (dispatch: App
 
 }
 
+export const logOut = () => async (dispatch: AppDispatchType) => {
+	try {
+		await accountAPI.logOut();
+
+		dispatch(loginDataReceived(null));
+		dispatch(myAccountDataReceived(null));
+		dispatch(authStatusChanged(false));
+	} catch(error: any) {
+		console.log('error', error.code);
+	}
+}
+
 export const createAccountByEmail = (email: string, password: string) => async (dispatch: AppDispatchType) => {
 	try {
 		dispatch(authActionStatusUpdated('register', 'loading'));
@@ -271,6 +283,37 @@ export const createAccountByEmail = (email: string, password: string) => async (
 		dispatch(authActionStatusUpdated('register', 'error'));
 	}
 
+}
+
+export const checkEmailForExisting = (email: string) => async (dispatch: AppDispatchType) => {
+	try {
+		dispatch(authActionStatusUpdated('register', 'loading'));
+		const isExisting = await accountAPI.checkEmailForExisting(email);
+
+		if(isExisting) {
+			dispatch(authErrorReceived('register', 'auth/email-already-exists'));
+			dispatch(authActionStatusUpdated('register', 'error'));
+		} else {
+			dispatch(authActionStatusUpdated('register', 'success'));
+		}
+	} catch(error: any) {
+		dispatch(authErrorReceived('register', error.code));
+		dispatch(authActionStatusUpdated('register', 'error'));
+
+		console.log('error', error.code);
+	}
+} 
+
+export const sendEmailVerificationLink = (email: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
+	const loginData = getState().account.myLoginData;
+
+	try {
+		console.log('send email verify link', email);
+		accountAPI.sendEmailVerificationLink(email);	
+
+	} catch(error: any) {
+
+	}
 }
 
 export const removeAccount = () => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
