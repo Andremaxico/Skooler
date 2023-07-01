@@ -89,7 +89,7 @@ export const accountAPI = {
 		return user;
 	},
 
-	async sendEmailVerificationLink(email: string) {
+	async sendEmailVerificationLink(email: string, code: number) {
 		// axios.post('http://localhost:5000/send_email', email)
 		// 	.then(() => console.log('email sent'))
 		// 	.catch(error => console.log('error', error));
@@ -97,7 +97,11 @@ export const accountAPI = {
 		axios({
 			method: 'post',
 			url: 'http://localhost:5000/send_email',
-			data: email,
+			data: {
+				email, 
+				code: code.toString(),
+			},
+			//it must be here for working
 			validateStatus: (status) => {
 				return true; // I'm always returning true, you may want to do it depending on the status received
 			},
@@ -106,7 +110,7 @@ export const accountAPI = {
 			console.log('email sent', response);
 		})
 		.catch(error => {
-			console.log('error', error);
+			throw error;
 		});
 
 		//axios.get('http://localhost:5000').then(res => console.log('res', res));
