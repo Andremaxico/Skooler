@@ -133,10 +133,9 @@ const accountReducer = createReducer(initialState, (builder) => {
 		.addCase(authErrorReceived, (state, action) => {
 			const errorMessage = errorToText(action.payload.message);
 
-			console.log('error message', errorMessage);
-
 			state.authErrors[action.payload.type] = {
-				...action.payload, message: errorMessage
+				...action.payload, 
+				message: errorMessage
 			};
 		})
 		.addCase(authErrorRemoved, (state, action) => {

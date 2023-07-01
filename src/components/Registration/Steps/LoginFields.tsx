@@ -4,7 +4,7 @@ import loginImg from '../../../assets/images/login-img.png';
 import EastIcon from '@mui/icons-material/East';   
 import { Select } from 'antd';
 import { ControllerFieldType } from '../../../utils/types';
-import { Control, Controller, FieldErrors, UseFormTrigger } from 'react-hook-form';
+import { Control, Controller, FieldErrors, UseFormTrigger, useWatch } from 'react-hook-form';
 import { FormContext, RegistrationFieldValues } from '../Registration';
 import { VisibilityOff, Visibility } from '@mui/icons-material';
 import { values } from 'lodash';
@@ -13,6 +13,7 @@ import { FormControl, FormHelperText, FormLabel, Input, TextField } from '@mui/j
 import IconButton from '@mui/joy/IconButton';
 import { useAppDispatch } from '../../../Redux/store';
 import { LoginForm } from '../../../UI/LoginForm/LoginForm';
+import { checkEmailForExisting, sendEmailVerificationLink } from '../../../Redux/account/account-reducer';
 
 
 type PropsType = {
@@ -21,6 +22,19 @@ type PropsType = {
 
 export const LoginFields: React.FC<PropsType> = ({errors}) => {
 	const { control } = useContext(FormContext) || {};
+ 
+	const email = useWatch({
+		control,
+		name: 'email',
+	})
+
+	const dispatch = useAppDispatch();
+
+	const onSubmit = async () => {
+		console.log('on submit', email);
+		await dispatch(checkEmailForExisting(email));
+		await dispatch(sendEmailVerificationLink(email));
+	}
 
 	return (
 		<section className={classes.Step}>
@@ -38,6 +52,8 @@ export const LoginFields: React.FC<PropsType> = ({errors}) => {
 			<SaveBtn 
 				className={classes.btn}
 				errors={errors}
+				onSubmit={onSubmit}
+				waitForAction={true}
 				//strict order adherence(дотримання) for firebase functions(-> array)
 				fieldsNames={['email', 'password']}
 			/>
