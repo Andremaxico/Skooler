@@ -117,7 +117,7 @@ export const AvatarUpload: React.FC<PropsType> = ({register, getValues, setValue
 	}, [selectedFile])
 
 	//run after positive validiting in SaveBtn
-	const handleSubmit = () => {
+	const handleSubmit = async () => {
 		//set avatar to the firestore
 		//we do it here, becouse in SaveBtn we must throw too many props
 		if(selectedFile) {
@@ -182,7 +182,12 @@ export const AvatarUpload: React.FC<PropsType> = ({register, getValues, setValue
 			} */}
 			<div className={classes.currentAvatar}>
 				{!isLoading ?
-					<UserAvatar src={localImgSrc} name={name} surname={surname}/>
+					<UserAvatar 
+						src={localImgSrc} 
+						name={name} 
+						surname={surname}
+						size='lg'
+					/>
 				: 
 					<Preloader />
 				}
@@ -206,7 +211,7 @@ export const AvatarUpload: React.FC<PropsType> = ({register, getValues, setValue
 					errors={errors}
 					fieldsNames={['avatar']}
 					className={classes.saveBtn}
-					onSubmit={handleSubmit}
+					onSubmitFunctions={[handleSubmit]}
 					submit={true}
 				/>
 			</div>       

@@ -94,7 +94,7 @@ export const accountAPI = {
 		// 	.then(() => console.log('email sent'))
 		// 	.catch(error => console.log('error', error));
 
-		axios({
+		await axios({
 			method: 'post',
 			url: 'http://localhost:5000/send_email',
 			data: {
@@ -105,12 +105,6 @@ export const accountAPI = {
 			validateStatus: (status) => {
 				return true; // I'm always returning true, you may want to do it depending on the status received
 			},
-		})
-		.then(response => {
-			console.log('email sent', response);
-		})
-		.catch(error => {
-			throw error;
 		});
 
 		//axios.get('http://localhost:5000').then(res => console.log('res', res));

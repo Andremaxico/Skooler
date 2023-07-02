@@ -52,7 +52,7 @@ export const ActionStatus: React.FC<PropsType> = ({successText, status, errorTex
 
 	//change visibility with status
 	useEffect(() => {
-		console.log('status changed');
+		console.log('status changed', status);
 		setIsShow(!!status);
 	}, [status])
 	

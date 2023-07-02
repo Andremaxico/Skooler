@@ -281,6 +281,7 @@ export const createAccountByEmail = (email: string, password: string) => async (
 		if(user) {
 			console.log('we got user', user);
 			dispatch(loginDataReceived(user));
+			dispatch(authStatusChanged(true));
 		}
 	} catch(error: any) {
 		console.log('error', error.code);
@@ -291,6 +292,7 @@ export const createAccountByEmail = (email: string, password: string) => async (
 }
 
 export const checkEmailForExisting = (email: string) => async (dispatch: AppDispatchType) => {
+	console.log('check email for existing', email);
 	try {
 		dispatch(authActionStatusUpdated('register', 'loading'));
 		const isExisting = await accountAPI.checkEmailForExisting(email);
@@ -317,7 +319,7 @@ export const sendEmailVerificationLink = (email: string) => async (dispatch: App
 
 	try {
 		console.log('send email verify link', email);
-		accountAPI.sendEmailVerificationLink(email, code);	
+		await accountAPI.sendEmailVerificationLink(email, code);	
 		dispatch(authActionStatusUpdated('register', 'success'));
 		dispatch(authErrorRemoved('register'))
 	} catch(error: any) {

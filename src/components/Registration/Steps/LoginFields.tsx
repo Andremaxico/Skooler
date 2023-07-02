@@ -30,11 +30,8 @@ export const LoginFields: React.FC<PropsType> = ({errors}) => {
 
 	const dispatch = useAppDispatch();
 
-	const onSubmit = async () => {
-		console.log('on submit', email);
-		await dispatch(checkEmailForExisting(email));
-		await dispatch(sendEmailVerificationLink(email));
-	}
+	const checkForExisting = async () => await dispatch(checkEmailForExisting(email));
+	const sendCode = async () => await dispatch(sendEmailVerificationLink(email));
 
 	return (
 		<section className={classes.Step}>
@@ -52,7 +49,7 @@ export const LoginFields: React.FC<PropsType> = ({errors}) => {
 			<SaveBtn 
 				className={classes.btn}
 				errors={errors}
-				onSubmit={onSubmit}
+				onSubmitFunctions={[checkForExisting, sendCode]}
 				waitForAction={true}
 				//strict order adherence(дотримання) for firebase functions(-> array)
 				fieldsNames={['email', 'password']}

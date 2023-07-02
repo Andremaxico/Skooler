@@ -10,7 +10,7 @@ import { authActionStatusRemoved, authErrorRemoved, createAccountByEmail, logOut
 import { LoginFields } from './Steps/LoginFields';
 import { AvatarUpload } from './Steps/AvatarUpload/AvatarUpload';
 import { useSelector } from 'react-redux';
-import { selectAuthErrors, selectAuthedStatus, selectMyUid } from '../../Redux/account/account-selectors';
+import { selectAuthActionsStatuses, selectAuthErrors, selectAuthedStatus, selectMyUid } from '../../Redux/account/account-selectors';
 import { FirebaseContext } from '../../main';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { AboutField } from './Steps/AboutField';
@@ -54,10 +54,12 @@ export const Registration: React.FC<PropsType> = ({}) => {
 	} = useForm<RegistrationFieldValues>();
 
 	const authErrors = useSelector(selectAuthErrors);
+	const authActionsStatuses = useSelector(selectAuthActionsStatuses);
 	const prevPage = useSelector(selectPrevPage);
 	const isAuthed = useSelector(selectAuthedStatus);
 
 	const serverError = authErrors['register'];
+	const actionStatus = authActionsStatuses['register'];
 
 	const dispatch: AppDispatchType = useAppDispatch();
 
@@ -84,10 +86,6 @@ export const Registration: React.FC<PropsType> = ({}) => {
 		}
 		setIsLoading(false);
 	}, [isAuthed]);
-
-	useEffect(() => {
-		console.log('gender value', watch('gender'), watch('birthDate'));
-	}, [watch('gender'), watch('birthDate')]);
 
 	//надсилання даних на сервер
 	const onSubmit = async (data: AccountDataType) => {
@@ -160,6 +158,9 @@ export const Registration: React.FC<PropsType> = ({}) => {
 			break; 
 	}
 
+	useEffect(() => {
+		console.log('curr auth action status', actionStatus);
+	}, [actionStatus]);
 	return (
 		<form ref={formRef} className={classes.Registration} onSubmit={handleSubmit(onSubmit)}>
 			<FormContext.Provider value={{
@@ -169,8 +170,8 @@ export const Registration: React.FC<PropsType> = ({}) => {
 				{currStep}
 				<ActionStatus 
 					successText=''
-					status={authErrors['register'] ? 'error' : null}
-					errorText={authErrors['register']?.message}
+					status={actionStatus ? actionStatus : null}
+					errorText={serverError?.message}
 				/>
 			</FormContext.Provider>
 		</form>
