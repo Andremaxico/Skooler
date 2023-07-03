@@ -31,7 +31,7 @@ const Account: React.FC<PropsType> = ({}) => {
 
 	useEffect(() => {
 		setIsLoading(true);
-		if(!userId && !myAccountData) setIsEdit(true);
+		//if(!userId && !myAccountData) setIsEdit(true);
 		if(userId) {
 			dispatch(setAnotherUserAccount(userId));
 		}

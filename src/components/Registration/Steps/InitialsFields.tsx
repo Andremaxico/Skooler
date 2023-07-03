@@ -8,9 +8,7 @@ import Preloader from '../../../UI/Preloader/Preloader';
 import { ReturnBtn } from '../ReturnBtn/ReturnBtn';
 
 type PropsType = {
-	control: Control<RegistrationFieldValues, any>,
 	errors: FieldErrors<RegistrationFieldValues>,
-	nextStep: () => void,
 };  
 export const InitialsFields: React.FC<PropsType> = ({errors}) => {
 	const {control, nextStep, trigger} = useContext(FormContext) || {};

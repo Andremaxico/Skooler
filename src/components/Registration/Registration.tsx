@@ -10,7 +10,7 @@ import { authActionStatusRemoved, authErrorRemoved, createAccountByEmail, logOut
 import { LoginFields } from './Steps/LoginFields';
 import { AvatarUpload } from './Steps/AvatarUpload/AvatarUpload';
 import { useSelector } from 'react-redux';
-import { selectAuthActionsStatuses, selectAuthErrors, selectAuthedStatus, selectMyUid } from '../../Redux/account/account-selectors';
+import { selectAuthActionsStatuses, selectAuthErrors, selectAuthedStatus, selectMyAccountData, selectMyUid } from '../../Redux/account/account-selectors';
 import { FirebaseContext } from '../../main';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { AboutField } from './Steps/AboutField';
@@ -57,6 +57,7 @@ export const Registration: React.FC<PropsType> = ({}) => {
 	const authActionsStatuses = useSelector(selectAuthActionsStatuses);
 	const prevPage = useSelector(selectPrevPage);
 	const isAuthed = useSelector(selectAuthedStatus);
+	const myAccountData = useSelector(selectMyAccountData);
 
 	const serverError = authErrors['register'];
 	const actionStatus = authActionsStatuses['register'];
@@ -77,7 +78,7 @@ export const Registration: React.FC<PropsType> = ({}) => {
 		//it happens after first site's opening beacause we getting authData
 		//and it cant load in the time
 		console.log('is authed', isAuthed);
-		if(isAuthed) {
+		if(isAuthed && myAccountData) {
 			if(!prevPage || prevPage.includes('login')) {
 				navigate('/', {replace: true});	
 			} else {
@@ -142,18 +143,21 @@ export const Registration: React.FC<PropsType> = ({}) => {
 			currStep = <EmailVerirficationField errors={errors}/>
 			break;
 		case 2:
-			currStep = <AboutField errors={errors} />
+			currStep = <InitialsFields errors={errors} />
 			break;
 		case 3:
-			currStep = <InfoFields errors={errors} />
+			currStep = <AboutField errors={errors} />
 			break;
 		case 4:
-			currStep = <SchoolFields setValue={setValue} errors={errors} control={control} nextStep={nextStep} trigger={trigger}/>
+			currStep = <InfoFields errors={errors} />
 			break;
 		case 5:
-			currStep = <AvatarUpload register={register} getValues={getValues} setValue={setValue} submit={submit} errors={errors}/>
+			currStep = <SchoolFields setValue={setValue} errors={errors} control={control} nextStep={nextStep} trigger={trigger}/>
 			break;
 		case 6:
+			currStep = <AvatarUpload register={register} getValues={getValues} setValue={setValue} submit={submit} errors={errors}/>
+			break;
+		case 7:
 			currStep = <Welcoming isLoading={isLoading} />
 			break; 
 	}
@@ -170,7 +174,7 @@ export const Registration: React.FC<PropsType> = ({}) => {
 				{currStep}
 				<ActionStatus 
 					successText=''
-					status={actionStatus ? actionStatus : null}
+					status={serverError ? 'error' : null}
 					errorText={serverError?.message}
 				/>
 			</FormContext.Provider>
