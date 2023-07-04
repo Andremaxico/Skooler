@@ -4,7 +4,6 @@
 .AvatarUpload {
 	.currentAvatar {
 		position: relative;
-		@include size(100px);
 		cursor: pointer;
 		overflow: hidden;
 		border-radius: 50%;
@@ -35,8 +34,11 @@
 			}
 			.label {
 				position: relative;
-				@include size(40px);
+				@include center-align;
+				@include size(100%);
 				.addIcon {
+					position: relative;
+					@include size(40px);
 					cursor: pointer;
 					&::before, &::after {
 						content: '';

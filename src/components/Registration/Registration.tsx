@@ -46,7 +46,7 @@ export const FormContext = createContext<ContextType | null>(null);
 export const Registration: React.FC<PropsType> = ({}) => {
 	//number of step
 	const [isLoading, setIsLoading] = useState<boolean>(true);
-	const [step, setStep] = useState<number>(0);
+	const [step, setStep] = useState<number>(6);
 	const { 
 		control, handleSubmit, reset, formState: {errors}, 
 		trigger, watch, setValue, register, getValues, 

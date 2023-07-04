@@ -91,7 +91,28 @@ const primaryCol = {
 	  lg: `var(--mui-shadowRing), ${muiTheme.shadows[8]}`,
 	  xl: `var(--mui-shadowRing), ${muiTheme.shadows[12]}`,
 	},
- });
+	components: {
+		JoyAvatar: {
+			styleOverrides: {
+				root: ({ ownerState }) => ({
+					...(ownerState.size === 'sm' && {
+						'width': '32px',
+						'height': '32px',
+					}),
+					...(ownerState.size === 'md' && {
+						'width': '64px',
+						'height': '64px',
+					}),
+					...(ownerState.size === 'lg' && {
+						'width': '96px',
+						'height': '96px', 
+					}),
+				}),
+			},
+		},
+	},   
+})
+
  
  // You can use your own `deepmerge` function.
  // muiTheme will deeply merge to joyTheme.
