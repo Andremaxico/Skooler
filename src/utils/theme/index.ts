@@ -110,6 +110,16 @@ const primaryCol = {
 				}),
 			},
 		},
+		// JoyIconButton: {
+		// 	styleOverrides: {
+		// 		root: ({ ownerState, theme }) => ({
+		// 			...(ownerState.variant === 'plain' && {
+		// 				'color': theme.palette.primary[400],
+		// 				'backgroundColor': 'transparent',
+		// 			}) 
+		// 		})
+		// 	}
+		// }
 	},   
 })
 

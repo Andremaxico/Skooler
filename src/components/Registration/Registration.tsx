@@ -21,6 +21,12 @@ import { useNavigate } from 'react-router-dom';
 import { returnBtnShowStatusChanged } from '../../Redux/app/appReducer';
 import { EmailField } from './Steps/EmailField';
 import { EmailVerirficationField } from './Steps/EmailVerirficationField';
+import { createPortal } from 'react-dom';
+import { CancelRegistrationBtn } from './CancelRegistrationBtn';
+import e from 'express';
+import { Modal } from '../../UI/Modal';
+import { Button } from '@mui/joy';
+import { CancelConfirmModal } from './CancelConfirmModal';
 
 type PropsType = {};
 
@@ -43,10 +49,14 @@ type ContextType = {
 //context for all steps
 export const FormContext = createContext<ContextType | null>(null);
 
+const headerAccountLink = document.getElementById('headerAccountLink');
+
 export const Registration: React.FC<PropsType> = ({}) => {
 	//number of step
 	const [isLoading, setIsLoading] = useState<boolean>(true);
-	const [step, setStep] = useState<number>(6);
+	const [step, setStep] = useState<number>(0);
+	const [headerAccountLink, setHeaderAccountLink] = useState<HTMLElement | null>(null);
+	const [isCancelModalShow, setIsCancelModalShow] = useState<boolean>(false);
 	const { 
 		control, handleSubmit, reset, formState: {errors}, 
 		trigger, watch, setValue, register, getValues, 
@@ -73,6 +83,8 @@ export const Registration: React.FC<PropsType> = ({}) => {
 
 	const lastStep = 4;
 
+	console.log('header accouynt link', headerAccountLink);
+
 	useEffect(() => {
 		//if we went to this page accidantly(we have authData) -> come back
 		//it happens after first site's opening beacause we getting authData
@@ -88,6 +100,15 @@ export const Registration: React.FC<PropsType> = ({}) => {
 		setIsLoading(false);
 	}, [isAuthed]);
 
+	//get accountLink emement in header for portal
+	useEffect(() => {
+		const el = document.getElementById('headerAccountLink');
+
+		if(el) {
+			setHeaderAccountLink(el);
+		}
+	}, [document.getElementById('headerAccountLink')]);
+
 	//надсилання даних на сервер
 	const onSubmit = async (data: AccountDataType) => {
 		console.log('submit data', data);
@@ -100,15 +121,21 @@ export const Registration: React.FC<PropsType> = ({}) => {
 
 	}
 
+	const closeModal = () => {
+		setIsCancelModalShow(false);
+	}
+
 	const clearAfterRegistration = () => {
 		dispatch(authActionStatusRemoved('register'));
 		dispatch(authErrorRemoved('register'));
 		reset();
 	}
 
-	const cancelRegistration = () => {
+	const cancelRegistration = async () => {
 		clearAfterRegistration();
-		dispatch(removeAccount());
+		closeModal();
+		await dispatch(removeAccount());
+		navigate(prevPage || '/');
 	}
 
 	useEffect(() => {
@@ -176,6 +203,17 @@ export const Registration: React.FC<PropsType> = ({}) => {
 					successText=''
 					status={serverError ? 'error' : null}
 					errorText={serverError?.message}
+				/>
+				{headerAccountLink && createPortal(
+					<CancelRegistrationBtn
+						setIsCancelModalShow={setIsCancelModalShow}
+					/>,
+					headerAccountLink
+				)}
+				<CancelConfirmModal 
+					isShow={isCancelModalShow}
+					closeModal={closeModal}
+					cancelRegistration={cancelRegistration}
 				/>
 			</FormContext.Provider>
 		</form>

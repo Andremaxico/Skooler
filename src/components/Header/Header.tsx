@@ -12,7 +12,7 @@ import { ReturnBtn } from './ReturnBtn';
 import { selectPrevPage, selectReturnBtnShowStatus } from '../../Redux/app/appSelectors';
 import LoginIcon from '@mui/icons-material/Login';
 import { IconButton } from '@mui/joy';
-
+import cn from 'classnames';
 
 
 type PropsType = {};
@@ -46,7 +46,7 @@ const AppHeader: React.FC<PropsType> = ({}) => {
 	}, [prevPage, pathname])
 
 	return (
-		<header className={classes.AppHeader} ref={headerRef}>
+		<header className={classes.AppHeader} ref={headerRef} id='appHeader'>
 			<div className={classes.buttons}>
 				{isReturnBtnShow && <ReturnBtn />}
 				<SearchQuestions />
@@ -55,10 +55,10 @@ const AppHeader: React.FC<PropsType> = ({}) => {
 				<img src={logo} alt='Skooler'/>
 			</NavLink>
 			{/* <AppMenu mode='horizontal' /> */}
-			<div className={classes.accountLink}>
+			<div className={classes.accountLink} id='headerAccountLink'>
 				{myAccountData ? 
 					<AccountInfo loginData={loginData} />
-				:
+				: !pathname.includes('registration') &&
 					<NavLink to='/login' className={classes.loginLink}>
 						<LoginIcon className={classes.icon} />
 					</NavLink>
