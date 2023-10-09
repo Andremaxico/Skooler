@@ -1,7 +1,9 @@
 @import '../../../global-styles';
 
 .Posts {
+	height: 100vh;
 	box-sizing: border-box;
+	overflow-x: visible;
 	&::-webkit-scrollbar {
 		display: none;
 	}

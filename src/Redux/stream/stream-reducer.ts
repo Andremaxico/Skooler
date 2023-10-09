@@ -251,7 +251,9 @@ export const getNextPosts = () => async (dispatch: AppDispatchType, getState: ()
 	console.log('lastVisiblePost', lastVisiblePost);
 
 	const nextPosts = await streamAPI.getPosts(lastVisiblePost);
+
 	if(nextPosts) {
+		//set last post for triggering loading next posts if we see lastPost 
 		const lastPost = nextPosts[nextPosts.length - 1];
 
 		dispatch(lastVisiblePostChanged(lastPost));

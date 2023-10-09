@@ -21,6 +21,7 @@ export const FooterLink: React.FC<PropsType> = ({icon: Icon, to, bigger}) => {
 		)} to={to} >
 			<IconButton 
 				className={classes.btn}
+				variant='plain'
 			>
 				<Icon className={classes.icon} />
 			</IconButton>

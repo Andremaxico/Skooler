@@ -11,6 +11,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { NavLink } from 'react-router-dom';
 import { NoResults } from './NoResults';
 import { selectFooterHeight, selectHeaderHeight } from '../../../Redux/app/appSelectors';
+import { useInView } from 'react-intersection-observer';
 
 type PropsType = {
 	isLoading: boolean,
@@ -26,6 +27,10 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 	const isSearching = useSelector(selectIsSearchShowing);
 	const savedScrollValue = useSelector(selectCurrStreamScrollValue);
 
+	const { ref: isInViewRef, inView, entry  } = useInView({
+		threshold: 0.7,
+	});
+
 	const footerHeight = useSelector(selectFooterHeight) || 0;
 	const headerHeight = useSelector(selectHeaderHeight) || 0;
 
@@ -34,6 +39,7 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 	const postsRef = useRef<HTMLDivElement>(null);
 
 	//run after back from search
+	//for showing all posts
 	const reloadStream = () => {
 		dispatch(searchedPostsReceived(null));
 
@@ -48,7 +54,8 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 	useEffect(() => {
 		//if first posts -> loader
 		if(!posts) {
-			//if last vivisble post in not setted -> get first posts and show loader
+			//if last vivisble post in not setted 
+			//-> get first posts and show loader
 			if(lastVisiblePost !== null) {
 				const getFirstPosts = async () => {
 					setIsPostsFetching(true);
@@ -56,7 +63,7 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 					setIsPostsFetching(false);
 				}
 				getFirstPosts();
-			} else {
+			} else { 
 				//set newPosts
 				dispatch(getNextPosts());
 			}
@@ -74,11 +81,12 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 
 	//get next posts if at down
 	const handleScroll = () => {
-		// const triggerHeight = (postsRef.current?.scrollTop || 0) + (postsRef.current?.offsetHeight || 0);
+		console.log('handle scroll');
+		const triggerHeight = (postsRef.current?.scrollTop || 0) + (postsRef.current?.offsetHeight || 0);
 
-		// if(triggerHeight >= (postsRef.current?.scrollHeight || 0) - 10) {
-		// 	dispatch(getNextPosts());
-		// }
+		if(triggerHeight >= (postsRef.current?.scrollHeight || 0) - 10) {
+			dispatch(getNextPosts());
+		}
 	}
 
 	//add listener if we have more than 10 posts
@@ -98,7 +106,7 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 	return (
 		<div ref={postsRef} className={classes.Posts} >
 			{searchedPosts && searchedPosts.length > 0 ?
-				<>
+				<>  
 					<div className={classes.returnBtn}>
 						<button className={classes.btn} onClick={reloadStream}>
 							<ArrowBackIcon className={classes.icon}/>

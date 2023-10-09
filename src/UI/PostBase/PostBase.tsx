@@ -17,11 +17,12 @@ type PropsType = {
 	data: PostBaseType,  
 	category?: QuestionCategoriesType, 
 	answerQId?: string,
+	setIsDotsContextOpened: (value: boolean) => void,
 	onClick?: (e: MouseEvent) => void,
 };
 
-export const PostBase: React.FC<PropsType> = ({data, category, onClick, answerQId}) => {
-	const [isHower, setIsHower] = useState<boolean>(true);
+export const PostBase: React.FC<PropsType> = ({data, category, onClick, answerQId, setIsDotsContextOpened}) => {
+	const [isHover, setIsHover] = useState<boolean>(true);
 
 	const dotsRef = useRef<HTMLDivElement>(null); 
 	const menuRef = useRef<HTMLDivElement>(null);
@@ -76,6 +77,7 @@ export const PostBase: React.FC<PropsType> = ({data, category, onClick, answerQI
 						menuRef={menuRef}
 						postText={data.text}
 						isForOwner={isShowingForOwner}
+						setIsDotsContextOpened={setIsDotsContextOpened}
 					/>
 				</div>
 			</div>

@@ -32,6 +32,10 @@ type PropsType = {
 export const PostCard: React.FC<PropsType> = ({data, isOpen, answeringQuestionId, setAnsweringQuestionId}) => {
 	const { commentsCount, category, isClosed, createdAt, ...baseData } = data;
 
+	//for blocking native card onClick event if "three dots" menu opened
+	//because instead of starting button's funcs, we navigating to /post
+	const [isDotsContextOpened, setIsDotsContextOpened] = useState<boolean>(false);
+
 	const [isLiking, setIsLiking] = useState<boolean>(false);
 	const [isAnswerAdding, setIsAnswerAdding] = useState<boolean>(false);
 
@@ -46,8 +50,10 @@ export const PostCard: React.FC<PropsType> = ({data, isOpen, answeringQuestionId
 	const myAccountData = useSelector(selectMyAccountData); 
 	const isAuthed = useSelector(selectAuthedStatus);
 
+	//is current post liked from this account
 	const isLiked = myAccountData?.liked?.includes(data.id) || false;
 
+	//short text for card insteaf of full in Post
 	const cuttedText = !isOpen && data.text.length > 175 ? `${data.text.slice(0, 150)}...` : data.text; 
 
 	const likeQuestion = async () => {
@@ -75,12 +81,14 @@ export const PostCard: React.FC<PropsType> = ({data, isOpen, answeringQuestionId
 		const isClickedOnStarBtn = clickedEl === starBtnRef.current;
 		const isClickedOnCommentBtn = clickedEl === commentBtnRef.current;
 
-		if(!isClickedOnStarBtn && !isClickedOnCommentBtn) {
+		//navigate to another page
+		if(!isClickedOnStarBtn && !isClickedOnCommentBtn && !isDotsContextOpened   ) {
 			dispatch(openPostDataReceived(data));
 
 			navigate(`/post/${data.id}`);
 		}
 
+		//handle comment btn click
 		if(isClickedOnCommentBtn) {
 			handleCommentBtnClick();
 		}
@@ -98,10 +106,20 @@ export const PostCard: React.FC<PropsType> = ({data, isOpen, answeringQuestionId
 	}
 
 	return (
-		<section className={cn(classes.PostCard, isClosed ? classes._closed : '')}>    
-			<PostBase data={{...baseData, text: cuttedText}} category={category} onClick={!isOpen ? handleClick : undefined}/>
+		<section className={cn(classes.PostCard, isClosed ? classes._closed : '')}>   
+
+			<PostBase 
+				data={{...baseData, text: cuttedText}} 
+				category={category} 
+				onClick={!isOpen ? handleClick : undefined}
+				setIsDotsContextOpened={setIsDotsContextOpened}
+			/>
+
 			<div className={classes.buttons}>
+
 				{isAuthed ? <div className={classes.stats}>
+
+					{/* stars count */}
 					<button 
 						className={cn(classes.btn, isLiked ? classes._liked : '')} 
 						onClick={likeQuestion}
@@ -111,6 +129,8 @@ export const PostCard: React.FC<PropsType> = ({data, isOpen, answeringQuestionId
 						<p className={classes.number}>{data.stars}</p>
 						<GradeIcon className={classes.icon}/>
 					</button>
+
+					{/* comments count */}
 					<button className={cn(classes.btn, classes.commentsCount)}>
 						<p className={classes.number}>{commentsCount || 0}</p>
 						<QuestionAnswerIcon className={cn(classes.icon)}/>

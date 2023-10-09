@@ -30,10 +30,11 @@ export const streamAPI =  {
 		// Construct a new query starting at this document,
 		// get the next 25 cities.
 		if(lastVisiblePost) {
-			console.log('last visible post isnot null');
+			console.log('last visible post isnot null')	 
 			const next = query(collection(firestore, "questions"),
 				orderBy("createdAt", 'desc'),
-				startAfter(lastVisible),
+				//@ts-expect-error
+				startAfter(lastVisible['createdAt']),
 				limit(10));
 			documentSnapshots = await getDocs(next);  
 
