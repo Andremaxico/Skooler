@@ -1,11 +1,14 @@
 @import '../../global-styles';
 
 .Chat {
+	display: flex;
 	flex: 1 1 auto;
 	height: 100%;
-	max-width: 60%;
 	@media (max-width: $md2) {
 		max-width: 100vw;
 	}
 	box-sizing: border-box;
+	.body {
+		flex: 1 1 80%;
+	}
 }

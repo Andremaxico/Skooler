@@ -10,6 +10,7 @@ import Preloader from '../../UI/Preloader';
 import { useAppDispatch } from '../../Redux/store';
 import { ScrollBtn } from '../../UI/ScrollBtn';
 import { selectMyAccountData, selectMyLoginData } from '../../Redux/account/account-selectors';
+import { OtherChats } from './OtherChats';
 
 export type EditMessageDataType = {
 	value: string,
@@ -107,37 +108,40 @@ const Chat = () => {
 
 	return (
 		<div className={classes.Chat} ref={chatRef}>
-			{messagesData !== null ? 
-				<Messages 
-					ref={scrollBtnRef} 
-					contactId={contactUid || ''}
-					messagesData={messagesData}
-					setEditMessageData={(data: EditMessageDataType) => {
-						setEditMessageData(data);
-						setIsEdit(true);
-						console.log('set edit message data', data);
+			<OtherChats />
+			<div className={classes.body}>
+				{messagesData !== null ? 
+					<Messages 
+						ref={scrollBtnRef} 
+						contactId={contactUid || ''}
+						messagesData={messagesData}
+						setEditMessageData={(data: EditMessageDataType) => {
+							setEditMessageData(data);
+							setIsEdit(true);
+							console.log('set edit message data', data);
+						}
 					}
+						cancelEdit={cancelEdit}
+					/>
+					: <div>Немає повідомлень</div>
 				}
-					cancelEdit={cancelEdit}
+				{chatRef.current && 
+					<ScrollBtn 
+						element={chatRef.current} 
+						ref={scrollBtnRef} 
+						unreadCount={unreadMessagesCount || undefined} 
+					/>
+				}
+				<NewMessageForm   
+					contactUid={contactUid || ''}
+					authData={authData} 
+					ScrollBtn={scrollBtnRef.current} 
+					isMessageEdit={isEdit} 
+					updateMessage={sendUpdatedMessage} 
+					currValue={editMessageData?.value}
+					unreadCount={unreadMessagesCount || 0}
 				/>
-				: <div>Немає повідомлень</div>
-			}
-			{chatRef.current && 
-				<ScrollBtn 
-					element={chatRef.current} 
-					ref={scrollBtnRef} 
-					unreadCount={unreadMessagesCount || undefined} 
-				/>
-			}
-			<NewMessageForm   
-				contactUid={contactUid || ''}
-				authData={authData} 
-				ScrollBtn={scrollBtnRef.current} 
-				isMessageEdit={isEdit} 
-				updateMessage={sendUpdatedMessage} 
-				currValue={editMessageData?.value}
-				unreadCount={unreadMessagesCount || 0}
-			/>
+			</div>
 		</div>
 	)
 }

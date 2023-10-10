@@ -2,11 +2,10 @@
 
 .MessagesGroup {
 	position: relative;
+	display: flex;
 	.avatar {
-		position: absolute;
-		top: 0;
-		left: -6px;
-		transform: translateX(-100%);
+		@include size(56px);
+		margin-right: 4px;
 	}
 	.messages {
 		width: 100%;

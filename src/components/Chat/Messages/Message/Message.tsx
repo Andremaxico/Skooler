@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react'
 import { MessageDataType, UsersWhoReadMessageType } from '../../../../utils/types';
 import classes from './Message.module.scss';

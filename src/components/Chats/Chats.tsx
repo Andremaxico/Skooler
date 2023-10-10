@@ -23,6 +23,7 @@ const Chats: React.FC<PropsType> = ({}) => {
 	const chatsData = useSelector(selectChatsData);
 	const authData = useSelector(selectMyLoginData);
 
+	//when we got account data -> subscribing on chat changed -> immediately get chats data
 	useEffect(() => {
 		dispatch(subscribeOnChats());
 	}, [myAccountData?.uid]);
