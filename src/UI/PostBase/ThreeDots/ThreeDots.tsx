@@ -15,7 +15,7 @@ type PropsType = {
 	answerQId?: string,
 	postText: string,
 	isForOwner: boolean,
-	setIsDotsContextOpened: (v: boolean) => void,
+	setIsDotsContextOpened?: (v: boolean) => void,
 };
 
 export const ThreeDots = React.forwardRef<HTMLDivElement, PropsType>(({qId, menuRef, answerQId, postText, isForOwner, setIsDotsContextOpened}, ref) => {
@@ -77,7 +77,7 @@ export const ThreeDots = React.forwardRef<HTMLDivElement, PropsType>(({qId, menu
 
 	//open -> notice up
  	useEffect(() => {
-		setIsDotsContextOpened(isOpen)
+		if(setIsDotsContextOpened) setIsDotsContextOpened(isOpen)
 	}, [isOpen])
 	// const handlePopoverClick = (e: React.MouseEvent) =>{
 	// 	const target = e.target as Element;

@@ -45,7 +45,7 @@ export const Answer: React.FC<PropsType> = ({data, isForAskedUser, questionId}) 
 					<p className={classes.text}>Дякую!</p>
 				</button>
 			</div>
-			<PostDate createdAt={data.createdAt} closed={data.isCorrect} />
+			<PostDate createdAt={data.createdAt} closed={data.isCorrect} answer/>
 		</div>
 	)
 }

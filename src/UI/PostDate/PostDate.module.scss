@@ -9,6 +9,11 @@
 		background-color: $gray;
 		border-radius: 0 1px 1px 0;
 	}
+	&._answer {
+		&::after {
+			display: none;
+		}
+	}
 	p {
 		@include font-style(12px, 14px, 400, $gray);
 		white-space: nowrap;

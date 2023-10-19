@@ -6,6 +6,11 @@
 	min-height: 100%;
 	.comments {
 		position: relative;
+		.title {
+			margin-bottom: 8px;
+			@include bigText;
+			color: $gray;
+		}
 		.loaderWrap {
 			margin-top : 120px;
 		}

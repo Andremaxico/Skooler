@@ -19,7 +19,7 @@ type PropsType = {
 
 export const Posts: React.FC<PropsType> = ({isLoading}) => {
 	const [openedAnswerFormQId, setOpenedAnswerFormQId] = useState<string | null>(null);
-	const [isPostsFetching, setIsPostsFetching] = useState<boolean>(false);
+	const [isPostsFetching, setIsPostsFetching] = useState<boolean>(true);
 
 	const lastVisiblePost = useSelector(selectlastVisiblePost);
 	const posts = useSelector(selectPosts);
@@ -56,12 +56,13 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 		if(!posts) {
 			//if last vivisble post in not setted 
 			//-> get first posts and show loader
-			if(lastVisiblePost !== null) {
+			if(lastVisiblePost === null) {
 				const getFirstPosts = async () => {
 					setIsPostsFetching(true);
 					await dispatch(getNextPosts());
 					setIsPostsFetching(false);
 				}
+
 				getFirstPosts();
 			} else { 
 				//set newPosts

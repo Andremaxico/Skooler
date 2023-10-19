@@ -25,11 +25,11 @@ const Login: React.FC<PropsType> = ({}) => {
 		//it happens after first site's opening beacause we getting authData
 		//and it cant load in the time
 		console.log('is authed', isAuthed);
-		if(!!accountData && prevPage && isAuthed) {
+		if(!!accountData && isAuthed) {
 			if(prevPage === '/login') {
 				navigate('/', {replace: true});	
-			} else {
-				navigate(prevPage, {replace: true});
+			} else  {
+				navigate((prevPage || '/'), {replace: true});
 			}
 		}
 	}, [accountData, isAuthed]);

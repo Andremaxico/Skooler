@@ -14,7 +14,8 @@
   .container {
     @include column-align;
     position: relative;
-    padding: 15px 20px;
+    //16px - global  padding for all pages' containers
+    padding: 16px 20px;
     width: 100%;
     max-width: 1180px;
     margin: 0 auto;

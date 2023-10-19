@@ -74,14 +74,17 @@ export const Post: React.FC<PropsType> = ({}) => {
 
 	return (
 		<section className={classes.Post}>
-			{data && <button className={classes.returnBtn} onClick={returnToMain} style={{bottom: `${footerHeight ? footerHeight : 0 + 28}px`}}>
+			{/* {data && <button className={classes.returnBtn} onClick={returnToMain} style={{bottom: `${footerHeight ? footerHeight : 0 + 28}px`}}>
 				<ArrowBackIcon className={classes.icon}/>
-			</button>}
+			</button>} */}
 			<PostCard 
 				isOpen={true} 
 				data={postData} 
 			/>
 			<div className={classes.comments}>
+				{answers && answers.length > 0 &&
+					<h3 className={classes.title}>Відповіді {'(' + answers?.length + ')'} </h3>
+				}
 				{answers?.length || 0 > 0 && answers ? 
 					answers.map((answerData) => (
 						<Answer 

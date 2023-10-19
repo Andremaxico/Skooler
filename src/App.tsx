@@ -121,7 +121,7 @@ const App = () => {
   }, [auth])
 
 
-  //footer&header height for padding botton
+  //footer&header height for padding bottom
   const footerHeight = useSelector(selectFooterHeight) || 0;
   const headerHeight = useSelector(selectHeaderHeight) || 0;
 
@@ -159,7 +159,7 @@ const App = () => {
         <div
           className={classes.content} 
           style={{
-            paddingTop: `${headerHeight   }px`, 
+            paddingTop: `${headerHeight}px`, 
             paddingBottom: `${footerHeight}px`,
           }}
         >
@@ -198,7 +198,7 @@ const App = () => {
             }
           </div>
         </div>
-        {!location.pathname.includes('/chat/') && <AppFooter />}
+        <AppFooter />
     </div>
   );
 }

@@ -15,6 +15,7 @@ import { DeleteConfirm } from '../../../UI/DeleteConfirm';
 import { UsersWhoReadDialog } from '../../../UI/UsersWhoReadDialog';
 import { debounce } from 'lodash';
 import { getStringDate } from '../../../utils/helpers/getStringDate';
+import { selectFooterHeight, selectHeaderHeight } from '../../../Redux/app/appSelectors';
 
 type PropsType = {
 	setEditMessageData: (data: EditMessageDataType) => void, 
@@ -62,6 +63,8 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessage
 	const isFetching = useSelector(selectIsMessagesFetching);
 	const myAccountData = useSelector(selectMyAccountData);
 	const usersWhoReadCurrMessageData = useSelector(selectCurrMessageWhoReadList);
+	const headerHeight = useSelector(selectHeaderHeight);
+	const footerHeight = useSelector(selectFooterHeight);
 
 	const [usersWhoReadCurrMessage, setUsersWhoReadCurrMessage] = useState<UsersWhoReadMessageType | null>(null);
 	const [isUsersFetching, setIsUsersFetching] = useState<boolean>(false);
@@ -69,6 +72,7 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessage
 	const [prevMessagesData, setPrevMessagesData] = useState<MessagesDataType>(messagesData);
 	const [myMessages, setMyMessages] = useState<JSX.Element[]>([]);
 	const [currDeleteMessageId, setCurrDeleteMessageId] = useState<string | null>(null);
+	const [maxHeightValue, setMaxHeightValue] = useState<string>('100%');
 
 	const listRef = useRef<HTMLDivElement>(null);
 	const myMessageRef = useRef<HTMLDivElement>(null);
@@ -234,6 +238,10 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessage
 		setUsersWhoReadCurrMessage(null);
 	}
 
+	useEffect(() => {
+		setMaxHeightValue(`calc(100vh - ${(footerHeight || 0) + (headerHeight || 0)}px`);
+	}, [footerHeight, headerHeight]);
+
 	//add new message to state
 	/* useEffect(() => {
 		if(messagesList && messagesList.length > 0 && prevMessagesData.length !== messagesData.length) {
@@ -362,7 +370,7 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessage
 	if(!myAccountData || !messagesList) return <Preloader fixed={true} />;
 
 	return (
-		<div className={classes.Messages} ref={listRef}>
+		<div className={classes.Messages} ref={listRef} style={{maxHeight: maxHeightValue}}>
 			{isFetching && <Preloader />}
 
 			<UsersWhoReadDialog

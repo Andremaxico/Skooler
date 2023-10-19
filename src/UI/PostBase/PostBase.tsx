@@ -17,7 +17,7 @@ type PropsType = {
 	data: PostBaseType,  
 	category?: QuestionCategoriesType, 
 	answerQId?: string,
-	setIsDotsContextOpened: (value: boolean) => void,
+	setIsDotsContextOpened?: (value: boolean) => void,
 	onClick?: (e: MouseEvent) => void,
 };
 
@@ -43,7 +43,7 @@ export const PostBase: React.FC<PropsType> = ({data, category, onClick, answerQI
 
 	const isShowingForOwner = myAccountData?.uid === data.authorId;
 
-	const { authorAvatarUrl, authorName, authorSurname, text} = data;
+	const { authorAvatarUrl, authorFullname, text} = data;
 
 	const isTextCutted = text.substring(text.length - 3) === '...';
 
@@ -64,7 +64,7 @@ export const PostBase: React.FC<PropsType> = ({data, category, onClick, answerQI
 						size='sm'
 					/>
 					<div className={classes.authorInfo}>
-						<p className={classes.name}>{authorName} {authorSurname}</p>
+						<p className={classes.name}>{authorFullname}</p>
 						<p className={classes.rating}>{data.authorRating}</p>
 					</div>
 				</div>

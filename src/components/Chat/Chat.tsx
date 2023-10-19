@@ -11,6 +11,7 @@ import { useAppDispatch } from '../../Redux/store';
 import { ScrollBtn } from '../../UI/ScrollBtn';
 import { selectMyAccountData, selectMyLoginData } from '../../Redux/account/account-selectors';
 import { OtherChats } from './OtherChats';
+import { selectFooterHeight, selectHeaderHeight } from '../../Redux/app/appSelectors';
 
 export type EditMessageDataType = {
 	value: string,
@@ -23,11 +24,14 @@ const Chat = () => {
 	const authData = useSelector(selectMyLoginData);
 	const isFetching = useSelector(selectIsMessagesFetching);
 	const chatData = useSelector(selectCurrChatData); 
+	const footerHeight = useSelector(selectFooterHeight);
+	const headerHeight = useSelector(selectHeaderHeight);
 
 	//is existing messages now editing
 	const [isEdit, setIsEdit] = useState<boolean>(false);
 	const [editMessageData, setEditMessageData] = useState<EditMessageDataType | null>(null);
 	const [unreadMessagesCount, setUnreadMessagesCount] = useState<number | null>(null);
+	const [bodyHeight, setBodyHeight] = useState<string>('auto');
 
 	const params = useParams();
 	const navigate = useNavigate();
@@ -70,6 +74,15 @@ const Chat = () => {
 		}
 	}
 
+	//set body height
+	//= 100vh - container's padding - footerH - headerH
+	useEffect(() => {
+		const value = `calc(100vh - ${(footerHeight || 0) + (headerHeight || 0) + 32}px)`;
+
+		setBodyHeight(value);
+		console.log('body height value', value);
+	}, [footerHeight, headerHeight])
+
 	//start messaging
 	useEffect(() => {
 		if(contactUid) {
@@ -108,8 +121,15 @@ const Chat = () => {
 
 	return (
 		<div className={classes.Chat} ref={chatRef}>
-			<OtherChats />
-			<div className={classes.body}>
+			<OtherChats 
+				openedChatId={contactUid}
+			/>
+
+			<div className={classes.body}
+				style={{
+					height: bodyHeight,
+				}}
+			>
 				{messagesData !== null ? 
 					<Messages 
 						ref={scrollBtnRef} 

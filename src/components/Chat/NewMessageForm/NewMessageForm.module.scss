@@ -3,9 +3,9 @@
 .NewMessageForm {
 	@include column-align;
 	position: fixed;
-	left: 0;
+	right: 0;
 	bottom: 0;
-	width: 100%;
+	width: 80%;
 	padding: 6px 12px;
 	max-width: 100%;
 	align-items: flex-end;

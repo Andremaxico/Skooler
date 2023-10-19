@@ -2,11 +2,10 @@
 
 .Messages {
 	position: relative;
-	padding: 0 0 0 48px; // for avatars
+	//padding: 0 0 0 48px; // for avatars
 	flex: 1 1 auto;
 	width: 100%;
 	overflow-y: auto;
-
 	.messagesDate {
 		@include smallText;
 		color: $gray;
