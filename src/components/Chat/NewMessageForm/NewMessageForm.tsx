@@ -13,6 +13,7 @@ import { useAppDispatch } from '../../../Redux/store';
 import { FormControl, IconButton, Textarea } from '@mui/joy';
 import { footerHeightReceived } from '../../../Redux/app/appReducer';
 import { selectContactData, selectMessages } from '../../../Redux/chat/selectors';
+import { selectFooterHeight } from '../../../Redux/app/appSelectors';
 
 type ContactDataType = ReceivedAccountDataType | Promise<ReceivedAccountDataType | undefined>;
 
@@ -22,6 +23,7 @@ type PropsType = {
 	currValue?: string, 
 	ScrollBtn: HTMLButtonElement | null,
 	updateMessage: (value: string) => void,
+	setHeight: (n: number) => void,
 	contactUid: string,
 	unreadCount: number,
 }
@@ -31,7 +33,7 @@ type FieldValues = {
 }
 
 export const NewMessageForm: React.FC<PropsType> = React.memo(({
-	authData, isMessageEdit, currValue, updateMessage, ScrollBtn, contactUid, unreadCount
+	authData, isMessageEdit, currValue, updateMessage, ScrollBtn, contactUid, unreadCount, setHeight
 }): ReactElement<any, any> => {
 	//react-hook-form
 	const { control, formState: {errors, isValid}, handleSubmit, reset, setValue, trigger, watch } = useForm<FieldValues>();
@@ -47,6 +49,7 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 	const accountData = useSelector(selectMyAccountData);
 	const messages = useSelector(selectMessages);
 	const contactData = useSelector(selectContactData);
+	const footerHeight = useSelector(selectFooterHeight);
 
 	//for autofocus
 	const messageField = useRef<HTMLDivElement>(null);
@@ -102,6 +105,11 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 		setValue('message', currValue || '');
 	}, [currValue])
 
+	//changed ref -> set height for chat body padding
+	useEffect(() => {
+		const heightValue = formRef.current?.offsetHeight || 0;
+		setHeight(heightValue);
+	}, [formRef])
 	
 	const createChatInfo = async (
 		messageData: MessageDataType, contactData: ContactDataType, baseUid: string, secondUid: string
@@ -112,13 +120,13 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 		//if we havent messages -> we havent chat in firebase -> create info
 		if(!messages || messages.length === 0) {
 			console.log('new chat info');
-			const userData = await contactData;
+			const userData = await contactData;   
 			if(userData) {
 				chatInfo = {
 					lastMessageData: messageData,
 					lastMessageTime: messageData.createdAt,
-					contactAvatarUrl: userData?.avatarUrl,
-					contactFullname: userData.fullName,
+					contactAvatarUrl: userData?.avatarUrl || undefined,
+					contactFullname: userData.name + ' ' + userData.surname,
 					contactId: userData.uid,
 					unreadCount: 0,
 				}
@@ -139,7 +147,7 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 		//create new message data
 		const newMessageData: MessageDataType = {
 			uid: authData?.uid || 'undefined',
-			displayName: `${accountData?.fullName}` || 'Анонім',
+			displayName: `${accountData?.name} ${accountData?.surname}` || 'Анонім',
 			photoUrl: accountData?.avatarUrl || '',
 			text: newMessage,
 			createdAt: serverTimestamp(),
@@ -167,15 +175,15 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 	}
 
 	//form instead of footer
-	useEffect(() => {
-		if(formRef.current) {
-			const formHeight = formRef.current.offsetHeight;
+	// useEffect(() => {
+	// 	if(formRef.current) {
+	// 		const formHeight = formRef.current.offsetHeight;
 
-			console.log('formHeight', formHeight);
+	// 		console.log('formHeight', formHeight);
 
-			dispatch(footerHeightReceived(formHeight));
-		}
-	}, []);
+	// 		dispatch(footerHeightReceived(formHeight));
+	// 	}
+	// }, []);
 
 	//trigger message field for start validation
 	useEffect(() => {
@@ -193,7 +201,14 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 	}, [isFirstlyOpened, isMessageEdit, isValid]);
 	//if firstly open and not editing -> false, else if no(editing) and no firstly -> is messagesErrors(true -> false)
 	return (
-		<form className={classes.NewMessageForm} onSubmit={handleSubmit(onSubmit)} ref={formRef}>
+		<form 
+			className={classes.NewMessageForm} 
+			onSubmit={handleSubmit(onSubmit)} 
+			ref={formRef}
+			style={{
+				bottom: `${footerHeight}px`
+			}}
+		>
 			<Controller
 				name='message'
 				control={control}

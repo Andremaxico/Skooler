@@ -28,10 +28,11 @@ const Chat = () => {
 	const headerHeight = useSelector(selectHeaderHeight);
 
 	//is existing messages now editing
+	const [unreadMessagesCount, setUnreadMessagesCount] = useState<number | null>(null);
 	const [isEdit, setIsEdit] = useState<boolean>(false);
 	const [editMessageData, setEditMessageData] = useState<EditMessageDataType | null>(null);
-	const [unreadMessagesCount, setUnreadMessagesCount] = useState<number | null>(null);
 	const [bodyHeight, setBodyHeight] = useState<string>('auto');
+	const [newMessageFormHeight, setNewMessageFormHeight] = useState<number>(0);
 
 	const params = useParams();
 	const navigate = useNavigate();
@@ -77,11 +78,12 @@ const Chat = () => {
 	//set body height
 	//= 100vh - container's padding - footerH - headerH
 	useEffect(() => {
-		const value = `calc(100vh - ${(footerHeight || 0) + (headerHeight || 0) + 32}px)`;
+		console.log('new message for height', newMessageFormHeight);
+		const value = `calc(100vh - ${(footerHeight || 0) + (headerHeight || 0) + 32 + newMessageFormHeight}px)`;
 
 		setBodyHeight(value);
 		console.log('body height value', value);
-	}, [footerHeight, headerHeight])
+	}, [footerHeight, headerHeight, newMessageFormHeight]);
 
 	//start messaging
 	useEffect(() => {
@@ -133,6 +135,7 @@ const Chat = () => {
 				{messagesData !== null ? 
 					<Messages 
 						ref={scrollBtnRef} 
+						unreadMessagesCount={unreadMessagesCount || 0}
 						contactId={contactUid || ''}
 						messagesData={messagesData}
 						setEditMessageData={(data: EditMessageDataType) => {
@@ -145,13 +148,6 @@ const Chat = () => {
 					/>
 					: <div>Немає повідомлень</div>
 				}
-				{chatRef.current && 
-					<ScrollBtn 
-						element={chatRef.current} 
-						ref={scrollBtnRef} 
-						unreadCount={unreadMessagesCount || undefined} 
-					/>
-				}
 				<NewMessageForm   
 					contactUid={contactUid || ''}
 					authData={authData} 
@@ -160,6 +156,7 @@ const Chat = () => {
 					updateMessage={sendUpdatedMessage} 
 					currValue={editMessageData?.value}
 					unreadCount={unreadMessagesCount || 0}
+					setHeight={setNewMessageFormHeight}
 				/>
 			</div>
 		</div>

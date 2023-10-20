@@ -16,12 +16,14 @@ import { UsersWhoReadDialog } from '../../../UI/UsersWhoReadDialog';
 import { debounce } from 'lodash';
 import { getStringDate } from '../../../utils/helpers/getStringDate';
 import { selectFooterHeight, selectHeaderHeight } from '../../../Redux/app/appSelectors';
+import { ScrollBtn } from '../../../UI/ScrollBtn';
 
 type PropsType = {
 	setEditMessageData: (data: EditMessageDataType) => void, 
 	messagesData: MessageDataType[],
 	contactId: string,
 	cancelEdit: () => void,
+	unreadMessagesCount: number,
 	//ref: React.RefObject<HTMLButtonElement>,
 }
 
@@ -59,7 +61,7 @@ const getSortedByDateMessages = (messagesData: MessagesDataType): FormattedMessa
 	return sortedMessages;
 }
 
-const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessageData, messagesData, contactId}, ref) => {
+const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessageData, messagesData, contactId, unreadMessagesCount}, ref) => {
 	const isFetching = useSelector(selectIsMessagesFetching);
 	const myAccountData = useSelector(selectMyAccountData);
 	const usersWhoReadCurrMessageData = useSelector(selectCurrMessageWhoReadList);
@@ -76,6 +78,7 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessage
 
 	const listRef = useRef<HTMLDivElement>(null);
 	const myMessageRef = useRef<HTMLDivElement>(null);
+	const scrollBtnRef = useRef<HTMLButtonElement>(null);
 
 	const dispatch = useAppDispatch();
 
@@ -367,10 +370,12 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessage
 		}
 	}, [messagesData]);
 	*/
+
+	
 	if(!myAccountData || !messagesList) return <Preloader fixed={true} />;
 
 	return (
-		<div className={classes.Messages} ref={listRef} style={{maxHeight: maxHeightValue}}>
+		<div className={classes.Messages} ref={listRef}>
 			{isFetching && <Preloader />}
 
 			<UsersWhoReadDialog
@@ -392,6 +397,14 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessage
 				? 
 					messagesList
 				: <div>Немає повідомлень</div>
+			}
+
+			{listRef.current && 
+				<ScrollBtn 
+					element={listRef.current} 
+					ref={scrollBtnRef} 
+					unreadCount={unreadMessagesCount || undefined} 
+				/>
 			}
 		</div>
 	)
