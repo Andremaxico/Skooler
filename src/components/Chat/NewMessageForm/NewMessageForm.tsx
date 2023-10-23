@@ -43,6 +43,7 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 	const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 	const [textareaEl, setTextareaEl] = useState<HTMLTextAreaElement | null>(null);
 	const [isSendBtnShowing, setIsSendBtnShowing] = useState<boolean>(false);
+	const [formHeight, setFormHeight] = useState<number>(0);
 
 	//ant design form(щоб показувати зарашнє значення коментара) & reset formmessa
 
@@ -67,6 +68,7 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 
 	const dispatch = useAppDispatch();
 
+	//when whole form submitting -> send message
 	const onSubmit = async (data: FieldValues) => {
 		console.log('submit data', data);
 		if(!isSubmitted) setIsSubmitted(true);
@@ -89,7 +91,7 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 		setValue('message', '', {shouldValidate: true});
 	};
 
-	//for edit
+	//autofocus when editinig
 	useEffect(() => {
 		//set focus on the message field
 		console.log('curr value or ismessageEdit changed', textareaEl, isMessageEdit);
@@ -100,6 +102,7 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 		
 	}, [isMessageEdit]);
 
+	//menual value set in react-hook-form
 	useEffect(() => {
 		setValue('message', currValue || '');
 	}, [currValue])
@@ -107,10 +110,19 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 	//changed ref -> set height for chat body padding
 	useEffect(() => {
 		const heightValue = formRef.current?.offsetHeight || 0;
-		//for Chat.tsx(apper level)
+		//for Chat.tsx(upper level)
 		setHeight(heightValue);
-	}, [formRef])
-	
+	}, [formRef]);
+
+	//changed ref -> set height for -bottom value of form
+	useEffect(() => {
+		const heightValue = formRef.current?.offsetHeight || 0;
+		//for -bottom valuef
+		setFormHeight(heightValue);
+	}, [formRef]);
+
+
+	//chat info for chatCard  
 	const createChatInfo = async (
 		messageData: MessageDataType, contactData: ContactDataType, baseUid: string, secondUid: string
 	) => {
@@ -174,17 +186,6 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 		}
 	}
 
-	//form instead of footer
-	// useEffect(() => {
-	// 	if(formRef.current) {
-	// 		const formHeight = formRef.current.offsetHeight;
-
-	// 		console.log('formHeight', formHeight);
-
-	// 		dispatch(footerHeightReceived(formHeight));
-	// 	}
-	// }, []);
-
 	//trigger message field for start validation
 	useEffect(() => {
 		if(!isSubmitted) {
@@ -205,6 +206,9 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 			className={classes.NewMessageForm} 
 			onSubmit={handleSubmit(onSubmit)} 
 			ref={formRef}
+			style={{
+				bottom: `-${formHeight}px`
+			}}
 		>
 			<Controller
 				name='message'

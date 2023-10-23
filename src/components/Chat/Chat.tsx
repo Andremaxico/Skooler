@@ -95,16 +95,14 @@ const Chat = () => {
 		}
 	}, [myAccountData, contactUid]);
 
-	//set unread messages count
+	//set unread messages count from chat data
 	useEffect(() => {
 		const unreadCount = chatData?.unreadCount;
-
-		console.log('new unread count', unreadCount);
 
 		setUnreadMessagesCount(unreadCount || null);
 	}, [chatData]);
 
-	//set contact data
+	//set contact data for current chat
 	useEffect(() => {
 		if(contactUid) {
 			console.log('set contact data');
