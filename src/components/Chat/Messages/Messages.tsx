@@ -61,7 +61,9 @@ const getSortedByDateMessages = (messagesData: MessagesDataType): FormattedMessa
 	return sortedMessages;
 }
 
-const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessageData, messagesData, contactId, unreadMessagesCount}, ref) => {
+const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({
+	setEditMessageData, messagesData, contactId, unreadMessagesCount
+}, ref) => {
 	const isFetching = useSelector(selectIsMessagesFetching);
 	const myAccountData = useSelector(selectMyAccountData);
 	const usersWhoReadCurrMessageData = useSelector(selectCurrMessageWhoReadList);
@@ -375,7 +377,10 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({setEditMessage
 	if(!myAccountData || !messagesList) return <Preloader fixed={true} />;
 
 	return (
-		<div className={classes.Messages} ref={listRef}>
+		<div 
+			className={classes.Messages} 
+			ref={listRef}
+		>
 			{isFetching && <Preloader />}
 
 			<UsersWhoReadDialog

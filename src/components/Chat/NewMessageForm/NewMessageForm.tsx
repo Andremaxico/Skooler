@@ -49,7 +49,6 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 	const accountData = useSelector(selectMyAccountData);
 	const messages = useSelector(selectMessages);
 	const contactData = useSelector(selectContactData);
-	const footerHeight = useSelector(selectFooterHeight);
 
 	//for autofocus
 	const messageField = useRef<HTMLDivElement>(null);
@@ -108,6 +107,7 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 	//changed ref -> set height for chat body padding
 	useEffect(() => {
 		const heightValue = formRef.current?.offsetHeight || 0;
+		//for Chat.tsx(apper level)
 		setHeight(heightValue);
 	}, [formRef])
 	
@@ -205,9 +205,6 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 			className={classes.NewMessageForm} 
 			onSubmit={handleSubmit(onSubmit)} 
 			ref={formRef}
-			style={{
-				bottom: `${footerHeight}px`
-			}}
 		>
 			<Controller
 				name='message'
@@ -215,7 +212,7 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 				rules={{
 					required: 'Напишіть повідомлення!',
 					minLength: {value: 1, message: 'Напишіть повідомлення!'},
-					maxLength: {value: 600, message: 'Повідомлення надто довге'},
+					maxLength: {value: 5, message: 'Повідомлення надто довге'},
 				}}
 				defaultValue={currValue}
 				render={({field: {onChange, value}}) => (
