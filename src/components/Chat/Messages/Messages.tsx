@@ -24,6 +24,7 @@ type PropsType = {
 	contactId: string,
 	cancelEdit: () => void,
 	unreadMessagesCount: number,
+	newMessageFormHeight: number, 
 	//ref: React.RefObject<HTMLButtonElement>,
 }
 
@@ -62,7 +63,7 @@ const getSortedByDateMessages = (messagesData: MessagesDataType): FormattedMessa
 }
 
 const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({
-	setEditMessageData, messagesData, contactId, unreadMessagesCount
+	setEditMessageData, messagesData, contactId, unreadMessagesCount, newMessageFormHeight
 }, ref) => {
 	const isFetching = useSelector(selectIsMessagesFetching);
 	const myAccountData = useSelector(selectMyAccountData);
@@ -146,7 +147,6 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({
 					const prevUid = i > 0 ? sortedMessages[dateStr][i-1].uid : null;
 					const isShort: boolean = prevUid == data.uid;
 					const isMy = data.uid === myAccountData.uid;
-					console.log('us my', isMy);
 
 					const currMessage = (
 						<Message 
@@ -373,8 +373,11 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({
 	}, [messagesData]);
 	*/
 
-	
-	if(!myAccountData || !messagesList) return <Preloader fixed={true} />;
+	//if(!myAccountData || !messagesList) return <Preloader fixed={true} />;
+
+
+
+	console.log('list ref', window.document.body.offsetWidth - (listRef.current?.getBoundingClientRect().right || 0));
 
 	return (
 		<div 
@@ -406,6 +409,8 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({
 
 			{listRef.current && 
 				<ScrollBtn 
+					newMessageFormH={newMessageFormHeight}
+					right={window.document.body.offsetWidth - (listRef.current?.getBoundingClientRect().right || 0)}
 					element={listRef.current} 
 					ref={scrollBtnRef} 
 					unreadCount={unreadMessagesCount || undefined} 

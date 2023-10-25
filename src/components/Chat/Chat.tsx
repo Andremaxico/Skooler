@@ -134,6 +134,7 @@ const Chat = () => {
 					<Messages 
 						ref={scrollBtnRef} 
 						unreadMessagesCount={unreadMessagesCount || 0}
+						newMessageFormHeight={newMessageFormHeight}
 						contactId={contactUid || ''}
 						messagesData={messagesData}
 						setEditMessageData={(data: EditMessageDataType) => {

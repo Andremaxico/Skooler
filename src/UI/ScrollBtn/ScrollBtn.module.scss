@@ -3,8 +3,6 @@
 .ScrollBtn {
 	position: fixed;
 	@include size(40px);
-	bottom: 80px;
-	right: 12px;
 	display: flex;
 	justify-content: flex-end;
 	transition: 0.15s;
