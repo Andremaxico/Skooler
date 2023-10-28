@@ -216,7 +216,7 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 				rules={{
 					required: 'Напишіть повідомлення!',
 					minLength: {value: 1, message: 'Напишіть повідомлення!'},
-					maxLength: {value: 5, message: 'Повідомлення надто довге'},
+					maxLength: {value: 500, message: 'Повідомлення надто довге'},
 				}}
 				defaultValue={currValue}
 				render={({field: {onChange, value}}) => (

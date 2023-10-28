@@ -80,8 +80,8 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({
 	const [maxHeightValue, setMaxHeightValue] = useState<string>('100%');
 
 	const listRef = useRef<HTMLDivElement>(null);
-	const myMessageRef = useRef<HTMLDivElement>(null);
 	const scrollBtnRef = useRef<HTMLButtonElement>(null);
+	const lastReadedMessageRef = useRef<HTMLDivElement>(null);
 
 	const dispatch = useAppDispatch();
 
@@ -98,7 +98,6 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({
 		}
 	}
 
-	console.log('my message ref', myMessageRef);
 
 	//on scroll listener
 	useEffect(() => {
@@ -114,16 +113,15 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({
 
 	//scroll to last read message
 	useEffect(() => {
-		console.log('mu message ref current', myMessageRef?.current);
-		if(myMessageRef.current) {
-			console.log('scroll to my new message');
-			myMessageRef.current.scrollIntoView({
+		console.log('lst ref current', lastReadedMessageRef.current);
+		if(lastReadedMessageRef.current) {
+			lastReadedMessageRef.current.scrollIntoView({
+				block: 'end',
 				behavior: 'auto',
 			})
 		}
-	}, [myMessageRef.current, myAccountData]);
+	}, [lastReadedMessageRef, messagesList]);
 
-	console.log('my message ref', myMessageRef.current);
 
 	//sorted messages data -> messagesList(JSX.Element[])
 	useEffect(() => {
@@ -157,7 +155,7 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({
 							showDeleteConfirm={showDeleteConfirm} 
 							openInfoModal={setUsersWhoReadCurrMessage}  
 							isShort={isShort} 
-							ref={isMy ? myMessageRef : null}
+							ref={data.isRead ? lastReadedMessageRef: null}
 							contactId={contactId}
 						/>
 					);
