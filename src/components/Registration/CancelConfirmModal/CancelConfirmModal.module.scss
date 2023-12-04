@@ -1,0 +1,22 @@
+@import '../../../global-styles';
+
+.CancelConfirmModal {
+	@include column-align;
+	justify-content: space-between;
+	@include size(300px, 150px);
+	padding: 16px;
+	background-color: #fff;
+	border-radius: 12px;
+	.title {
+		@include bigText;
+		font-weight: 500;
+	}
+	.buttons {
+		@include row-align;
+		justify-content: flex-end;
+		gap: 8px;
+		.btn {
+
+		}
+	}
+}

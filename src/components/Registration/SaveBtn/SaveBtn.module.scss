@@ -1,0 +1,30 @@
+@import '../../../global-styles';
+
+.SaveBtn {
+	width: 100%;
+	@include row-align;
+	justify-content: flex-end;
+	cursor: pointer;
+	span {
+		display: block;
+		margin-right: 4px;
+	}
+	.iconBtn {
+		@include center-align;
+		@include size(40px);
+		background-color: $primary;
+		cursor: pointer;
+		@media (max-width: $md2) {
+			@include size(30px);
+		}
+		&:hover, &:active {
+			.icon {
+				transform: translateX(4px);
+			}
+		}
+		.icon {
+			color: #fff;
+			transition: 0.2s;
+		}
+	}
+}

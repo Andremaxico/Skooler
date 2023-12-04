@@ -1,0 +1,13 @@
+@import '../../../../global-styles';
+
+.ResetEmailForm {
+	@include column-align;
+	align-items: flex-end;
+	.fieldWrapper {
+		width: 100%;
+		.label {}
+		.input {}
+		.errorText {}
+		.submitBtn {}
+	}
+}

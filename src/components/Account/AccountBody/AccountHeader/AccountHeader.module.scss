@@ -1,0 +1,42 @@
+@import '../../../../global-styles';
+
+.AccountHeader {
+	position: relative;
+	.cover {
+		position: relative;
+		@include size(100%, 15vh);
+		background-color: $mainCol;
+		border-radius: 0 0 24px 24px;
+		.fullName {
+			position: absolute;
+			top: 8px;
+			left: 12px;
+			margin: 0;
+			@include smallTitle; 
+			color: #fff;
+			@media (max-width: $md2) {
+				color: #fff;
+			}
+		}
+		.editBtn {
+			position: absolute;
+			bottom: 12px;
+			right: 12px;
+			.icon {
+				font-size: 24px;
+				color: #fff;
+				opacity: 0.6;
+			}
+		}
+	}
+	.avatar {
+		position: absolute;
+		bottom: 0;
+		left: 28px;
+		transform: translateY(50%);
+		
+		img {
+
+		}
+	}
+}

@@ -1,0 +1,20 @@
+@import '../../../global-styles';
+
+.ReturnBtn {
+	@include row-align;
+	margin-right: 8px;
+	.iconBtn {
+		@include size(40px);
+		margin-right: 4px;
+		background-color: $primary;
+		@media (max-width: $md2) {
+			@include size(30px);
+		}
+		.icon {
+			color: #fff;
+		}
+	}
+	.text {
+
+	}
+}

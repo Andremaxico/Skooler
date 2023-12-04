@@ -1,0 +1,12 @@
+@import '../../global-styles';
+
+.form {
+	.serverError {
+		margin-bottom: 8px;
+		@include text;
+		@media (max-width: $md2) {
+			color: $error;
+		}
+	}
+
+}

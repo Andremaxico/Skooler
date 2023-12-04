@@ -1,0 +1,32 @@
+@import '../../../../global-styles';
+
+.AccountInfo {
+	li {
+		padding: 8px 0 8px 32px;
+		@include row-align;
+		background-size: 28px;
+		background-position: left center;
+		background-repeat: no-repeat;
+	}
+	.title {
+		margin-bottom: 4px;
+		@include bigText;
+		font-weight: 500;
+	}
+	.birthDate {
+		background-image: url('../../../../assets/images/birthday-icon.png');
+	}
+	.classNum {
+		background-image: url('../../../../assets/images/pupil.png');
+	}
+	
+	.rating {
+		background-image: url('../../../../assets/images/rating.png');
+	}
+	.AccountSchool {
+		background-image: url('../../../../assets/images/school-icon.png');
+		.school {
+			color: $black; 
+		}
+	}
+}

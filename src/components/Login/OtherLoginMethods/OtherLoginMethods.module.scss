@@ -1,0 +1,25 @@
+@import '../../../global-styles';
+
+.OtherLoginMethods {
+	@include column-align;
+	align-items: center;
+	margin-bottom: 12px;
+	.text {
+		@include bigText;
+		margin-bottom: 8px;
+	}
+	.buttons {
+		@include row-align;  
+		.btn {
+			@include size(32px);
+			margin-right: 4px;
+			overflow: hidden;
+			&:last-child {
+				margin-right: 0;
+			}
+			.icon {
+				@include size(32px);
+			}
+		}
+	}
+}

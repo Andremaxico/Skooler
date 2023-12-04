@@ -1,0 +1,47 @@
+@import '../../../../global-styles';
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap');
+
+.Welcoming {
+	@include column-align;
+	align-items: center;
+	padding: 20px;
+	border-radius: 10px;
+	box-shadow: 0px 7px 48px -10px rgba(0,0,0,0.56);
+	opacity: 0;
+	animation: show-hide 4s ease 1;
+	.title {
+		@include title;
+		font-weight: 500;
+		//without this working only @title style
+		@media (max-width: $md2) {
+			font-weight: 500;
+		}
+		.skooler {
+			font-family: 'Dancing Script', cursive;
+			color: $primary;
+			@media (max-width: $md2) {
+				font-family: 'Dancing Script', cursive;
+				color: $primary;
+			}
+		}
+	}
+	.text {
+		@include text;
+		color: $darkGray;
+	}
+}
+
+@keyframes show-hide {
+	0% {
+		opacity: 0;
+	}
+	10% {
+		opacity: 1;
+	}
+	85% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
+}

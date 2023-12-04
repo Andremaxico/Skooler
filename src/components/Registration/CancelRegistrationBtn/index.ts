@@ -1,0 +1,1 @@
+export { CancelRegistrationBtn } from './CancelRegistrationBtn';

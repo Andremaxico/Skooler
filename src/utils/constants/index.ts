@@ -1,0 +1,1 @@
+export const ABOUT_ME_MAX_LENGTH = 600;
