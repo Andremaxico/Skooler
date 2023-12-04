@@ -2,15 +2,17 @@ import { streamAPI } from './../../api/streamApi';
 import { accountAPI } from './../../api/accountApi';
 import { AppDispatchType, RootStateType } from './../store';
 import { ThunkAction } from 'redux-thunk';
-import { AccountDataType, ReceivedAccountDataType, UserType, SchoolDataType, UserRatingsType, PostDataType, AuthErrorsType, AuthErrorType, AuthActionsTypesType, AuthActionsType } from './../../utils/types/index';
+import { AccountDataType, ReceivedAccountDataType, UserType, SchoolDataType, UserRatingsType, PostDataType, AuthErrorsType, AuthErrorType, AuthActionsTypesType, AuthActionsType, UpdatedAccountDataType, FinalUpdatedAccountDataType } from './../../utils/types/index';
 import { createReducer, createAction, AnyAction } from '@reduxjs/toolkit';
 import { schoolsAPI } from '../../api/schoolsApi';
 import { usersAPI } from '../../api/usersApi';
 import { User, createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
-import { idText } from 'typescript';
+import { NonNullChain, idText } from 'typescript';
 import { errorToText } from '../../firebase/firebaseErrorsConverter';
 import { UserActionStatusType } from '../stream/stream-reducer';
 import { getRandomSixDigitCode } from '../../utils/helpers/getRandomSixDigitCode';
+import { doc, updateDoc } from 'firebase/firestore';
+import { firestore } from '../../firebase/firebaseApi';
 
 export type AccountStateType = {
 	myAccountData: ReceivedAccountDataType | null,
@@ -29,6 +31,7 @@ type _ThunkType = ThunkAction<void, AccountStateType, unknown, AnyAction>;
 
 //=========ACTIONS=========
 export const myAccountDataReceived = createAction<ReceivedAccountDataType | null>('account/SET_MY_ACCOUNT_DATA');
+export const myAccountDataUpdated = createAction<FinalUpdatedAccountDataType>('account/MY_ACCOUNT_DATA_UPDATED');
 export const loginDataReceived = createAction<User | null>('account/LOGIN_DATA_RECEIVED');
 export const currUserAccountReceived = createAction<ReceivedAccountDataType | undefined>('account/CURR_USER_ACCOUNT_RECEIVED');
 export const schoolInfoReceived = createAction<SchoolDataType>('account/SCHOOL_INFO_RECEIVED');
@@ -91,6 +94,11 @@ const accountReducer = createReducer(initialState, (builder) => {
 	builder
 		.addCase(myAccountDataReceived, (state, action) => {
 			state.myAccountData = action.payload;
+		})
+		.addCase(myAccountDataUpdated, (state, action) => {  
+			if(state.myAccountData) {
+				state.myAccountData = {...state.myAccountData, ...action.payload}
+			}
 		})
 		.addCase(currUserAccountReceived, (state, action) => {
 			state.currUserAccount = action.payload;
@@ -189,29 +197,33 @@ export const setMyAvatarUrl = (file: File | Blob) => async (dispatch: AppDispatc
 		console.log('avatar url', url);
 
 		dispatch(avatarUrlReceived(url));
+
 	}
 
 } 
 
 export const sendMyAccountData = (data: AccountDataType) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
 	dispatch(isFetchingStatusChanged(true));
-	const uid = getState().account.myLoginData?.uid;
 	const loginData = getState().account.myLoginData;
+	const uid = loginData?.uid;
 
 	console.log('uid', uid, data.avatar );
 
 	if(uid) {
 		let accountData: ReceivedAccountDataType | null = null;
-		const { avatar, ...restData } = data;
+		const { avatar, birthDate, ...restData } = data;
 
 		//get large data about school
 		const schoolData = data.schoolInfo?.id ? await schoolsAPI.getSchoolInfo(data.schoolInfo.id) : null;
 
-		console.log('data', restData, restData.birthDate.toDate());
+		console.log('data', restData);
 
 		//formatting birthdate
-		//we do it for avoid firebase error with custom object
-		const birthDate = Object.assign({}, restData.birthDate.toDate());
+		const formattedBirthDate = {
+			month: birthDate.month() + 1,
+			year: birthDate.year(),
+			date: birthDate.date(),
+		};
 
 		console.log('birth date', birthDate);
 
@@ -229,11 +241,12 @@ export const sendMyAccountData = (data: AccountDataType) => async (dispatch: App
 			accountData = {
 				...restData,
 				school: schoolData, 
-				birthDate: birthDate,
+				birthDate: formattedBirthDate,
 				avatarUrl: avatarUrl, uid: uid,
 				rating: 'Ніхто',
 				liked: [],
 				correctAnswersCount: 0,
+				email: loginData.email,
 			}; 
 		}
 
@@ -259,6 +272,32 @@ export const sendMyAccountData = (data: AccountDataType) => async (dispatch: App
 
 }
 
+export const updateMyAccountData = (data: UpdatedAccountDataType) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
+	const uid = getState().account.myLoginData?.uid;
+	const { aboutMe, avatar, class: classNum, schoolInfo } = data;
+	console.log('data', data);
+
+	if(uid) {
+		let avatarUrl: string | null = null;
+		if(avatar) {
+			avatarUrl = await accountAPI.sendAvatar(avatar, uid);
+			if(avatarUrl === undefined) avatarUrl = null;
+		}
+
+		//get large data about school
+		const schoolData = await schoolsAPI.getSchoolInfo(schoolInfo.id);
+
+
+		const finalData: FinalUpdatedAccountDataType = {
+			class: classNum,
+			school: schoolData,
+			avatarUrl,
+			aboutMe
+		}
+		await accountAPI.updateMyAccountData(finalData, uid);
+		
+	}
+}
 export const logOut = () => async (dispatch: AppDispatchType) => {
 	try {
 		await accountAPI.logOut();

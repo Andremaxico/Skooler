@@ -1,3 +1,4 @@
+import { FinalUpdatedAccountDataType, UpdatedAccountDataType } from './../utils/types/index';
 import { checkEmailForExisting, sendEmailVerificationLink } from './../Redux/account/account-reducer';
 import { setDoc, addDoc, collection, doc, updateDoc, Unsubscribe, onSnapshot, deleteDoc } from 'firebase/firestore';
 import { UserType, AccountDataType, ReceivedAccountDataType } from '../utils/types/index';
@@ -20,6 +21,14 @@ export const accountAPI = {
 		await setDoc(doc(firestore, 'users', uid), data);
 	},
 
+	async updateMyAccountData(data: FinalUpdatedAccountDataType, uid: string,) {
+		const ref = doc(firestore, 'users', uid);
+
+		await updateDoc(ref, {
+			...data,
+		});
+	},
+
 	async logOut() {
 		await signOut(auth);
 	},	
@@ -30,8 +39,9 @@ export const accountAPI = {
 		const storageRef = ref(storage, `images/${uid}-avatar.png`);
 
 		//send avatar to storage
-		await uploadBytes(storageRef, file);
-		console.log('uploaded avatar');
+		const res = await uploadBytes(storageRef, file);
+		const url = await getDownloadURL(res.ref);
+		return url;
 	},
 
 	async deleteAvatar(uid: string) {

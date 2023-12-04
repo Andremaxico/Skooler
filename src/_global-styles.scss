@@ -146,3 +146,17 @@ $smBoxShadow: 3px 5px 22px -1px $gray;
     color: #fff;
   }
 }
+
+
+.fieldWrapper {}
+.fieldLabel {
+  @include text;
+  margin-bottom: 4px;
+}
+.fieldErrorText {
+  @include text;
+  color: $error;
+}
+.input {
+  @include input;
+}

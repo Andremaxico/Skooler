@@ -9,7 +9,6 @@ import { dateFromMoment } from '../../../../utils/helpers/converters';
 import classes from './NewEventForm.module.scss';
 import { v1 } from 'uuid';
 import { About } from '../../../../UI/formControls/About';
-import { ClassSelect } from '../../../../UI/formControls/ClassSelect';
 import { ControlOutlined } from '@ant-design/icons';
 
 type PropsType = {
@@ -74,7 +73,7 @@ export const NewEventForm: React.FC<PropsType> = ({onSave}) => {
 					/> 
 				</Col>
 				{/* leading(хто проводить) */}
-				<Col>
+				{/* <Col>
 					<Controller 
 						name='leading'
 						defaultValue={'усі'}
@@ -93,10 +92,10 @@ export const NewEventForm: React.FC<PropsType> = ({onSave}) => {
 							</Form.Item>
 						)}
 					/>
-				</Col>
+				</Col> */}
 				{/* Дата проведення */}
  				<Col>
-					<Controller 
+					{/* <Controller 
 						name='date'
 						control={control}
 						defaultValue={tomorrowMoment}
@@ -123,7 +122,7 @@ export const NewEventForm: React.FC<PropsType> = ({onSave}) => {
 								/>
 							</Form.Item>
 						)}
-					/>
+					/> */}
 				</Col>
 			</Row>
 

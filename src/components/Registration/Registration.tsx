@@ -8,12 +8,12 @@ import { SchoolFields } from './Steps/SchoolFields';
 import { AppDispatchType, useAppDispatch } from '../../Redux/store';
 import { authActionStatusRemoved, authErrorRemoved, createAccountByEmail, logOut, loginDataReceived, myAccountDataReceived, removeAccount, sendMyAccountData } from '../../Redux/account/account-reducer';
 import { LoginFields } from './Steps/LoginFields';
-import { AvatarUpload } from './Steps/AvatarUpload/AvatarUpload';
+import { AvatarUpload } from '../../UI/formControls/AvatarUpload/AvatarUpload';
 import { useSelector } from 'react-redux';
 import { selectAuthActionsStatuses, selectAuthErrors, selectAuthedStatus, selectMyAccountData, selectMyUid } from '../../Redux/account/account-selectors';
 import { FirebaseContext } from '../../main';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { AboutField } from './Steps/AboutField';
+import { AboutField } from '../../UI/formControls/AboutField';
 import { Welcoming } from './Steps/Welcoming';
 import { ActionStatus } from '../../UI/ActionStatus';
 import { selectPrevPage } from '../../Redux/app/appSelectors';
@@ -173,7 +173,7 @@ export const Registration: React.FC<PropsType> = ({}) => {
 			currStep = <InitialsFields errors={errors} />
 			break;
 		case 3:
-			currStep = <AboutField errors={errors} />
+			currStep = <AboutStep errors={errors} />
 			break;
 		case 4:
 			currStep = <InfoFields errors={errors} />

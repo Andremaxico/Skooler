@@ -4,12 +4,14 @@ import studyImg from '../../../assets/images/study-icon.png';
 import EastIcon from '@mui/icons-material/East';
 import { Control, FieldErrors, Controller, UseFormTrigger, UseFormSetValue, useWatch } from 'react-hook-form';
 import { RegistrationFieldValues } from '../Registration';
-import { ControllerFieldType, SchoolSearchItemType } from '../../../utils/types';
+import { ControllerFieldType, SchoolInfoType, SchoolOptionType, SchoolSearchItemType } from '../../../utils/types';
 import { searchSchool } from '../../../Redux/account/account-reducer';
 import { SaveBtn } from '../SaveBtn';
 import Autocomplete from '@mui/joy/Autocomplete/Autocomplete';
 import { CircularProgress, FormControl, FormHelperText, FormLabel, Input, MenuItem, Select } from '@mui/joy';
 import { ReturnBtn } from '../ReturnBtn/ReturnBtn';
+import { SchoolField } from '../../../UI/formControls/SchoolField';
+import { ClassField } from '../../../UI/formControls/ClassField';
 
 
 type PropsType = {
@@ -18,11 +20,6 @@ type PropsType = {
 	trigger: UseFormTrigger<RegistrationFieldValues>,
 	setValue: UseFormSetValue<RegistrationFieldValues>,
 	nextStep: () => void,
-};
-
-export type SchoolOptionType = {
-	id: number,
-	name: string,
 };
 
 export const SchoolFields: React.FC<PropsType> = ({control, errors, nextStep, trigger, setValue}) => {
@@ -74,6 +71,11 @@ export const SchoolFields: React.FC<PropsType> = ({control, errors, nextStep, tr
 		setLoading(false);
 	}
 
+	//we make this function because of difficulty about throwing setValue into ptops(typization)
+	const setValueForSchoolField = (name: 'schoolInfo', value: SchoolInfoType) => {
+		setValue(name, value);
+	}
+
 	useEffect(() => {
 		console.log('input value changed:', inputValue);
 	}, [inputValue])
@@ -109,52 +111,10 @@ export const SchoolFields: React.FC<PropsType> = ({control, errors, nextStep, tr
 					render={({field: {value, onChange}} : ControllerFieldType) => (
 						<FormControl className={classes.fieldWrapper} required>
 							<FormLabel className={classes.label}>Заклад освіти</FormLabel>
-							<Autocomplete
-								open={open}
-								onOpen={() => {
-									setOpen(true);
-								}}
-
-								onClose={() => {
-									setOpen(false);
-								}}
-								
-								error={!!errors.schoolInfo}
-
-								getOptionLabel={(option) => option.name}
-								noOptionsText={'Навчальних закладів не знайдено або спробуйте точніше'}
-								loadingText='Завантаження...'
-								placeholder='Шукайте тут'
-
-								options={schoolsOptions}
+							<SchoolField
+								error={errors.schoolInfo?.message}
+								setValue={setValueForSchoolField}
 								value={value}
-								onChange={(e, value: SchoolOptionType) => {
-									console.log('autocomplete value', value);
-									if(value.id && value.name) {
-										setValue('schoolInfo', {
-											id: value.id,
-											label: value.name,
-										});
-									}
-								}}
-
-								onInputChange={(e, value) => {
-									console.log(value, typeof value);
-									//after blur we got 'undefined' value
-									if(value === 'undefined') return;
-
-									//when search changed -> get request to server	
-									if(value.replace(' ', '').length > 2) {
-										handleSearchChange(value);
-									} else if(value.length < (inputValue?.length || 0)) {
-										clearAutocomplete();
-									}
-									setInputValue(value);
-								}}
-
-								onBlur={handleBlur}
-								inputValue={inputValue}
-								loading={loading}  
 							/>
 							{!!errors.schoolInfo && 
 								<FormHelperText className={classes.errorText}>{errors.schoolInfo.message}</FormHelperText>
@@ -173,23 +133,11 @@ export const SchoolFields: React.FC<PropsType> = ({control, errors, nextStep, tr
 						max: {value: 11, message: 'Класів всього 11'},
 					}}
 					render={({field: {onChange, value}} : ControllerFieldType) => (
-						<FormControl
-							className={classes.fieldWrapper}
-							required
-						>
-							<FormLabel htmlFor="classNum-select" className={classes.label}>Ваш клас</FormLabel>
-							<Input 
-								value={value}
-								onChange={onChange}
-								className={classes.input}
-								placeholder='Ваш клас'
-								error={!!errors.class}
-								type='number'
-							/>
-							{!!errors.class && 
-								<FormHelperText className={classes.errorText}>{errors.class.message}</FormHelperText>
-							}
-						</FormControl>
+						<ClassField
+							error={errors.class?.message}
+							onChange={onChange}
+							value={value}
+						/>
 					)}
 				/>
 			</div>

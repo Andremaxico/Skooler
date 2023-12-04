@@ -15,6 +15,7 @@ type PropsType = {};
 
 const Account: React.FC<PropsType> = ({}) => {
 	const [isLoading, setIsLoading] = useState<boolean>(true);
+	const [isEditing, setIsEditing] = useState<boolean>(false);
 
 	const myAccountData = useSelector(selectMyAccountData);
 	const currUserAccountData = useSelector(selectCurrUserAccountData);
@@ -26,8 +27,6 @@ const Account: React.FC<PropsType> = ({}) => {
 
 	const accountData = userId ? currUserAccountData : myAccountData;
 	const isMy = !userId;
-
-	const [isEdit, setIsEdit] = useState<boolean>(false);
 
 	useEffect(() => {
 		setIsLoading(true);
@@ -45,23 +44,22 @@ const Account: React.FC<PropsType> = ({}) => {
 	console.log('is fetching', isFetching);
 
 	if(!isAuthed) return <Navigate to='/login' replace={true}/>
-	if(isFetching && isLoading) return <Preloader />;
-
+	if(isFetching && isLoading || !myAccountData) return <Preloader />;
 	return (
 		<div className={classes.Account}>
 			{
-			!isEdit && accountData ?
+			!isEditing && accountData ?
 				<>
 					<AccountBody 
 						accountData={accountData} 
-						setIsEdit={setIsEdit}
+						setIsEditing={setIsEditing}
 						isMy={isMy}
 					/>
 					<AccountQuestions uid={accountData.uid} />
 				</>
 			: isMy ? (
-				// <AccountForm accountData={myAccountData} setIsEdit={setIsEdit}/>
-				<p>Тут має бути AccountForm</p>
+				<AccountForm accountData={myAccountData} setIsEdit={setIsEditing}/>
+				// <p>Тут має бути AccountForm</p>
 			) 
 			: <NoAccountData />
 			}

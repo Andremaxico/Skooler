@@ -19,11 +19,11 @@ import { MessageBtn } from './MessageBtn';
 
 type PropsType = {
 	accountData: ReceivedAccountDataType,
-	setIsEdit: (value: boolean) => void,
+	setIsEditing: (value: boolean) => void,
 	isMy: boolean,
 };
 
-export const AccountBody: React.FC<PropsType> = React.memo(({accountData, isMy}) => {
+export const AccountBody: React.FC<PropsType> = React.memo(({accountData, isMy, setIsEditing}) => {
 	const {
 		aboutMe, avatarUrl, uid, name, surname
 	} = accountData;
@@ -32,6 +32,7 @@ export const AccountBody: React.FC<PropsType> = React.memo(({accountData, isMy})
 		<div className={classes.AccountBody}>
 			<AccountHeader
 				avatarUrl={avatarUrl}
+				setIsEditing={setIsEditing}
 				name={name}
 				surname={surname}
 				className={classes.header}

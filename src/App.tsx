@@ -17,7 +17,7 @@ import { loginDataReceived, sendMyAccountData, setMyAccountData } from './Redux/
 
 import Preloader from './UI/Preloader';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { Auth, onAuthStateChanged } from 'firebase/auth';
+import { Auth, User, onAuthStateChanged } from 'firebase/auth';
 import MySchool from './components/MySchool';
 
 import { selectFooterHeight, selectHeaderHeight, selectNetworkError, selectPrevPage } from './Redux/app/appSelectors';
@@ -55,6 +55,7 @@ const App = () => {
   const { auth } = useContext(FirebaseContext);
 
   const [isFetching, setIsFetching] = useState<boolean>(true);
+  const [user, setUser] = useState<User | null | undefined>(undefined);
 
   const networkError = useSelector(selectNetworkError);
   const userAction = useSelector(selectUserActionStatus); 
@@ -109,6 +110,7 @@ const App = () => {
   useEffect(() => {
     if(auth) {
       onAuthStateChanged(auth, async (user) => {
+        setUser(user);
         if (user) {
           dispatch(loginDataReceived({...user}));
           await dispatch(setMyAccountData(user));	
@@ -152,7 +154,8 @@ const App = () => {
     }
   }, [location])
 
-  //if(!loading && !user) return <Login />;  
+  if(isFetching) return <Preloader />
+  if(!isFetching && !user) return <Login />;  
   return (
     <div className={classes.App}>
         <AppHeader />

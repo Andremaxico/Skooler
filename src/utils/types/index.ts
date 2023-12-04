@@ -112,6 +112,7 @@ export type SchoolInfoType = {
 	label: string,
 }
 
+//comes to redux
 export type AccountDataType = {
 	class: number,
 	schoolInfo: SchoolInfoType,
@@ -120,12 +121,11 @@ export type AccountDataType = {
 	gender: 'male' | 'female',
 	aboutMe: string | null,
 	avatar: File | Blob | undefined,
-	email: string,
-	password: string,
 	name: string, 
 	surname: string,
 }
 
+//comes to server and from server
 export type ReceivedAccountDataType = { 
 	class: number,
 	school: SchoolDataType,
@@ -134,13 +134,31 @@ export type ReceivedAccountDataType = {
 	surname: string,
 	status: 'teacher' | 'schoolboy',
 	rating: UserRatingsType,
-	birthDate: Date, 
+	birthDate: {
+		month: number,
+		year: number, 
+		date: number
+	}, 
 	aboutMe: string | null,
 	avatarUrl: string | null,
 	uid: string,
-	email: string,
+	email: string | null,
 	liked: string[],
 	correctAnswersCount: number,
+}
+
+export type UpdatedAccountDataType = {
+	schoolInfo: SchoolInfoType,
+	class: number,
+	avatar: File | Blob | null, 
+	aboutMe: string,
+}
+
+export type FinalUpdatedAccountDataType = {
+	class: number,
+	school: SchoolDataType,
+	avatarUrl: string | null,
+	aboutMe: string,
 }
 
 export type SchoolResultValueType = {
@@ -149,6 +167,11 @@ export type SchoolResultValueType = {
 	label: string,
 	value: string,
 }
+
+export type SchoolOptionType = {
+	id: number,
+	name: string,
+};
 
 export type SchoolDataType = {
 	website: string,

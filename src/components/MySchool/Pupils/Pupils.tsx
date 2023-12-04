@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux';
 import { setCurrClassPupils, setMySchoolPupils } from '../../../Redux/mySchool/school-reducer';
 import { selectMySchoolPupils, selectCurrClassPupils } from '../../../Redux/mySchool/school-selectors';
 import { useAppDispatch } from '../../../Redux/store';
-import { ClassSelect } from '../../../UI/formControls/ClassSelect';
 import Preloader from '../../../UI/Preloader';
 import { PupilCard } from './PupilCard';
 import classes from './Pupils.module.scss';
@@ -62,12 +61,12 @@ export const Pupils: React.FC<PropsType> = ({}) => {
 	return (
 		<div className={classes.Pupils}>
 			<h2 className={classes.title}>Учні</h2>
-			<ClassSelect 
+			{/* <ClassSelect 
 				className={classes.classSelect}
 				placeholder='Клас' defaultValue={allPupilsValue}
 				extraClass={allPupilsValue}
 				onChange={handleClassChange} value={selectedClass}				
-			/>
+			/> */}
 			<div className={classes.pupilsGrid}>
 				{	isFetching && <Preloader /> 
 					||
