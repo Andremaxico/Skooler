@@ -27,6 +27,8 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 	const isSearching = useSelector(selectIsSearchShowing);
 	const savedScrollValue = useSelector(selectCurrStreamScrollValue);
 
+	console.log('posts', posts);
+
 	const { ref: isInViewRef, inView, entry  } = useInView({
 		threshold: 0.7,
 	});
@@ -93,7 +95,6 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 	//add listener if we have more than 10 posts
 	useEffect(() => {
 		if(posts && posts.length >= 10 && postsRef.current) {
-			console.log('add event listener');
 			postsRef.current.addEventListener('scroll', handleScroll);
 
 			return () => {
@@ -102,10 +103,21 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 		}
 	}, [postsRef.current, posts])
 
-	if(isLoading || isPostsFetching) return <Preloader />;
+	console.log('posts ref', postsRef.current?.scrollHeight);
+
+	if(isLoading || posts === null) return <Preloader fixed />;
 
 	return (
-		<div ref={postsRef} className={classes.Posts} >
+		<div 
+			ref={postsRef} 
+			className={classes.Posts} 
+			// style={{
+			// 	paddingBottom: 
+			// 		postsRef.current?.scrollHeight || 0 > document.body.clientHeight ? 
+			// 		footerHeight : 
+			// 		0
+			// }}
+		>
 			{searchedPosts && searchedPosts.length > 0 ?
 				<>  
 					<div className={classes.returnBtn}>
