@@ -75,21 +75,19 @@ export const AvatarUpload: React.FC<PropsType> = ({ name, surname, setSelectedFi
 
 		if (e.target.files && e.target.files.length > 0) {
 			const currFile = e.target.files[0];
-			setSelectedFile(currFile)
-			//set value of avatar 
-			// if(currFile) {
-			// 	setValue('avatar', currFile);
-	
-			// 	console.log('value of avatar setted', currFile);
-			// }
 
+			console.log('curr file', currFile);
 
 			//check if file is too big -> stop
-			if(selectedFile && selectedFile.size > 71680){
-				alert("File is too big!");
-				e.target.value = "";
-				return;
-			};
+			// if(currFile && currFile.size > 71680){
+			// 	alert("File is too big!");
+			// 	e.target.value = "";
+			// 	return;
+			// } else {
+				
+			// }
+
+			setSelectedFile(currFile)
 		 }
 	}
 

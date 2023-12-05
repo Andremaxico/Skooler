@@ -7,8 +7,7 @@
 		margin-bottom: 16px;	
 	}  	
 	.body {
-		display: flex;
-		justify-content: space-between;
+		@include column-align;
 		margin-bottom: 16px;
 		.avatar {
 			margin-right: 96px;
@@ -16,6 +15,10 @@
 		.textFields {
 
 		}
+	}
+
+	.top {
+		display: flex;
 	}
 
 	.initialsInputs {

@@ -8,7 +8,6 @@ import { useAppDispatch } from '../../../../Redux/store';
 import { dateFromMoment } from '../../../../utils/helpers/converters';
 import classes from './NewEventForm.module.scss';
 import { v1 } from 'uuid';
-import { About } from '../../../../UI/formControls/About';
 import { ControlOutlined } from '@ant-design/icons';
 
 type PropsType = {
@@ -126,14 +125,14 @@ export const NewEventForm: React.FC<PropsType> = ({onSave}) => {
 				</Col>
 			</Row>
 
-			<About<FieldsValues>
+			{/* <About<FieldsValues>
 				// @ts-ignore
 				control={control}
 				name='about'
 				className={classes.about}
 				maxLength={350}
 				placeholder='Про подію'
-			/>
+			/> */}
 			<Button htmlType='submit'>Зберегти подію</Button>
 		</Form>
 	)

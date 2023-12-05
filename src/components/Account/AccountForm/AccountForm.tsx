@@ -1,20 +1,16 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { Controller, useForm, useWatch } from 'react-hook-form';
-import { AccountDataType, ReceivedAccountDataType, SchoolDataType, SchoolInfoType, SchoolSearchItemType, UpdatedAccountDataType } from '../../../utils/types';
+import React, { useEffect, useState } from 'react'
+import { Controller, useForm } from 'react-hook-form';
+import { ReceivedAccountDataType, SchoolInfoType, UpdatedAccountDataType } from '../../../utils/types';
 import classes from './AccountForm.module.scss';
-import { searchSchool as searchSchools, sendMyAccountData, updateMyAccountData } from '../../../Redux/account/account-reducer';
+import { updateMyAccountData } from '../../../Redux/account/account-reducer';
 import { useAppDispatch } from '../../../Redux/store';
-import moment from 'moment';
-import { InitialInput } from './InitialInput';
-import { addZero } from '../../../utils/helpers/formatters';
-import { About } from '../../../UI/formControls/About';
-import { FormGroup, FormHelperText } from '@mui/material';
+import { FormHelperText } from '@mui/material';
 import { Button, FormControl, FormLabel } from '@mui/joy';
 import { SchoolField } from '../../../UI/formControls/SchoolField';
 import { AvatarUpload } from '../../../UI/formControls/AvatarUpload';
 import { ClassField } from '../../../UI/formControls/ClassField';
-import dayjs from 'dayjs';
 import { ABOUT_ME_MAX_LENGTH } from '../../../utils/constants';
+import { AboutField } from '../../../UI/formControls/AboutField';
 
 type PropsType = {
 	accountData: ReceivedAccountDataType,
@@ -123,11 +119,16 @@ export const AccountForm: React.FC<PropsType> = React.memo(({accountData, setIsE
 					<Controller
 						control={control}
 						name='aboutMe'
+						defaultValue={accountData.aboutMe || ''}
 						rules={{
 							maxLength: {value: ABOUT_ME_MAX_LENGTH, message: `Повинно бути менше ${ABOUT_ME_MAX_LENGTH} символів`}
 						}}
-						render={({field: {  }}) => (
-							
+						render={({field: {value, onChange  }}) => (
+							<AboutField
+								error={errors.aboutMe?.message}
+								onChange={onChange}
+								value={value}
+							/>
 						)}
 					/>
 				</div>

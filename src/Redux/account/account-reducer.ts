@@ -274,11 +274,13 @@ export const sendMyAccountData = (data: AccountDataType) => async (dispatch: App
 
 export const updateMyAccountData = (data: UpdatedAccountDataType) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
 	const uid = getState().account.myLoginData?.uid;
+	const currData = getState().account.myAccountData;
 	const { aboutMe, avatar, class: classNum, schoolInfo } = data;
 	console.log('data', data);
 
 	if(uid) {
-		let avatarUrl: string | null = null;
+		//if user didn't change avatar, without getting it we setting it to null
+		let avatarUrl: string | null = getState().account.myAccountData?.avatarUrl || null; 
 		if(avatar) {
 			avatarUrl = await accountAPI.sendAvatar(avatar, uid);
 			if(avatarUrl === undefined) avatarUrl = null;
@@ -296,6 +298,9 @@ export const updateMyAccountData = (data: UpdatedAccountDataType) => async (disp
 		}
 		await accountAPI.updateMyAccountData(finalData, uid);
 		
+		if(currData) {
+			dispatch(myAccountDataReceived({...currData, ...finalData}));
+		} 
 	}
 }
 export const logOut = () => async (dispatch: AppDispatchType) => {
