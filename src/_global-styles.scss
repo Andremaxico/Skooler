@@ -51,9 +51,9 @@ $smBoxShadow: 3px 5px 22px -1px $gray;
 }
 @mixin text() {
   @include font-style(16px, 140%);
-  @media (max-width: $md2) {
-    @include font-style(14px, 140%);
-  }
+  // @media (max-width: $md2) {
+  //   @include font-style(14px, 140%);
+  // }
 }
 @mixin smallText() {
   @include font-style(14px, 140%);
@@ -64,7 +64,7 @@ $smBoxShadow: 3px 5px 22px -1px $gray;
 @mixin smallTitle() {
   @include font-style(22px, 140%, 500);
   @media (max-width: $md2) {
-    @include font-style(18px, 140%, 500);
+    @include font-style(20px, 140%, 500);
   }
 }
 
@@ -116,6 +116,7 @@ $smBoxShadow: 3px 5px 22px -1px $gray;
 
 @mixin input {
   padding: 10px 14px;
+  width: 100%;
   @include smallText;
   border: 1px solid $gray;
   border-radius: 4px;
@@ -148,7 +149,9 @@ $smBoxShadow: 3px 5px 22px -1px $gray;
 }
 
 
-.fieldWrapper {}
+.fieldWrapper {
+  width: 100%;
+}
 .fieldLabel {
   @include text;
   margin-bottom: 4px;

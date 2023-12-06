@@ -1,4 +1,4 @@
-import React, { MouseEvent, useRef, useState } from 'react';
+import React, { ForwardedRef, MouseEvent, Ref, forwardRef, useRef, useState } from 'react';
 
 import classes from './PostCard.module.scss';
 
@@ -29,7 +29,7 @@ type PropsType = {
 	setAnsweringQuestionId?: (value: string) => void,
 };
 
-export const PostCard: React.FC<PropsType> = ({data, isOpen, answeringQuestionId, setAnsweringQuestionId}) => {
+export const PostCard = forwardRef<HTMLDivElement, PropsType>(({data, isOpen, answeringQuestionId, setAnsweringQuestionId}, ref) => {
 	const { commentsCount, category, isClosed, createdAt, ...baseData } = data;
 
 	//for blocking native card onClick event if "three dots" menu opened
@@ -106,8 +106,7 @@ export const PostCard: React.FC<PropsType> = ({data, isOpen, answeringQuestionId
 	}
 
 	return (
-		<section className={cn(classes.PostCard, isClosed ? classes._closed : '')}>   
-
+		<section className={cn(classes.PostCard, isClosed ? classes._closed : '')} ref={ref}>   
 			<PostBase 
 				data={{...baseData, text: cuttedText}} 
 				category={category} 
@@ -149,4 +148,4 @@ export const PostCard: React.FC<PropsType> = ({data, isOpen, answeringQuestionId
 			<PostDate createdAt={createdAt} closed={isClosed}/>
 		</section>
 	)
-}
+})

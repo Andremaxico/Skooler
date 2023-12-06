@@ -5,6 +5,7 @@ import { PostDataType } from "../utils/types";
 import { once } from 'lodash';
 import { orderByChild } from 'firebase/database';
 import { lime } from '@mui/material/colors';
+import { POSTS_QUERY_LIMIT } from '../utils/constants';
 
 let unsubscribeFromQChanges: {[key: string]: Function} = {};
 let unsubscribeFromAnChanges: {[key: string]: Function} = {};
@@ -12,47 +13,54 @@ let unsubscribeFromAnChanges: {[key: string]: Function} = {};
 let documentSnapshots: QuerySnapshot<DocumentData> | null = null;
 
 export const streamAPI =  {
-	async getPosts(lastVisiblePost: PostDataType | null) {
+	async getPosts(lastVisiblePostId: string | null) {
 		const postsRef = collection(firestore, 'questions');
-		const postsLimit = 10;
+		const postsLimit = POSTS_QUERY_LIMIT;
 		let nextPosts: DocumentData[] = [];
 
 		console.log('get posts--------------');
 
 		// Query the first page of docs
-		const first = query(collection(firestore, "questions"), orderBy("createdAt"), limit(25));
+		const first = query(postsRef, orderBy("createdAt", 'desc'), limit(postsLimit));
 		documentSnapshots = await getDocs(first);
 
 		// Get the last visible document
-		const lastVisible = documentSnapshots.docs[documentSnapshots.docs.length-1];
-		console.log("last", lastVisible);
+		// const lastVisible = documentSnapshots.docs[documentSnapshots.docs.length-1];
+		// console.log("last", lastVisible);
 
 		// Construct a new query starting at this document,
 		// get the next 25 cities.
-		if(lastVisiblePost) {
-			console.log('last visible post isnot null')	 
-			const next = query(collection(firestore, "questions"),
-				orderBy("createdAt", 'desc'),
-				//@ts-expect-error
-				startAfter(lastVisible['createdAt']),
-				limit(10));
-			documentSnapshots = await getDocs(next);  
-
-		} else {
-			// Query the first page of docs
-			const first = query(collection(firestore, "questions"), orderBy("createdAt", 'desc'), limit(10));
-			documentSnapshots = await getDocs(first);
+		console.log('last visible post id', lastVisiblePostId);
+		if(lastVisiblePostId) {
+			const lastVisiblePostQ = query(postsRef, where('id', '==', lastVisiblePostId));
+			const lastVisiblePostSnaps = await getDocs(lastVisiblePostQ);
+			let lastVisiblePostSnap = null;
+			lastVisiblePostSnaps.forEach(snap => {
+				if(snap.exists()) {
+					lastVisiblePostSnap = snap;
+				}
+			})
+			console.log('last visible post snap', lastVisiblePostSnap, lastVisiblePostSnap);
+			if(lastVisiblePostSnap) {
+				const next = query(postsRef,
+					orderBy("createdAt", 'desc'),
+					startAfter(lastVisiblePostSnap),
+					limit(postsLimit)
+				);
+				console.log('next query', next);
+				documentSnapshots = await getDocs(next);  
+				console.log('get docs, next');
+			}
 		}
    
 		if(documentSnapshots) {
 			documentSnapshots.forEach(doc => {
-				console.log('foreach posts');
 				if(doc.exists()) {
 					nextPosts.push(doc.data());
 				}
 			});
 
-			console.log('next posts', nextPosts);
+			console.log('next posts api', nextPosts);
 
 			return nextPosts as PostDataType[];
 		}

@@ -12,6 +12,7 @@ import { NavLink } from 'react-router-dom';
 import { NoResults } from './NoResults';
 import { selectFooterHeight, selectHeaderHeight } from '../../../Redux/app/appSelectors';
 import { useInView } from 'react-intersection-observer';
+import { debounce } from 'lodash';
 
 type PropsType = {
 	isLoading: boolean,
@@ -27,11 +28,16 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 	const isSearching = useSelector(selectIsSearchShowing);
 	const savedScrollValue = useSelector(selectCurrStreamScrollValue);
 
-	console.log('posts', posts);
-
 	const { ref: isInViewRef, inView, entry  } = useInView({
 		threshold: 0.7,
 	});
+
+	useEffect(() => {
+		console.log('is in view', inView);
+		if(inView) {
+			dispatch(getNextPosts());
+		}
+	}, [inView])
 
 	const footerHeight = useSelector(selectFooterHeight) || 0;
 	const headerHeight = useSelector(selectHeaderHeight) || 0;
@@ -83,25 +89,28 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 	}, [isSearching]);
 
 	//get next posts if at down
-	const handleScroll = () => {
-		console.log('handle scroll');
-		const triggerHeight = (postsRef.current?.scrollTop || 0) + (postsRef.current?.offsetHeight || 0);
+	// const handleScroll = debounce(() => {
+	// 	const scrollTop = window.scrollY;
+	// 	const clientHeight = postsRef.current?.clientHeight;
+	// 	const scrollHeight = postsRef.current?.scrollHeight;
+	// 	console.log('handle scroll', scrollTop, clientHeight, scrollHeight);
+	// 	const triggerHeight = (scrollTop || 0) + (clientHeight || 0);
 
-		if(triggerHeight >= (postsRef.current?.scrollHeight || 0) - 10) {
-			dispatch(getNextPosts());
-		}
-	}
+	// 	if(triggerHeight >= (scrollHeight || 0) - 10) {
+	// 		dispatch(getNextPosts());
+	// 	}
+	// }, 20);
 
 	//add listener if we have more than 10 posts
-	useEffect(() => {
-		if(posts && posts.length >= 10 && postsRef.current) {
-			postsRef.current.addEventListener('scroll', handleScroll);
-
-			return () => {
-				postsRef.current?.removeEventListener('scroll', handleScroll);
-			}
-		}
-	}, [postsRef.current, posts])
+	// useEffect(() => {
+	// 	if(posts && posts.length >= 10) {
+	// 		window.addEventListener('scroll', handleScroll);
+	// 		console.log('add event listener');
+	// 		return () => {
+	// 			window.removeEventListener('scroll', handleScroll);
+	// 		}
+	// 	}
+	// }, [posts])
 
 	console.log('posts ref', postsRef.current?.scrollHeight);
 
@@ -135,6 +144,7 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 						data={data} 
 						key={data.id} 
 						isOpen={false} 
+						ref={isInViewRef}
 						answeringQuestionId={openedAnswerFormQId}
 						setAnsweringQuestionId={setOpenedAnswerFormQId}
 					/>

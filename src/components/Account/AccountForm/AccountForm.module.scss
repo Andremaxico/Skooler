@@ -1,47 +1,63 @@
 @import '../../../global-styles';
-.form {
-	@include column-align;
-	align-items: center;
-	.title {
-		@include title;
-		margin-bottom: 16px;	
-	}  	
-	.body {
+
+.formWrapper {
+	@include size(100%, 100%);
+	@include center-align;
+	.form {
 		@include column-align;
-		margin-bottom: 16px;
-		.avatar {
-			margin-right: 96px;
+		align-items: center;
+		.title {
+			@include title;
+			margin-bottom: 16px;	
+		}  	
+		.body {
+			@include column-align;
+			margin-bottom: 16px;
+			@media (max-width: $md2) {
+				max-width: 320px;
+				width: 100%;
+			}
+			.avatar {
+				margin-right: 96px;
+				@media (max-width: $md2) {
+					margin-right: 0;
+				}	
+			}
+			.textFields {
+				width: 100%;
+			}
 		}
-		.textFields {
-
+	
+		.top {
+			display: flex;
+			@media (max-width: $md2) {
+				flex-direction: column;
+				align-items: center;
+			}
 		}
-	}
-
-	.top {
-		display: flex;
-	}
-
-	.initialsInputs {
-		display: flex;
-	}
-
-	.avatarUpload {
-		@include size(100px, 100px);
-		border-radius: 50%;
-		overflow: hidden;
-	}
-ї
-	.aboutMe {
-		width: 100%;
-		max-height: 300px;
-	}
-
-	.schoolInfo {
-		.selectSchool {
+	
+		.initialsInputs {
+			display: flex;
+		}
+	
+		.avatarUpload {
+			@include size(100px, 100px);
+			border-radius: 50%;
+			overflow: hidden;
+		}
+	ї
+		.aboutMe {
 			width: 100%;
+			max-height: 300px;
 		}
-		.selectClass {
-			
-		}	
+	
+		.schoolInfo {
+			.selectSchool {
+				width: 100%;
+			}
+			.selectClass {
+				
+			}	
+		}
 	}
 }

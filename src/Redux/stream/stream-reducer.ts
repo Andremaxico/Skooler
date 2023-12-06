@@ -246,11 +246,13 @@ export const streamReducer = createReducer(inititalState, (builder) => {
 
 //==========================THUNKS========================
 export const getNextPosts = () => async (dispatch: AppDispatchType, getState: () => RootStateType ) => {
-	const lastVisiblePost = getState().stream.lastVisiblePost;
+	const lastVisiblePostId = getState().stream.lastVisiblePost?.id || null;
 
-	console.log('lastVisiblePost', lastVisiblePost);
+	console.log(lastVisiblePostId);
 
-	const nextPosts = await streamAPI.getPosts(lastVisiblePost);
+	const nextPosts = await streamAPI.getPosts(lastVisiblePostId);
+
+	console.log('nextPosts', nextPosts);
 
 	if(nextPosts) {
 		//set last post for triggering loading next posts if we see lastPost 

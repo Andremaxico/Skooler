@@ -52,7 +52,7 @@ export const AccountForm: React.FC<PropsType> = React.memo(({accountData, setIsE
 
 	return (
 		// onFinish == onSubmit
-		<>
+		<div className={classes.formWrapper}>
 			<form className={classes.form} onSubmit={handleSubmit(onSubmit)}>
 				<h2 className={classes.title}>Змінити дані профілю</h2>
 				<div className={classes.body}>
@@ -136,7 +136,7 @@ export const AccountForm: React.FC<PropsType> = React.memo(({accountData, setIsE
 					Зберегти
 				</Button>
 			</form>
-		</>	
+		</div>	
 	);
 
 });
