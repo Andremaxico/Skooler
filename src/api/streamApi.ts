@@ -18,8 +18,6 @@ export const streamAPI =  {
 		const postsLimit = POSTS_QUERY_LIMIT;
 		let nextPosts: DocumentData[] = [];
 
-		console.log('get posts--------------');
-
 		// Query the first page of docs
 		const first = query(postsRef, orderBy("createdAt", 'desc'), limit(postsLimit));
 		documentSnapshots = await getDocs(first);
@@ -30,7 +28,6 @@ export const streamAPI =  {
 
 		// Construct a new query starting at this document,
 		// get the next 25 cities.
-		console.log('last visible post id', lastVisiblePostId);
 		if(lastVisiblePostId) {
 			const lastVisiblePostQ = query(postsRef, where('id', '==', lastVisiblePostId));
 			const lastVisiblePostSnaps = await getDocs(lastVisiblePostQ);
@@ -40,16 +37,13 @@ export const streamAPI =  {
 					lastVisiblePostSnap = snap;
 				}
 			})
-			console.log('last visible post snap', lastVisiblePostSnap, lastVisiblePostSnap);
 			if(lastVisiblePostSnap) {
 				const next = query(postsRef,
 					orderBy("createdAt", 'desc'),
 					startAfter(lastVisiblePostSnap),
 					limit(postsLimit)
 				);
-				console.log('next query', next);
 				documentSnapshots = await getDocs(next);  
-				console.log('get docs, next');
 			}
 		}
    

@@ -1,6 +1,7 @@
 @import '../../../global-styles';
 
 .Posts {
+	position: relative;
 	box-sizing: border-box;
 	overflow-x: visible;
 	&::-webkit-scrollbar {
@@ -10,5 +11,8 @@
 		@include text;
 		color: $gray;
 		font-style: italic;
+	}
+	.loaderBox {
+		@include center-align;
 	}
 }

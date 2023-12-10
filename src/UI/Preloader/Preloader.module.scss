@@ -1,14 +1,19 @@
 @import '../../global-styles';
 
 .Preloader {
-	position: absolute;
-	top: 50%;
-	left: 50%;
 	@include size(100px);
 	@include center-align;
-	transform: translate(-50%, -50%);
+	&._absolute {
+		position: absolute;
+	}
 	&._fixed {
 		position: fixed;
+	}
+	&._fixed, 
+	&._absolute {
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
 	}
 	.clockLoader {
 		--clock-color: $primary;

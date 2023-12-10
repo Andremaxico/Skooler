@@ -21,6 +21,7 @@ type PropsType = {
 export const Posts: React.FC<PropsType> = ({isLoading}) => {
 	const [openedAnswerFormQId, setOpenedAnswerFormQId] = useState<string | null>(null);
 	const [isPostsFetching, setIsPostsFetching] = useState<boolean>(true);
+	
 
 	const lastVisiblePost = useSelector(selectlastVisiblePost);
 	const posts = useSelector(selectPosts);
@@ -31,13 +32,6 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 	const { ref: isInViewRef, inView, entry  } = useInView({
 		threshold: 0.7,
 	});
-
-	useEffect(() => {
-		console.log('is in view', inView);
-		if(inView) {
-			dispatch(getNextPosts());
-		}
-	}, [inView])
 
 	const footerHeight = useSelector(selectFooterHeight) || 0;
 	const headerHeight = useSelector(selectHeaderHeight) || 0;
@@ -66,22 +60,29 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 			//-> get first posts and show loader
 			if(lastVisiblePost === null) {
 				const getFirstPosts = async () => {
-					setIsPostsFetching(true);
 					await dispatch(getNextPosts());
-					setIsPostsFetching(false);
 				}
 
 				getFirstPosts();
-			} else { 
-				//set newPosts
-				dispatch(getNextPosts());
 			}
 		}
-	}, [lastVisiblePost]);
+	}, []);
+
+	useEffect(() => {
+		console.log('is in view', inView);
+		if(inView) {
+			//set newPosts
+			const fetchPosts = async () => {
+				setIsPostsFetching(true);
+				await dispatch(getNextPosts());
+				setIsPostsFetching(false);
+			}
+			fetchPosts();
+		}
+	}, [inView])
 
 	//==========SAVE SCROLL VALUE WHEN SEARCHING FORM VISIBILITY STATUS CHANGING========
-	useEffect(() => {  
-		console.log('scroll', postsRef);
+	useEffect(() => { 
 		//is showing all posts
 		if(!searchedPosts && postsRef.current) {
 			dispatch(currStreamScrollValueChanged(postsRef.current.scrollTop || 0))
@@ -112,7 +113,9 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 	// 	}
 	// }, [posts])
 
-	console.log('posts ref', postsRef.current?.scrollHeight);
+	useEffect(() => {
+		console.log('is posts fetching', isPostsFetching);
+	}, [isPostsFetching]);
 
 	if(isLoading || posts === null) return <Preloader fixed />;
 
@@ -139,19 +142,27 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 					))}
 				</>
 			: searchedPosts == null && !!posts && posts.length || 0 > 0 ?
-				posts?.map(data => (
-					<PostCard 
-						data={data} 
-						key={data.id} 
-						isOpen={false} 
-						ref={isInViewRef}
-						answeringQuestionId={openedAnswerFormQId}
-						setAnsweringQuestionId={setOpenedAnswerFormQId}
-					/>
-				))
+				<>
+					{posts?.map(data => (
+						<PostCard 
+							data={data} 
+							key={data.id} 
+							isOpen={false} 
+							ref={isInViewRef}
+							answeringQuestionId={openedAnswerFormQId}
+							setAnsweringQuestionId={setOpenedAnswerFormQId}
+						/>
+					))}
+					{isPostsFetching &&
+						<div className={classes.loaderBox}>
+							<Preloader width={20} height={20} />
+						</div>
+					}
+				</>
 			: searchedPosts && searchedPosts?.length < 1 ?
 				<NoResults reloadStream={reloadStream} />
-			: <div>Питань немає взагалі</div>
+			: 
+				<div>Питань немає взагалі</div>
 			}
 		</div>
 	)
