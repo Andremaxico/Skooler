@@ -51,9 +51,9 @@ $smBoxShadow: 3px 5px 22px -1px $gray;
 }
 @mixin text() {
   @include font-style(16px, 140%);
-  // @media (max-width: $md2) {
-  //   @include font-style(14px, 140%);
-  // }
+  @media (max-width: $md3) {
+    @include font-style(14px, 140%);
+  }
 }
 @mixin smallText() {
   @include font-style(14px, 140%);

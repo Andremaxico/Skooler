@@ -1,4 +1,4 @@
-import React, {useRef, useEffect} from 'react'
+import React, {useRef, useEffect, useState} from 'react'
 import { NavLink, unstable_useBlocker as useBlocker, useLocation } from 'react-router-dom';
 import { AccountInfo } from './AccountInfo';
 import classes from './Header.module.scss';
@@ -7,17 +7,20 @@ import { selectMyAccountData, selectMyLoginData } from '../../Redux/account/acco
 import logo from '../../assets/images/logo.png';
 import { useAppDispatch } from '../../Redux/store';
 import { headerHeightReceived, returnBtnShowStatusChanged } from '../../Redux/app/appReducer';
-import { SearchQuestions } from './SearchQuestions';
+import { SearchButtons } from './SearchButtons';
 import { ReturnBtn } from './ReturnBtn';
 import { selectPrevPage, selectReturnBtnShowStatus } from '../../Redux/app/appSelectors';
 import LoginIcon from '@mui/icons-material/Login';
 import { IconButton } from '@mui/joy';
 import cn from 'classnames';
+import { SearchUsersForm } from './SearchUsersForm';
 
 
 type PropsType = {};
 
 const AppHeader: React.FC<PropsType> = ({}) => {
+	const [isSearchUsersFormShow, setIsSearchUsersFormShow] = useState<boolean>(false);
+
 	const loginData = useSelector(selectMyLoginData);
 	const myAccountData = useSelector(selectMyAccountData);
 	const isReturnBtnShow = useSelector(selectReturnBtnShowStatus);
@@ -46,24 +49,38 @@ const AppHeader: React.FC<PropsType> = ({}) => {
 	}, [prevPage, pathname])
 
 	return (
-		<header className={classes.AppHeader} ref={headerRef} id='appHeader'>
+		<header 
+			className={cn(
+				classes.AppHeader, 
+				isSearchUsersFormShow ? classes._showInput : ''
+			)} 
+			ref={headerRef} id='appHeader'
+		>
 			<div className={classes.buttons}>
 				{isReturnBtnShow && <ReturnBtn />}
-				<SearchQuestions />
+				<SearchButtons 
+					setIsSearchUserFormShow={setIsSearchUsersFormShow}
+				/>
 			</div>
-			<NavLink to={'/'} className={classes.logo}>
-				<img src={logo} alt='Skooler'/>
-			</NavLink>
-			{/* <AppMenu mode='horizontal' /> */}
-			<div className={classes.accountLink} id='headerAccountLink'>
-				{myAccountData ? 
-					<AccountInfo loginData={loginData} />
-				: !pathname.includes('registration') &&
-					<NavLink to='/login' className={classes.loginLink}>
-						<LoginIcon className={classes.icon} />
+			{ isSearchUsersFormShow ?
+				<SearchUsersForm />
+			:
+				<>
+					<NavLink to={'/'} className={classes.logo}>
+						<img src={logo} alt='Skooler'/>
 					</NavLink>
-				}
-			</div>
+					{/* <AppMenu mode='horizontal' /> */}
+					<div className={classes.accountLink} id='headerAccountLink'>
+						{myAccountData ? 
+							<AccountInfo loginData={loginData} />
+						: !pathname.includes('registration') &&
+							<NavLink to='/login' className={classes.loginLink}>
+								<LoginIcon className={classes.icon} />
+							</NavLink>
+						}
+					</div>
+				</>
+			}
 		</header>
 	)
 }
