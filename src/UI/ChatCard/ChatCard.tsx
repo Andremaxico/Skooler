@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import classes from './ChatCard.module.scss';
 import { ChatDataType } from '../../utils/types';
 import { Avatar, useTheme } from '@mui/joy';
-import { getStringDate } from '../../utils/helpers/getStringDate';
+import { getStringDate } from '../../utils/helpers/date/getStringDate';
 import { Link } from 'react-router-dom';
 import cn from 'classnames';
 

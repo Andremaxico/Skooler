@@ -130,8 +130,7 @@ export type ReceivedAccountDataType = {
 	class: number,
 	school: SchoolDataType,
 	gender: 'male' | 'female',
-	name: string, 
-	surname: string,
+	fullName: string,
 	status: 'teacher' | 'schoolboy',
 	rating: UserRatingsType,
 	birthDate: {

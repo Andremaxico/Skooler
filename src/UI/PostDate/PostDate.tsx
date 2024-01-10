@@ -2,7 +2,7 @@ import { FieldValue } from 'firebase/firestore';
 import React from 'react';
 import classes from './PostDate.module.scss';
 import cn from 'classnames';
-import { getStringDate } from '../../utils/helpers/getStringDate';
+import { getStringDate } from '../../utils/helpers/date/getStringDate';
 
 type PropsType = {
 	createdAt: FieldValue,

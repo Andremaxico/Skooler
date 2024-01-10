@@ -28,11 +28,13 @@ const AppHeader: React.FC<PropsType> = ({}) => {
 
 	const headerRef = useRef<HTMLDivElement>(null);
 
-	const	{ pathname } = useLocation();
-
-	console.log('pathname', pathname);
+	const { pathname } = useLocation();
 
 	const dispatch = useAppDispatch();
+
+	const closeSearchUsersForm = () => {
+		setIsSearchUsersFormShow(false);
+	}
 
 	useEffect(() => {
 		const headerHeight = headerRef.current?.clientHeight || 0;
@@ -54,16 +56,18 @@ const AppHeader: React.FC<PropsType> = ({}) => {
 				classes.AppHeader, 
 				isSearchUsersFormShow ? classes._showInput : ''
 			)} 
-			ref={headerRef} id='appHeader'
+			ref={headerRef} 
+			id='appHeader'
 		>
 			<div className={classes.buttons}>
-				{isReturnBtnShow && <ReturnBtn />}
+				{/* {isReturnBtnShow && <ReturnBtn />} */}
 				<SearchButtons 
 					setIsSearchUserFormShow={setIsSearchUsersFormShow}
+					isUsersSearching={isSearchUsersFormShow}
 				/>
 			</div>
 			{ isSearchUsersFormShow ?
-				<SearchUsersForm />
+				<SearchUsersForm closeForm={closeSearchUsersForm} />
 			:
 				<>
 					<NavLink to={'/'} className={classes.logo}>

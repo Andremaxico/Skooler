@@ -1,7 +1,7 @@
 import React from 'react';
 import classes from './AccountInfo.module.scss';
 import { ReceivedAccountDataType } from '../../../../utils/types';
-import { getStringDate } from '../../../../utils/helpers/getStringDate';
+import { getStringDate } from '../../../../utils/helpers/date/getStringDate';
 import { Link } from 'react-router-dom';
 import cn from 'classnames';
 

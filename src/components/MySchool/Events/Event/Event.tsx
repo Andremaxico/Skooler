@@ -1,6 +1,6 @@
 import { ClockCircleOutlined } from '@ant-design/icons';
 import React from 'react'
-import { getNumberOfDays } from '../../../../utils/helpers/getNumberOfDays';
+import { getNumberOfDays } from '../../../../utils/helpers/date/getNumberOfDays';
 import { EventDataType } from '../../../../utils/types'
 import classes from './Event.module.scss';
 

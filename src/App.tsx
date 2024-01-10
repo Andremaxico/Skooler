@@ -39,6 +39,7 @@ import Chat from './components/Chat';
 import { Registration } from './components/Registration';
 import { ResetPassword } from './components/Login/ResetPassword';
 import dayjs from 'dayjs';
+import { SearchUsers } from './components/SearchUsers';
 
 //const Chat = React.lazy(() => import('./components/Chat'));
 const Chats = React.lazy(() => import('./components/Chats'));
@@ -179,7 +180,10 @@ const App = () => {
                 <Route path='/chats' element={<Chats />} />
                 <Route path='/account' element={<SuspensedAccount />}>
                   <Route path=':userId'/>
-                </Route> 
+                </Route>
+                <Route path="searchUsers">
+                  <Route path=":searchTerm" element={<SearchUsers />} />
+                </Route>
                 <Route path='/post/:postId' element={<Post />} />
                 <Route path='/myschool' element={<MySchool />}/>
                 <Route path='/new-post' element={<NewPost />} />

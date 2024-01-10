@@ -14,7 +14,7 @@ import { MessagesGroup } from './MessagesGroup';
 import { DeleteConfirm } from '../../../UI/DeleteConfirm';
 import { UsersWhoReadDialog } from '../../../UI/UsersWhoReadDialog';
 import { debounce } from 'lodash';
-import { getStringDate } from '../../../utils/helpers/getStringDate';
+import { getStringDate } from '../../../utils/helpers/date/getStringDate';
 import { selectFooterHeight, selectHeaderHeight } from '../../../Redux/app/appSelectors';
 import { ScrollBtn } from '../../../UI/ScrollBtn';
 

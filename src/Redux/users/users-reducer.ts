@@ -46,6 +46,8 @@ export const setUsers = () => async (dispatch: AppDispatchType) => {
 
 export const searchUsersByFullname = (fullName: string) => async (dispatch: AppDispatchType) => {
 	const users = await usersAPI.getUsersByQuery(fullName);
-
-
+	
+	if(users) {
+		dispatch(usersFound(users));
+	}
 }

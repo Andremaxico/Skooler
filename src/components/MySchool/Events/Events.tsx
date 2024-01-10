@@ -5,7 +5,7 @@ import { startNewEventsListening, stopNewEventsListening } from '../../../Redux/
 import { selectMySchoolEvents } from '../../../Redux/mySchool/school-selectors';
 import { useAppDispatch } from '../../../Redux/store';
 import Preloader from '../../../UI/Preloader';
-import { getNumberOfDays } from '../../../utils/helpers/getNumberOfDays';
+import { getNumberOfDays } from '../../../utils/helpers/date/getNumberOfDays';
 import { EventDataType } from '../../../utils/types';
 import { Event } from './Event';
 import classes from './Events.module.scss';

@@ -8,7 +8,7 @@ import classes from './AccountBody.module.scss';
 import SchoolIcon from '../../../assets/images/school-icon.png';
 import BirthdayIcon from '../../../assets/images/birthday-icon.png';
 import { addZero } from '../../../utils/helpers/formatters';
-import { getStringDate } from '../../../utils/helpers/getStringDate';
+import { getStringDate } from '../../../utils/helpers/date/getStringDate';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import MessageIcon from '@mui/icons-material/Message';
 import { Avatar, Button } from '@mui/joy';
