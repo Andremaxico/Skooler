@@ -1,4 +1,5 @@
-export const stringAvatar = (name: string, surname: string) => {
+export const stringAvatar = (fullName: string) => {
+	const [name, surname] = fullName.split(' ');
 	return {
 	  sx: {
 		 bgcolor: '#fff'

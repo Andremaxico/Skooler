@@ -7,17 +7,15 @@ import { UserAvatar } from '../../../../UI/UserAvatar';
 
 type PropsType = {
 	className?: string,
-	name: string,
-	surname: string,
+	isMy: boolean,
+	fullName: string,
 	avatarUrl?: string | null,
 	setIsEditing: (v: boolean) => void,
 };
 
 export const AccountHeader: React.FC<PropsType> = ({
-	className, name, surname, avatarUrl, setIsEditing
+	className, fullName, avatarUrl, setIsEditing, isMy
 }) => {
-	console.log('avatar url', avatarUrl);
-
 	const handleEditBtnClick = () => {
 		setIsEditing(true);
 	}
@@ -25,16 +23,17 @@ export const AccountHeader: React.FC<PropsType> = ({
 	return (
 		<div className={cn(classes.AccountHeader, className)}>
 			<div className={classes.cover}>
-				<button className={classes.editBtn} onClick={handleEditBtnClick}>
-					<EditIcon className={classes.icon} />
-				</button>
-				<h1 className={classes.fullName}>{name} {surname}</h1>
+				{isMy &&
+					<button className={classes.editBtn} onClick={handleEditBtnClick}>
+						<EditIcon className={classes.icon} />
+					</button>
+				}
+				<h1 className={classes.fullName}>{fullName}</h1>
 			</div>
 			<UserAvatar
 				className={classes.avatar}
 				src={avatarUrl} 
-				name={name}
-				surname={surname}
+				fullName={fullName}
 				size='lg'
 			/>	
 		</div>

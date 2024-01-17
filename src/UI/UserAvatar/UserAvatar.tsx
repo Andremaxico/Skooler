@@ -7,14 +7,13 @@ import { stringAvatar } from '../../utils/helpers/stringAvatar';
 type PropsType = {
 	className?: string,
 	src?: string | null,
-	name?: string,
-	surname?: string,
+	fullName: string,
 	size?: 'sm' | 'md' | 'lg',
 };
 
 
 
-export const UserAvatar: React.FC<PropsType> = ({className, src, name, surname, size = 'sm'}) => {
+export const UserAvatar: React.FC<PropsType> = ({className, src, fullName, size = 'sm'}) => {
 	return (
 		<>	
 			{src ?
@@ -23,10 +22,10 @@ export const UserAvatar: React.FC<PropsType> = ({className, src, name, surname, 
 					src={src} 
 					size={size}  
 				/>
-			: name && surname ?
+			: fullName ?
 				<Avatar 
 					className={cn(classes.UserAvatar, className, classes[size])} 
-					{...stringAvatar(name, surname)}
+					{...stringAvatar(fullName)}
 					size={size}
 				/>
 			:
