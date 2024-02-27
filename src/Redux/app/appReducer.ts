@@ -1,6 +1,5 @@
 import { createReducer, createAction } from '@reduxjs/toolkit';
-
-
+import { UserActionType } from '../../utils/types';
 
 //=================ACTIONS=====================
 export const networkErrorStatusChanged = createAction<string | null>('app/NETWORK_ERROR_CHANGED');
@@ -9,6 +8,7 @@ export const footerHeightReceived = createAction<number>('app/FOOTER_HEIGHT_RECE
 export const headerHeightReceived = createAction<number>('app/HEADER_HEIGHT_RECEIVED');
 export const prevPageChanged = createAction<string>('app/PREV_PAGE_CHANGED');
 export const returnBtnShowStatusChanged = createAction<boolean>('app/RETURN_BTN_SHOW_STATUS_CHANGED');
+export const userActionStatusChanged = createAction<UserActionType | null>('app/USER_ACTION_STATUS_CHANGED');
 
 //==================	REDUCER===================
 type AppStateType = {
@@ -18,6 +18,7 @@ type AppStateType = {
 	headerHeight: number | null,
 	prevPage: string | null,
 	isReturnBtnShow: boolean, 
+	userAction: UserActionType | null
 };
 
 const initialState: AppStateType = {
@@ -27,6 +28,7 @@ const initialState: AppStateType = {
 	headerHeight: null,
 	prevPage: null,
 	isReturnBtnShow: false,
+	userAction: null,
 };
 
 export const appReducer = createReducer(initialState, (builder) => {
@@ -48,6 +50,9 @@ export const appReducer = createReducer(initialState, (builder) => {
 		})
 		.addCase(returnBtnShowStatusChanged, (state, action) => {
 			state.isReturnBtnShow = action.payload;
+		})
+		.addCase(userActionStatusChanged, (state, action) => {
+			state.userAction = action.payload;
 		})
 		.addDefaultCase((state, action) => {})
 });

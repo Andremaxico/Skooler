@@ -20,7 +20,7 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { Auth, User, onAuthStateChanged } from 'firebase/auth';
 import MySchool from './components/MySchool';
 
-import { selectFooterHeight, selectHeaderHeight, selectNetworkError, selectPrevPage } from './Redux/app/appSelectors';
+import { selectFooterHeight, selectHeaderHeight, selectNetworkError, selectPrevPage, selectUserAction } from './Redux/app/appSelectors';
 import { NetworkError } from './UI/NetworkError';
 import { AppFooter } from './components/AppFooter';
 import Stream from './components/Stream';
@@ -31,7 +31,6 @@ import {
   Experimental_CssVarsProvider as CssVarsProvider,
 } from '@mui/material/styles';
 import withSuspense from './utils/hoc/withSuspense';
-import { selectUserActionStatus } from './Redux/stream/stream-selectors';
 import { ActionStatus } from './UI/ActionStatus';
 import { theme } from './utils/theme';
 import { FirebaseContext } from './main';
@@ -40,6 +39,7 @@ import { Registration } from './components/Registration';
 import { ResetPassword } from './components/Login/ResetPassword';
 import dayjs from 'dayjs';
 import { SearchUsers } from './components/SearchUsers';
+import { getSuccessTextByTarget } from './utils/helpers/getSuccessTextByTarget';
 
 //const Chat = React.lazy(() => import('./components/Chat'));
 const Chats = React.lazy(() => import('./components/Chats'));
@@ -59,7 +59,7 @@ const App = () => {
   const [user, setUser] = useState<User | null | undefined>(undefined);
 
   const networkError = useSelector(selectNetworkError);
-  const userAction = useSelector(selectUserActionStatus); 
+  const userAction = useSelector(selectUserAction); 
   const prevPage = useSelector(selectPrevPage);
 
   const dispatch = useAppDispatch();
@@ -92,22 +92,7 @@ const App = () => {
     }
     console.log('naviagtor online check', navigator.onLine);
   }, [navigator.onLine]);
-
-  //get login data 
-  // useEffect(() => {
-  //   console.log('user', user);
-  //   setIsFetching(true);
-  //   const getLoginData = async () => {
-  //     if(user) {
-  //       dispatch(loginDataReceived({...user}));
-  //       await dispatch(setMyAccountData(user));	
-  //     }
-  //   }
-  //   getLoginData();
-  //   setIsFetching(false);
-  // }, [user]);
-
-  //set account data
+  
   useEffect(() => {
     if(auth) {
       onAuthStateChanged(auth, async (user) => {
@@ -191,17 +176,8 @@ const App = () => {
               </Routes>
             </Suspense>
             
-            {userAction?.target === 'post_adding' &&
-                <ActionStatus status={userAction.status} successText='Питання успішно додано'/>
-              || 
-              userAction?.target === 'answer_adding' && 
-                <ActionStatus status={userAction.status} successText='Відповідь успішно додана' />
-              ||
-              userAction?.target === 'post_deleting' &&
-                <ActionStatus status={userAction.status} successText='Питання видалено'/>
-              ||
-              userAction?.target === 'answer_deleting' &&
-                <ActionStatus status={userAction.status} successText='Відповідь видалено'/>
+            {userAction &&
+              <ActionStatus status={userAction.status} successText={getSuccessTextByTarget(userAction.target)} />
             }
           </div>
         </div>

@@ -20,3 +20,8 @@ export const selectPrevPage = (state: RootStateType) => {
 export const selectReturnBtnShowStatus = (state: RootStateType) => {
 	return state.app.isReturnBtnShow;
 }
+
+
+export const selectUserAction = (state: RootStateType) => {
+	return state.app.userAction;
+}

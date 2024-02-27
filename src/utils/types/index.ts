@@ -7,7 +7,6 @@ import { Value } from 'sass';
 import { BirthDateObject } from '../../Redux/account/account-reducer';
 import { AnyMxRecord } from 'dns';
 import dayjs, { Dayjs } from 'dayjs';
-import { UserActionStatusType } from '../../Redux/stream/stream-reducer';
 
 export type LinkDataType = {
 	path: PathsType,
@@ -121,8 +120,7 @@ export type AccountDataType = {
 	gender: 'male' | 'female',
 	aboutMe: string | null,
 	avatar: File | Blob | undefined,
-	name: string, 
-	surname: string,
+	fullName: string,
 }
 
 //comes to server and from server
@@ -201,12 +199,32 @@ export type EventDataType = {
 
 export type UserType = User;
 
+//=====================USER ACTIONS============
+export type UserStreamActionTargetType = 
+	'post_adding' | 'post_deleting' | 'post_editing' |
+	'answer_adding' | 'answer_deleting'
+;
+
+export type UserAccountActionTargetType = 
+	'changing_info' | 'post_deleting' | 
+	'answer_adding' | 'answer_deleting'
+;
+
+export type UserActionStatusType = 'loading' | 'success' | 'error';
+
+export type UserActionType = {
+	target: 
+		UserStreamActionTargetType | 
+		UserAccountActionTargetType,
+	status: UserActionStatusType,
+}
 
 //ERRORS====================================
 export type AuthActionsTypesType = 
 	'signin' | 'register' |
 	'reset_password'
 ;
+
 
 export type AuthErrorType = {
 	message: string,

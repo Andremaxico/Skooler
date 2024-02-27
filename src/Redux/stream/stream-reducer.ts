@@ -3,6 +3,7 @@ import { createReducer, createAction } from '@reduxjs/toolkit';
 import { streamAPI } from '../../api/streamApi';
 import { CommentType, PostDataType, QuestionCategoriesType } from '../../utils/types';
 import { AppDispatchType } from '../store';
+import { userActionStatusChanged } from '../app/appReducer';
 
 //=================ACTIONS========================
 export const newPostsReceived = createAction<PostDataType[]>('stream/NEW_POSTS_RECEIVED');
@@ -23,7 +24,6 @@ export const questionUnMarkedAsClosed = createAction<string>('stream/QUESTION_UN
 export const postRemoved = createAction<string>('stream/POST_REMOVED');
 export const questionChanged = createAction<PostDataType>('stream/QUESTION_CHANGED');
 export const answerChanged = createAction<CommentType>('stream/ANSWER_CHANGED');
-export const userActionStatusChanged = createAction<UserActionType | null>('stream/USER_ACTION_STATUS_CHANGED');
 export const lastVisiblePostChanged = createAction<PostDataType>('stream/LATEST_DOC_CHANGED');
 
 export const newAnswerAdded = createAction('stream/NEW_ANSWER_ADDED', (questionId: string, data: CommentType) => ({
@@ -39,16 +39,6 @@ export const answerDeleted = createAction('stream/ANSWER_DELETED', (qId: string,
 	}
 }));
 
-export type UserActionTargetType = 
-	'post_adding' | 'post_deleting' | string | 
-	'answer_adding' | 'answer_deleting'
-;
-
-export type UserActionStatusType = 'loading' | 'success' | 'error';
-export type UserActionType = {
-	target: UserActionTargetType,
-	status: UserActionStatusType,
-}
 
 type StateType = {
 	posts: PostDataType[] | null,
@@ -58,7 +48,6 @@ type StateType = {
 	currPostAnswers: null | CommentType[],
 	searchedPosts: null | PostDataType[],
 	currStreamScrollValue: number, 
-	userActionStatus: UserActionType | null,
 	lastVisiblePost: null | PostDataType,
 };
 const inititalState: StateType = {
@@ -83,7 +72,6 @@ const inititalState: StateType = {
 	currPostAnswers: null,
 	searchedPosts: null,
 	currStreamScrollValue: 0,
-	userActionStatus: null,
 	lastVisiblePost: null,
 };
 
@@ -234,9 +222,6 @@ export const streamReducer = createReducer(inititalState, (builder) => {
 				}
 			}
 		})
-		.addCase(userActionStatusChanged, (state, action) => {
-			state.userActionStatus = action.payload;
-		})
 		.addCase(lastVisiblePostChanged, (state, action) => {
 			state.lastVisiblePost = action.payload;
 		})
@@ -332,7 +317,7 @@ export const editQuestion = (qId: string, newText: string) => async (dispatch: A
 
 		//show loader
 		dispatch(userActionStatusChanged({
-			target: qId,
+			target: 'post_editing',
 			status: 'loading',
 		}));
 
@@ -451,15 +436,22 @@ export const editAnswer = (aId: string, newText: string) => async (dispatch: App
 		//loader instead of old text
 		dispatch(userActionStatusChanged({
 			status: 'loading',
-			target: aId,
+			target: 'post_editing',
 		}));
 
+		console.log('set action status');
 
 		//send new answer text to server
-		await streamAPI.editAnswer(data[0], newText);
+		const error = await streamAPI.editAnswer(data[0], newText);
 
 		//show new text insted of loader 
-		dispatch(userActionStatusChanged(null));
+		dispatch(userActionStatusChanged({
+			status: error ? 'error' : 'success',
+			target: 'post_editing',
+		}));
+		setTimeout(() => {
+			dispatch(userActionStatusChanged(null));
+		}, 1000);
 
 		//change answer in redux(local)
 		dispatch(answerChanged({

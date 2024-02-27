@@ -8,7 +8,7 @@ import cn from 'classnames';
 
 type PropsType = {
 	data: ChatDataType,
-	active: boolean
+	active?: boolean
 };
 
 const getMessageTime = (date: Date): string => {
@@ -49,7 +49,7 @@ const getMessageTime = (date: Date): string => {
 	}
 }
 
-export const ChatCard: React.FC<PropsType> = ({data, active}) => {
+export const ChatCard: React.FC<PropsType> = ({data, active = false}) => {
 	const { 
 		contactAvatarUrl, contactFullname, contactId, 
 		lastMessageData, lastMessageTime, unreadCount
@@ -86,6 +86,8 @@ export const ChatCard: React.FC<PropsType> = ({data, active}) => {
 
 	const stringDate = getMessageTime(date);
 
+	console.log('unread count', unreadCount, (unreadCount || 0) > 0);
+
 	console.log('is cut', isCut);  
 	return (
 		<Link to={`/chat/${contactId}`} className={cn(active ? classes._active: '',  classes.ChatCard)}>
@@ -103,7 +105,12 @@ export const ChatCard: React.FC<PropsType> = ({data, active}) => {
 						{lastMessageData.text}
 						{isCut && <span className={classes.ending}>...</span>}
 					</p>
-					{unreadCount && unreadCount > 0 && <span className={classes.newMessagesCount} ref={counterRef}>{unreadCount}</span>}
+					<span 
+						className={classes.newMessagesCount} 
+						ref={counterRef}
+					>
+						{unreadCount && unreadCount > 0 ? unreadCount : ''}
+					</span>
 				</div>
 			</div>
 		</Link>

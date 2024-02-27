@@ -6,6 +6,7 @@ import { once } from 'lodash';
 import { orderByChild } from 'firebase/database';
 import { lime } from '@mui/material/colors';
 import { POSTS_QUERY_LIMIT } from '../utils/constants';
+import ErrorList from 'antd/es/form/ErrorList';
 
 let unsubscribeFromQChanges: {[key: string]: Function} = {};
 let unsubscribeFromAnChanges: {[key: string]: Function} = {};
@@ -61,97 +62,134 @@ export const streamAPI =  {
 	},
 
 	async getUserQuestions(uid: string) {
-		const questionRef = collection(firestore, 'questions');
-		const docs = query(questionRef, where('authorId', '==', uid));
+		try {
+			const questionRef = collection(firestore, 'questions');
+			const docs = query(questionRef, where('authorId', '==', uid));
 
-		const snapshots = await getDocs(docs);
+			const snapshots = await getDocs(docs);
 
-		const questions: PostDataType[] = [];
+			const questions: PostDataType[] = [];
 
-		snapshots.forEach(snap => {
-			if(snap.exists()) questions.push(snap.data() as PostDataType);
-		});
+			snapshots.forEach(snap => {
+				if(snap.exists()) questions.push(snap.data() as PostDataType);
+			});
 
-		return questions;
+			return questions;
+		} catch (e) {
+			return e;
+		}
 	},
 
 	async editPost(data: PostDataType, newText: string) {
-		const changingPost = doc(firestore, 'questions', data.id);
+		try {
+			const changingPost = doc(firestore, 'questions', data.id);
 
-		await updateDoc(changingPost, {
-			...data,
-			text: newText,
-			isEdited: true,
-		})
+			await updateDoc(changingPost, {
+				...data,
+				text: newText,
+				isEdited: true,
+			})
+		} catch (e) {
+			return e
+		}
 	},
 
 	async addNewPost(data: PostDataType) {
 		if(data) {
-			await setDoc(doc(firestore, 'questions', data.id), {
-				...data
-			});
+			try {
+				await setDoc(doc(firestore, 'questions', data.id), {
+					...data
+				});
+			} catch(e) {
+
+			}
 		}
 	},
 
 	//no in use
 	async getPostById(id: string) {
-		const docRef = doc(firestore, 'questions', id);
-		const docSnap = await getDoc(docRef);
+		try {
+			const docRef = doc(firestore, 'questions', id);
+			const docSnap = await getDoc(docRef);
 
-		let postData;
+			let postData;
 
-		if(docSnap.exists()) {
-			postData = docSnap.data();
+			if(docSnap.exists()) {
+				postData = docSnap.data();
+			}
+
+			return postData as PostDataType;
+		} catch (e) {
+			return e;
 		}
-
-		return postData as PostDataType;
 	},
 
 	async addStarToQuestion(id: string) {
 		const questionDocref = doc(firestore, 'questions', id);
 		const docRef = await getDoc(questionDocref);
 
-		await updateDoc(questionDocref,{
-			stars: docRef.data()?.stars + 1,
-		});
+		try {
+			await updateDoc(questionDocref,{
+				stars: docRef.data()?.stars + 1,
+			});
+		} catch (e) {
+
+		}
 	},
 
 	async removeStarFromQuestion(id: string) {
 		const questionDocref = doc(firestore, 'questions', id);
 		const docRef = await getDoc(questionDocref);
 
-		await updateDoc(questionDocref,{
-			stars: docRef.data()?.stars - 1,
-		});
+		try {
+			await updateDoc(questionDocref,{
+				stars: docRef.data()?.stars - 1,
+			});
+		} catch(e) {
+			return e;
+		} 
 	},
 
 	async increaceCommentsCount(qId: string) {
 		//increase comments count
 		const questionRef = doc(firestore, 'questions', qId);
 		const questionDoc = await getDoc(questionRef);
-		if(questionDoc.exists()) {
-			const prevCommentsCount = questionDoc.data().commentsCount;
 
-			await updateDoc(questionRef, {
-				commentsCount: prevCommentsCount + 1,
-			})
+		try {
+			if(questionDoc.exists()) {
+				const prevCommentsCount = questionDoc.data().commentsCount;
+
+				await updateDoc(questionRef, {
+					commentsCount: prevCommentsCount + 1,
+				})
+			}
+		} catch(e) {
+			return e;
 		}
 	},
 
 	async addNewAnswer(questionId: string, data: CommentType) {
 		//add answer to collection
 		const newAnswerRef = doc(firestore, 'questions', questionId, 'comments', data.id);
-		await setDoc(newAnswerRef, data);
+		try {
+			await setDoc(newAnswerRef, data);
+		} catch(e) {
+			return e;
+		}
 	},
 
 	async editAnswer(data: CommentType, newText: string) {
 		const changingAnswer = doc(firestore, 'questions', data.parentQId, 'comments', data.id);
 
-		await updateDoc(changingAnswer, {
-			...data,
-			text: newText,
-			isEdited: true,
-		})
+		try {
+			await updateDoc(changingAnswer, {
+				...data,
+				text: newText,
+				isEdited: true,
+			})
+		} catch (error) {
+			return error;
+		}
 	},
 
 	async getPostsByQuery(queryStr: string, category: QuestionCategoriesType) {
@@ -159,14 +197,18 @@ export const streamAPI =  {
 		const postsQ = query(postsRef, where('category', '==', category));
 		const docs = await getDocs(postsQ);
 
-		let posts: DocumentData[] = [];
-		docs.forEach(doc => {
-			if(doc.exists()) {
-				if(doc.data().text.includes(queryStr)) posts.push(doc.data());
-			}
-		});
+		try {
+			let posts: DocumentData[] = [];
+			docs.forEach(doc => {
+				if(doc.exists()) {
+					if(doc.data().text.includes(queryStr)) posts.push(doc.data());
+				}
+			});
 
-		return posts as PostDataType[];
+			return posts as PostDataType[];
+		} catch(e) {
+			return e;
+		}
 	},
 
 	async getPostAnswers(postId: string) {
@@ -174,77 +216,106 @@ export const streamAPI =  {
 		const answersQ = query(answerRef);
 		const docs = await getDocs(answersQ);
 
-		let answers: DocumentData[] = [];
-		docs.forEach(doc => {
-			if(doc.exists()) {
-				answers.push(doc.data());
-			}
-		});
 
-		return answers as CommentType[];
+		try {
+			let answers: DocumentData[] = [];
+			docs.forEach(doc => {
+				if(doc.exists()) {
+					answers.push(doc.data());
+				}
+			});
+
+			return answers as CommentType[];
+		} catch(e) {
+			return e;
+		}
 	},
 
 	async addCorrentAnswerMark(qId: string, aId: string) {
 		console.log('api ids', qId, aId);
 		const answerRef = doc(firestore, 'questions', qId, 'comments', aId);
 
-		await updateDoc(answerRef, {
-			isCorrect: true,
-		})
+		try {
+			await updateDoc(answerRef, {
+				isCorrect: true,
+			})
+		} catch(e) {
+			return e;
+		}
 	},
 
 	async removeCorrentAnswerMark(qId: string, aId: string) {
 		const answerRef = doc(firestore, 'questions', qId, 'comments', aId);
 
-		await updateDoc(answerRef, {
-			isCorrect: false,
-		})
+		try {
+			await updateDoc(answerRef, {
+				isCorrect: false,
+			})
+		} catch(e) {
+			return e;
+		}
 	},
 
 	async markQuestionAsClosed(qId: string) {
 		const questionRef = doc(firestore, 'questions', qId);
 
-		await updateDoc(questionRef, {
-			isClosed: true,
-		})
+		try {
+			await updateDoc(questionRef, {
+				isClosed: true,
+			})
+		} catch(e) {
+			return e
+		}
 	},
 
 	async unmarkQuestionAsClosed(qId: string) {
 		const questionRef = doc(firestore, 'questions', qId);
 
-		await updateDoc(questionRef, {
-			isClosed: false,
-		})
+		try {
+			await updateDoc(questionRef, {
+				isClosed: false,
+			})
+		} catch(e) {
+			return e;
+		}
 	},
 
 	async subscribeOnPostChanges(qId: string, subscriber: (data: PostDataType) => void) {
 		const questionRef = doc(firestore, 'questions', qId);
 
-		unsubscribeFromQChanges[qId] = onSnapshot(questionRef, 
-			(querySnap) => {
-				let updatedPost: PostDataType | null = null;
+		try {
+			unsubscribeFromQChanges[qId] = onSnapshot(questionRef, 
+				(querySnap) => {
+					let updatedPost: PostDataType | null = null;
 
-				if(querySnap.exists()) updatedPost = querySnap.data() as PostDataType; 
+					if(querySnap.exists()) updatedPost = querySnap.data() as PostDataType; 
 
-				if(updatedPost) subscriber(updatedPost);
-			}
-		);
+					if(updatedPost) subscriber(updatedPost);
+				}
+			);
+		} catch(e) {
+			return e;
+		}
 	},
 
 	async subscribeOnAnswerChanges(qId: string, aId: string, subscriber: (data: CommentType) => void) {
 		const answerRef = doc(firestore, 'questions', qId, 'comments', aId);
 
-		unsubscribeFromAnChanges[qId] = onSnapshot(answerRef, 
-			(querySnap) => {
-				let updatedAnswer: CommentType | null = null;
+		try {
+			unsubscribeFromAnChanges[qId] = onSnapshot(answerRef, 
+				(querySnap) => {
+					let updatedAnswer: CommentType | null = null;
 
-				if(querySnap.exists()) updatedAnswer = querySnap.data() as CommentType; 
+					if(querySnap.exists()) updatedAnswer = querySnap.data() as CommentType; 
 
-				console.log('updated answer', updatedAnswer);
+					console.log('updated answer', updatedAnswer);
 
-				if(updatedAnswer) subscriber(updatedAnswer);
-			}
-		);
+					if(updatedAnswer) subscriber(updatedAnswer);
+				}
+			);
+		} catch(e) {
+			return e;
+		}
 	},
 
 	async unsubscribeFromPostChanges() {
@@ -253,25 +324,38 @@ export const streamAPI =  {
 
 	async deleteQuestion(qId: string) {
 		const questionRef = doc(firestore, 'questions', qId);
-		await deleteDoc(questionRef);
+		try {
+			await deleteDoc(questionRef);
+		} catch(e) {
+			return e;
+		}
 	},
 
 	async deleteAnswer(qId: string, aId: string) {
 		const answerRef = doc(firestore, 'questions', qId, 'comments', aId);
 
-		await deleteDoc(answerRef);
+		try {
+
+		} catch(e) {
+			await deleteDoc(answerRef);
+		}
 	},
 
 	async decreaceCommentsCount(qId: string) {
 		//decrease comments count
 		const questionRef = doc(firestore, 'questions', qId);
 		const questionDoc = await getDoc(questionRef);
-		if(questionDoc.exists()) {
-			const prevCommentsCount = questionDoc.data().commentsCount;
 
-			await updateDoc(questionRef, {
-				commentsCount: prevCommentsCount - 1,
-			})
+		try {
+			if(questionDoc.exists()) {
+				const prevCommentsCount = questionDoc.data().commentsCount;
+
+				await updateDoc(questionRef, {
+					commentsCount: prevCommentsCount - 1,
+				})
+			}
+		} catch (e) {
+			return e;
 		}
 	}
 }
