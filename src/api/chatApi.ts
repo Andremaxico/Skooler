@@ -52,26 +52,30 @@ const chatAPI = {
 			orderBy('createdAt')
 		);
 
-		unsubscribers.messages = onSnapshot(q, 
-			(querySnapshot) => {
-				let messages: DocumentData = [];
+		try {
+			unsubscribers.messages = onSnapshot(q, 
+				(querySnapshot) => {
+					let messages: DocumentData = [];
 
-				console.log('snapshot');
+					console.log('snapshot');
 
-				querySnapshot.forEach((doc) => {
-					messages.push({...doc.data(), id: doc.id});
-				});
+					querySnapshot.forEach((doc) => {
+						messages.push({...doc.data(), id: doc.id});
+					});
 
-				notifyMessagesSubscribers(messages as MessagesDataType);
-			},
-			(error) => {
-				console.log('error' ,error.message);
-			}
-		);
+					notifyMessagesSubscribers(messages as MessagesDataType);
+				},
+				(error) => {
+					console.log('error' ,error.message);
+				}
+			);
 
-		subscribers['messages-subs'].push(subscriber);
+			subscribers['messages-subs'].push(subscriber);
 
-		notifyFetchingSubscribers(false);
+			notifyFetchingSubscribers(false);
+		} catch(e) {
+			return e;
+		}
 	},
 
 	async fetchingSubscribe(subscriber: FetchingSubscriberType) {
@@ -84,17 +88,21 @@ const chatAPI = {
 			await setDoc(messageDoc, messageData); 
 			
 		} catch(e) {
-			console.log(e);
+			return e;
 		}
 	},
 
 	async readMessage(messageId: string, uid: string, contactUid: string) {
 		const docRef = doc(firestore, 'messages', 'chat', uid, contactUid, 'messages', messageId);
 		//const messageData = await getDoc(docRef);
-		await updateDoc(docRef, {
-			//usersWhoRead: [...messageData.data()?.usersWhoRead, uid]
-			isRead: true,
-		});
+		try {
+			await updateDoc(docRef, {
+				//usersWhoRead: [...messageData.data()?.usersWhoRead, uid]
+				isRead: true,
+			});
+		} catch(e) {
+			return e;
+		}
 	},
 
 	unsubscribe() {
@@ -107,17 +115,25 @@ const chatAPI = {
 	async deleteMessage(messageId: string) {
 		const docRef = doc(firestore, 'messages', messageId);
 
-		//delete document
-		await deleteDoc(docRef);
+		try {
+			//delete document
+			await deleteDoc(docRef);
+		} catch(e) {
+			return e;
+		}
 	},
 
 	async updateMessage(messageId: string, newText: string, uid1: string, contactUid: string,) {
 		const docRef = doc(firestore, 'messages', 'chat', uid1, contactUid, 'messages', messageId);
 		console.log('update message', messageId, newText);
-		await updateDoc(docRef, {
-			text: newText,
-			edited: true,
-		})
+		try {
+			await updateDoc(docRef, {
+				text: newText,
+				edited: true,
+			})
+		} catch(e) {
+			return e;
+		}
 	},
 
 	async getChatsData(uid: string) {
@@ -130,13 +146,17 @@ const chatAPI = {
 
 		const chatsData: ChatDataType[] = []; 
 
-		qSnapshot.forEach(snap => {
-			if(snap.exists()) {
-				chatsData.push(snap.data() as ChatDataType);
-			}
-		});
-
-		return chatsData;
+		try {
+			qSnapshot.forEach(snap => {
+				if(snap.exists()) {
+					chatsData.push(snap.data() as ChatDataType);
+				}
+			});
+	
+			return chatsData;
+		} catch(e) {
+			return e;
+		}
 	},    
 
 	async subscribeOnChats(uid: string, subscriber: ChatsSubscriberType) {
@@ -147,20 +167,25 @@ const chatAPI = {
 			orderBy('lastMessageTime', 'desc')
 		);
 
-		unsubscribers.chats = onSnapshot(q, 
-			(snap) => {
-				const chatsData: ChatDataType[] = [];
+		try {
+			unsubscribers.chats = onSnapshot(q, 
+				(snap) => {
+					const chatsData: ChatDataType[] = [];
+	
+					snap.forEach(doc => {
+						if(doc.exists()) {
+							console.log('doc data', doc.data());
+							chatsData.push(doc.data() as ChatDataType);
+						}
+					});
+	
+					notifyChatsSubscribers(chatsData);
+				}
+			);
+		} catch(e) {
+			return e;
+		}
 
-				snap.forEach(doc => {
-					if(doc.exists()) {
-						console.log('doc data', doc.data());
-						chatsData.push(doc.data() as ChatDataType);
-					}
-				});
-
-				notifyChatsSubscribers(chatsData);
-			}
-		);
 
 	},
 
@@ -171,13 +196,17 @@ const chatAPI = {
 
 		let chatInfo: ChatDataType | null = null;
 
-		unsubscribers.chat = onSnapshot(ref, (snap) => {
-			console.log('chat data updated');
-			if(snap.exists()) {
-				chatInfo = snap.data() as ChatDataType;
-				notifyChatSubscriber(chatInfo);
-			}
-		});
+		try {
+			unsubscribers.chat = onSnapshot(ref, (snap) => {
+				console.log('chat data updated');
+				if(snap.exists()) {
+					chatInfo = snap.data() as ChatDataType;
+					notifyChatSubscriber(chatInfo);
+				}
+			});
+		} catch(e) {
+			return e;
+		}
 	},
 
 	async unsubscribeFromChatInfo() {
@@ -188,17 +217,25 @@ const chatAPI = {
 	},
 
 	async setChatInfo(data: ChatDataType, uid1: string, contactUid: string) {
-		setDoc(
-			doc(firestore, `messages/chat/${uid1}/${contactUid}`), 
-			data,   
-		);
+		try {
+			setDoc(
+				doc(firestore, `messages/chat/${uid1}/${contactUid}`), 
+				data,   
+			);
+		} catch(e) {
+			return e;
+		}
 	},
 
 	async updateChatInfo(data: ChatDataType, uid1: string, contactUid: string) {
-		updateDoc(
-			doc(firestore, `messages/chat/${uid1}/${contactUid}`), 
-			data,   
-		);
+		try {
+			updateDoc(
+				doc(firestore, `messages/chat/${uid1}/${contactUid}`), 
+				data,   
+			);
+		} catch(e) {
+			return e;
+		}
 	},
 
 	async increaceUnreadCount(uid1: string, contactUid: string) {
@@ -206,16 +243,21 @@ const chatAPI = {
 		const prevDoc = await getDoc(ref);
 
 		let prevData: null | ChatDataType = null;
-		if(prevDoc.exists()) {
-			prevData = prevDoc.data() as ChatDataType;
-			console.log('increase unread count', prevData);
-			if(prevData && prevData.unreadCount) {
-				updateDoc(
-					ref, {
-						unreadCount: (prevData?.unreadCount || 0) + 1,
-					}
-				)
+
+		try {
+			if(prevDoc.exists()) {
+				prevData = prevDoc.data() as ChatDataType;
+				console.log('increase unread count', prevData);
+				if(prevData && prevData.unreadCount) {
+					updateDoc(
+						ref, {
+							unreadCount: (prevData?.unreadCount || 0) + 1,
+						}
+					)
+				}
 			}
+		} catch(e) {
+			return e;
 		}
 	},
 	async decreaceUnreadCount(uid1: string, contactUid: string) {
@@ -225,16 +267,20 @@ const chatAPI = {
 		console.log('decrese unread count', prevDoc);
 
 		let prevData: null | ChatDataType = null;
-		if(prevDoc.exists()) {
-			prevData = prevDoc.data() as ChatDataType;
-
-			if(prevData && prevData.unreadCount) {
-				updateDoc( 
-					ref, {
-						unreadCount: prevData.unreadCount - 1,
-					}
-				)
+		try {
+			if(prevDoc.exists()) {
+				prevData = prevDoc.data() as ChatDataType;
+	
+				if(prevData && prevData.unreadCount) {
+					updateDoc( 
+						ref, {
+							unreadCount: prevData.unreadCount - 1,
+						}
+					)
+				}
 			}
+		} catch(e) {
+			return e;
 		}
 	},
 }

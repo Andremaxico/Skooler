@@ -9,14 +9,22 @@ export const schoolsAPI = {
 	async getSchoolsByName(name: string) {
 		console.log('get schools by name', name);
 
-		const res = await instance.get<SchoolSearchItemType[]>(`school-search/?ut=3&lc=&ns=${name || ''}`);
-		return res.data;
+		try {
+			const res = await instance.get<SchoolSearchItemType[]>(`school-search/?ut=3&lc=&ns=${name || ''}`);
+			return res.data;
+		} catch(e) {
+			return e;
+		}
 	},
  
 	async getSchoolInfo(id: number) {
-		const res = await instance.get<SchoolDataType>(`institution/?id=${id}&exp=json`);
-		console.log('school res', res)
-		return res.data;
+		try {
+			const res = await instance.get<SchoolDataType>(`institution/?id=${id}&exp=json`);
+			console.log('school res', res)
+			return res.data;
+		} catch(e) {
+			return e;
+		}
 	}
 }
 

@@ -69,12 +69,15 @@ export const usersAPI = {
 		let users: ReceivedAccountDataType[] = [];
 
 		const querySnapshot = await getDocs(collection(firestore, 'users'));
-		querySnapshot.forEach((doc) => {
-			users.push(doc.data() as ReceivedAccountDataType);
-			console.log(doc.id, " => ", doc.data());
-		});
-
-		return users;
+		try {
+			querySnapshot.forEach((doc) => {
+				users.push(doc.data() as ReceivedAccountDataType);
+				console.log(doc.id, " => ", doc.data());
+			});
+			return users;
+		} catch(e) {
+			return e;
+		}
 	},
 
 	async getUsersByQuery(queryStr: string) {
@@ -92,39 +95,42 @@ export const usersAPI = {
 		// 	.search(searchParameters);
 
 		// console.log('searchResults', searchResults);
-
-		if(queryStr) {
-			//fullname замість name, тому що починається з ім'я і пошук по name - зайвий
-			const surnamesQuery = query(usersRef, 	
-				orderBy('surname'), 
-				startAt(queryStr), 
-				endAt(queryStr+"\uf8ff")
-			);
-			const fullnamesQuery = query(usersRef, 	
-				orderBy('fullName'), 
-				startAt(queryStr), 
-				endAt(queryStr+"\uf8ff")
-			);
-			const surnamesSnaps = await getDocs(surnamesQuery);
-			const fullnamesSnaps = await getDocs(fullnamesQuery);
-
-			const usersSet: Set<ReceivedAccountDataType> = new Set();
-
-			surnamesSnaps.forEach(snap => {
-				if(snap.exists()) usersSet.add(snap.data() as ReceivedAccountDataType);
-			});
-
-			fullnamesSnaps.forEach(snap => {
-				if(snap.exists()) usersSet.add(snap.data() as ReceivedAccountDataType);
-			});
-
-			console.log('users set', usersSet);
-
-			const users: ReceivedAccountDataType[] = [];
-
-			for(let value of usersSet) users.push(value);
-
-			return users;
+		try {
+			if(queryStr) {
+				//fullname замість name, тому що починається з ім'я і пошук по name - зайвий
+				const surnamesQuery = query(usersRef, 	
+					orderBy('surname'), 
+					startAt(queryStr), 
+					endAt(queryStr+"\uf8ff")
+				);
+				const fullnamesQuery = query(usersRef, 	
+					orderBy('fullName'), 
+					startAt(queryStr), 
+					endAt(queryStr+"\uf8ff")
+				);
+				const surnamesSnaps = await getDocs(surnamesQuery);
+				const fullnamesSnaps = await getDocs(fullnamesQuery);
+	
+				const usersSet: Set<ReceivedAccountDataType> = new Set();
+	
+				surnamesSnaps.forEach(snap => {
+					if(snap.exists()) usersSet.add(snap.data() as ReceivedAccountDataType);
+				});
+	
+				fullnamesSnaps.forEach(snap => {
+					if(snap.exists()) usersSet.add(snap.data() as ReceivedAccountDataType);
+				});
+	
+				console.log('users set', usersSet);
+	
+				const users: ReceivedAccountDataType[] = [];
+	
+				for(let value of usersSet) users.push(value);
+	
+				return users;
+			}
+		} catch(e) {
+			return e;
 		}
 	},
 
@@ -134,27 +140,40 @@ export const usersAPI = {
 
 		const docSnap = await getDoc(doc(firestore, 'users', uid));
 
-		if(docSnap.exists()) {
-			return docSnap.data() as ReceivedAccountDataType;
-		} else {
-			return undefined;
+		try {
+			if(docSnap.exists()) {
+				return docSnap.data() as ReceivedAccountDataType;
+			} else {
+				return undefined;
+			}
+		} catch(e) {
+			return e;
 		}
 	},
 
 	async userAnswerMarkedAsCorrect(uid: string, prevCount: number) {
 		const userRef = doc(firestore, 'users', uid);
 
-		await updateDoc(userRef, {
-			correctAnswersCount: prevCount + 1
-		});
+		try {
+			await updateDoc(userRef, {
+				correctAnswersCount: prevCount + 1
+			});
+		} catch(e) {
+			return e;
+		}
 	},
 
 	async updateUserRating(uid: string, newRating: UserRatingsType) {
 		const userRef = doc(firestore, 'users', uid);
 
-		await updateDoc(userRef, {
-			rating: newRating,
-		});
+
+		try {
+			await updateDoc(userRef, {
+				rating: newRating,
+			});
+		} catch(e) {
+			return e;
+		}
 	}
 	
 }
