@@ -140,8 +140,7 @@ const App = () => {
     }
   }, [location])
 
-  if(isFetching) return <Preloader />
-  if(!isFetching && !user) return <Login />;  
+  if(isFetching) return <Preloader />  
   return (
     <div className={classes.App}>
         <AppHeader />

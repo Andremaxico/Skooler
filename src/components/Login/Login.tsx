@@ -10,6 +10,7 @@ import { Button } from '@mui/joy';
 import { selectPrevPage } from '../../Redux/app/appSelectors';
 import { SignInForm } from './SignInForm';
 import { OtherLoginMethods } from './OtherLoginMethods';
+import { Links } from './Links';
 
 type PropsType = {}
 
@@ -47,17 +48,7 @@ const Login: React.FC<PropsType> = ({}) => {
 				<h1 className={classes.title}>З поверненням!</h1>
 				<SignInForm />
 				<OtherLoginMethods />
-				<div className={classes.Links}>
-					<div className={classes.registerLink}></div>
-					<div className={classes.forgotPasswordLink}>
-						<Link to={'reset-password'} replace={true}>
-							Забули пароль?
-						</Link>
-					</div>
-					<Link to={'/registration'} replace={true} className={classes.registerBtn}>
-						Зареєструватися
-					</Link>
-				</div>
+				<Links />
 			</div>
 		</div>
 	)

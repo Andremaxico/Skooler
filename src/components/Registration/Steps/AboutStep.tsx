@@ -6,14 +6,16 @@ import { Control, Controller, FieldErrors } from 'react-hook-form';
 import { UpdatedAccountDataType } from '../../../utils/types';
 import { AboutField } from '../../../UI/formControls/AboutField';
 import { ABOUT_ME_MAX_LENGTH } from '../../../utils/constants';
+import { RegistrationFieldValues } from '../Registration';
 
 type PropsType = {
 	errors: FieldErrors<UpdatedAccountDataType>,
-	control: Control<UpdatedAccountDataType, any>,
+	control: Control<RegistrationFieldValues, any>,
 	
 }
 
 export const AboutStep: React.FC<PropsType> = ({errors, control}) => {
+
   return (
 	 <div>
 		<div className={classes.buttons}>
@@ -27,7 +29,7 @@ export const AboutStep: React.FC<PropsType> = ({errors, control}) => {
 					<AboutField
 						error={errors.aboutMe?.message}
 						onChange={onChange}
-						value={value}
+						value={value || ''}
 					/>
 				)}
 			/>
@@ -37,6 +39,7 @@ export const AboutStep: React.FC<PropsType> = ({errors, control}) => {
 				fieldsNames={['aboutMe']}
 				className={classes.saveBtn}
 			/>
+	
 		</div>
 	 </div>
   )

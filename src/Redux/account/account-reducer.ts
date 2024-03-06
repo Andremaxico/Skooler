@@ -167,7 +167,7 @@ export const searchSchool = async (value: string) => {
 
 export const setMyAccountData = (authData: UserType) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
 	dispatch(isFetchingStatusChanged(true));
-	const data: ReceivedAccountDataType | undefined = await usersAPI.getUserById(authData.uid as string);
+	const data: ReceivedAccountDataType | undefined | Error = await usersAPI.getUserById(authData.uid as string);
 
 	if(data) {
 		dispatch(myAccountDataReceived(data));
@@ -499,4 +499,5 @@ export const setUserQuestions = (uid: string) => async (dispatch: AppDispatchTyp
 
 	dispatch(currUserQuestionsReceived(questions));
 }
+
 export default accountReducer;

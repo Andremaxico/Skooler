@@ -27,11 +27,15 @@ import e from 'express';
 import { Modal } from '../../UI/Modal';
 import { Button } from '@mui/joy';
 import { CancelConfirmModal } from './CancelConfirmModal';
+import { AboutStep } from './Steps/AboutStep';
+import { AvatarStep } from './Steps/AvatarStep';
 
 type PropsType = {};
 
 export type RegistrationFieldValues = AccountDataType & {
 	emailCode: number,
+	email: string, 
+	password: string,
 };
 
 type ContextType = {
@@ -173,7 +177,7 @@ export const Registration: React.FC<PropsType> = ({}) => {
 			currStep = <InitialsFields errors={errors} />
 			break;
 		case 3:
-			currStep = <AboutStep errors={errors} />
+			currStep = <AboutStep control={control} errors={errors} />
 			break;
 		case 4:
 			currStep = <InfoFields errors={errors} />
@@ -182,7 +186,7 @@ export const Registration: React.FC<PropsType> = ({}) => {
 			currStep = <SchoolFields setValue={setValue} errors={errors} control={control} nextStep={nextStep} trigger={trigger}/>
 			break;
 		case 6:
-			currStep = <AvatarUpload register={register} getValues={getValues} setValue={setValue} submit={submit} errors={errors}/>
+			currStep = <AvatarStep getValues={getValues} setValue={setValue} errors={errors}/>
 			break;
 		case 7:
 			currStep = <Welcoming isLoading={isLoading} />

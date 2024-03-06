@@ -74,7 +74,7 @@ const chatAPI = {
 
 			notifyFetchingSubscribers(false);
 		} catch(e) {
-			return e;
+
 		}
 	},
 
@@ -88,7 +88,7 @@ const chatAPI = {
 			await setDoc(messageDoc, messageData); 
 			
 		} catch(e) {
-			return e;
+
 		}
 	},
 
@@ -101,7 +101,7 @@ const chatAPI = {
 				isRead: true,
 			});
 		} catch(e) {
-			return e;
+
 		}
 	},
 
@@ -119,7 +119,7 @@ const chatAPI = {
 			//delete document
 			await deleteDoc(docRef);
 		} catch(e) {
-			return e;
+
 		}
 	},
 
@@ -132,7 +132,7 @@ const chatAPI = {
 				edited: true,
 			})
 		} catch(e) {
-			return e;
+
 		}
 	},
 
@@ -155,7 +155,7 @@ const chatAPI = {
 	
 			return chatsData;
 		} catch(e) {
-			return e;
+
 		}
 	},    
 
@@ -183,7 +183,7 @@ const chatAPI = {
 				}
 			);
 		} catch(e) {
-			return e;
+
 		}
 
 
@@ -205,7 +205,7 @@ const chatAPI = {
 				}
 			});
 		} catch(e) {
-			return e;
+
 		}
 	},
 
@@ -223,7 +223,7 @@ const chatAPI = {
 				data,   
 			);
 		} catch(e) {
-			return e;
+
 		}
 	},
 
@@ -234,7 +234,7 @@ const chatAPI = {
 				data,   
 			);
 		} catch(e) {
-			return e;
+
 		}
 	},
 
@@ -257,7 +257,7 @@ const chatAPI = {
 				}
 			}
 		} catch(e) {
-			return e;
+
 		}
 	},
 	async decreaceUnreadCount(uid1: string, contactUid: string) {
@@ -280,7 +280,7 @@ const chatAPI = {
 				}
 			}
 		} catch(e) {
-			return e;
+
 		}
 	},
 }

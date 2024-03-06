@@ -13,7 +13,7 @@ export const schoolsAPI = {
 			const res = await instance.get<SchoolSearchItemType[]>(`school-search/?ut=3&lc=&ns=${name || ''}`);
 			return res.data;
 		} catch(e) {
-			return e;
+
 		}
 	},
  
@@ -23,7 +23,7 @@ export const schoolsAPI = {
 			console.log('school res', res)
 			return res.data;
 		} catch(e) {
-			return e;
+
 		}
 	}
 }

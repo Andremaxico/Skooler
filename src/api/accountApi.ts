@@ -33,7 +33,7 @@ export const accountAPI = {
 				...data,
 			});
 		} catch(e) {
-			return e;
+
 		}
 	},
 
@@ -41,7 +41,7 @@ export const accountAPI = {
 		try {
 			await signOut(auth);
 		} catch(e) {
-			return e;
+
 		}
 	},	
 
@@ -56,7 +56,7 @@ export const accountAPI = {
 			const url = await getDownloadURL(res.ref);
 			return url;
 		} catch(e) {
-			return e;
+
 		}
 	},
 
@@ -65,9 +65,7 @@ export const accountAPI = {
 
 		try {
 			await deleteObject(objRef);
-		} catch (e) {
-			return e;
-		}
+		} catch (e) {}
 	},
 
 	async getAvatarUrl(uid: string) {
@@ -82,7 +80,7 @@ export const accountAPI = {
 
 			return url;
 		} catch(e) {
-			return e;
+
 		}
 	},
 
@@ -94,7 +92,7 @@ export const accountAPI = {
 				liked: [...likedArr, questionId],
 			})
 		} catch(e) {
-			return e;
+
 		}
 	},
 
@@ -106,7 +104,7 @@ export const accountAPI = {
 				liked: likedArr.filter(id => id !== questionId) ,
 			})
 		} catch(e) {
-			return e;
+
 		}
 	},
 	
@@ -125,7 +123,7 @@ export const accountAPI = {
 				}
 			)
 		} catch(e) {
-			return e;
+
 		}
 	},
 	
@@ -134,7 +132,7 @@ export const accountAPI = {
 			const {user} = await createUserWithEmailAndPassword(auth, email, password);
 			return user;
 		} catch(e) {
-			return e;
+
 		}
 	},
 
@@ -157,7 +155,7 @@ export const accountAPI = {
 				},
 			});
 		} catch(e) {
-			return e;
+
 		}
 
 		//axios.get('http://localhost:5000').then(res => console.log('res', res));
@@ -168,7 +166,7 @@ export const accountAPI = {
 			const methods = await fetchSignInMethodsForEmail(auth, email);
 			return methods.length > 0;
 		} catch(e) {
-			return e;
+
 		}
 	},
 
@@ -176,7 +174,7 @@ export const accountAPI = {
 		try {
 			await deleteUser(user);
 		} catch(e) {
-			return e;
+
 		}
 	},
 
@@ -184,7 +182,7 @@ export const accountAPI = {
 		try {
 			await deleteDoc(doc(firestore, "users", uid));
 		} catch(e) {
-			return e;
+
 		}
 	},
 
@@ -193,7 +191,7 @@ export const accountAPI = {
 			const {user} = await signInWithEmailAndPassword(auth, email, password);
 			return user;
 		} catch(e) {
-			return e;
+
 		}
 	},
 
@@ -208,7 +206,7 @@ export const accountAPI = {
 	
 			return result.user;
 		} catch(e) {
-			return e;
+
 		}
 	},
 
@@ -216,7 +214,7 @@ export const accountAPI = {
 		try {
 			await sendPasswordResetEmail(auth, email);
 		} catch(e) {
-			return e;
+
 		}
 	},
 }

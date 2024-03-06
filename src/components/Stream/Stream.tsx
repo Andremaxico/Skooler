@@ -9,10 +9,12 @@ type PropsType = {};
 const Stream: React.FC<PropsType> = ({}) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	console.log('is loading', isLoading);
+
 	return (
 		<div className={classes.Stream}>
 			<Search setIsLoading={setIsLoading} />
 			<Posts isLoading={isLoading} />
+			
 		</div>
 	)
 }

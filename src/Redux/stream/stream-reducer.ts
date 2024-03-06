@@ -322,10 +322,19 @@ export const editQuestion = (qId: string, newText: string) => async (dispatch: A
 		}));
 
 		//send new text to server
-		await streamAPI.editPost(data, newText);
+		const error = await streamAPI.editPost(data, newText);
+
+		//change text
+		dispatch(userActionStatusChanged({
+			target: 'post_editing',
+			status: error ? 'error' : 'success',
+		}));
+
 
 		//hide loader
-		dispatch(userActionStatusChanged(null));
+		setTimeout(() => {
+			dispatch(userActionStatusChanged(null));
+		}, 1000)
 
 		//update text data(local)
 		dispatch(questionChanged({

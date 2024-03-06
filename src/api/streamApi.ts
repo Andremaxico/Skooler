@@ -75,9 +75,7 @@ export const streamAPI =  {
 			});
 
 			return questions;
-		} catch (e) {
-			return e;
-		}
+		} catch (e) {}
 	},
 
 	async editPost(data: PostDataType, newText: string) {
@@ -89,9 +87,7 @@ export const streamAPI =  {
 				text: newText,
 				isEdited: true,
 			})
-		} catch (e) {
-			return e
-		}
+		} catch (e) {}
 	},
 
 	async addNewPost(data: PostDataType) {
@@ -119,9 +115,7 @@ export const streamAPI =  {
 			}
 
 			return postData as PostDataType;
-		} catch (e) {
-			return e;
-		}
+		} catch (e) {}
 	},
 
 	async addStarToQuestion(id: string) {
@@ -146,7 +140,7 @@ export const streamAPI =  {
 				stars: docRef.data()?.stars - 1,
 			});
 		} catch(e) {
-			return e;
+
 		} 
 	},
 
@@ -164,7 +158,7 @@ export const streamAPI =  {
 				})
 			}
 		} catch(e) {
-			return e;
+
 		}
 	},
 
@@ -174,7 +168,7 @@ export const streamAPI =  {
 		try {
 			await setDoc(newAnswerRef, data);
 		} catch(e) {
-			return e;
+
 		}
 	},
 
@@ -207,7 +201,7 @@ export const streamAPI =  {
 
 			return posts as PostDataType[];
 		} catch(e) {
-			return e;
+
 		}
 	},
 
@@ -227,7 +221,7 @@ export const streamAPI =  {
 
 			return answers as CommentType[];
 		} catch(e) {
-			return e;
+
 		}
 	},
 
@@ -240,7 +234,7 @@ export const streamAPI =  {
 				isCorrect: true,
 			})
 		} catch(e) {
-			return e;
+
 		}
 	},
 
@@ -252,7 +246,7 @@ export const streamAPI =  {
 				isCorrect: false,
 			})
 		} catch(e) {
-			return e;
+
 		}
 	},
 
@@ -276,7 +270,7 @@ export const streamAPI =  {
 				isClosed: false,
 			})
 		} catch(e) {
-			return e;
+
 		}
 	},
 
@@ -294,7 +288,7 @@ export const streamAPI =  {
 				}
 			);
 		} catch(e) {
-			return e;
+
 		}
 	},
 
@@ -314,7 +308,7 @@ export const streamAPI =  {
 				}
 			);
 		} catch(e) {
-			return e;
+
 		}
 	},
 
@@ -327,7 +321,7 @@ export const streamAPI =  {
 		try {
 			await deleteDoc(questionRef);
 		} catch(e) {
-			return e;
+
 		}
 	},
 
@@ -354,8 +348,6 @@ export const streamAPI =  {
 					commentsCount: prevCommentsCount - 1,
 				})
 			}
-		} catch (e) {
-			return e;
-		}
+		} catch (e) {}
 	}
 }

@@ -120,7 +120,8 @@ export type AccountDataType = {
 	gender: 'male' | 'female',
 	aboutMe: string | null,
 	avatar: File | Blob | undefined,
-	fullName: string,
+	name: string,
+	surname: string,
 }
 
 //comes to server and from server
@@ -211,6 +212,10 @@ export type UserAccountActionTargetType =
 ;
 
 export type UserActionStatusType = 'loading' | 'success' | 'error';
+
+export type UserActionTargetsType = 
+	UserAccountActionTargetType |
+	UserStreamActionTargetType
 
 export type UserActionType = {
 	target: 

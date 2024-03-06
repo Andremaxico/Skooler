@@ -10,6 +10,8 @@ import { SearchParametersWithQueryBy } from 'typesense-instantsearch-adapter';
 import { SearchParams } from 'typesense/lib/Typesense/Documents';
 
 
+//in [try/catch] should be added console.log 
+
 const instance = axios.create({
 	baseURL: 'https://real-time-chat-test-ece84-default-rtdb.europe-west1.firebasedatabase.app/',
 });
@@ -76,7 +78,7 @@ export const usersAPI = {
 			});
 			return users;
 		} catch(e) {
-			return e;
+
 		}
 	},
 
@@ -130,7 +132,7 @@ export const usersAPI = {
 				return users;
 			}
 		} catch(e) {
-			return e;
+
 		}
 	},
 
@@ -147,7 +149,7 @@ export const usersAPI = {
 				return undefined;
 			}
 		} catch(e) {
-			return e;
+
 		}
 	},
 
@@ -159,7 +161,7 @@ export const usersAPI = {
 				correctAnswersCount: prevCount + 1
 			});
 		} catch(e) {
-			return e;
+
 		}
 	},
 
@@ -172,7 +174,7 @@ export const usersAPI = {
 				rating: newRating,
 			});
 		} catch(e) {
-			return e;
+
 		}
 	}
 	
