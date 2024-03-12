@@ -71,17 +71,12 @@ export const accountAPI = {
 	async getAvatarUrl(uid: string) {
 		//get storage reference
 		const storageRef = ref(storage, `images/${uid}-avatar.png`);
+		//get avatar url
+		const url = await getDownloadURL(storageRef);
 
-		try {
-			//get avatar url
-			const url = await getDownloadURL(storageRef);
+		console.log('url');
 
-			console.log('url');
-
-			return url;
-		} catch(e) {
-
-		}
+		return url;
 	},
 
 	async addQuestionToLiked(questionId: string, uid: string, likedArr: string[]) {

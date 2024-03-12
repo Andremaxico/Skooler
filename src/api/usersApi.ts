@@ -71,15 +71,11 @@ export const usersAPI = {
 		let users: ReceivedAccountDataType[] = [];
 
 		const querySnapshot = await getDocs(collection(firestore, 'users'));
-		try {
-			querySnapshot.forEach((doc) => {
-				users.push(doc.data() as ReceivedAccountDataType);
-				console.log(doc.id, " => ", doc.data());
-			});
-			return users;
-		} catch(e) {
-
-		}
+		querySnapshot.forEach((doc) => {
+			users.push(doc.data() as ReceivedAccountDataType);
+			console.log(doc.id, " => ", doc.data());
+		});
+		return users;
 	},
 
 	async getUsersByQuery(queryStr: string) {

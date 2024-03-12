@@ -12,6 +12,7 @@ import { errorToText } from '../../firebase/firebaseErrorsConverter';
 import { getRandomSixDigitCode } from '../../utils/helpers/getRandomSixDigitCode';
 import { doc, updateDoc } from 'firebase/firestore';
 import { firestore } from '../../firebase/firebaseApi';
+import { globalErrorStateChanged } from '../app/appReducer';
 
 export type AccountStateType = {
 	myAccountData: ReceivedAccountDataType | null,
@@ -279,7 +280,7 @@ export const updateMyAccountData = (data: UpdatedAccountDataType) => async (disp
 
 	if(uid) {
 		//if user didn't change avatar, without getting it we setting it to null
-		let avatarUrl: string | null = getState().account.myAccountData?.avatarUrl || null; 
+		let avatarUrl: string | null | undefined = getState().account.myAccountData?.avatarUrl || null; 
 		if(avatar) {
 			avatarUrl = await accountAPI.sendAvatar(avatar, uid);
 			if(avatarUrl === undefined) avatarUrl = null;
@@ -374,12 +375,16 @@ export const sendEmailVerificationLink = (email: string) => async (dispatch: App
 export const removeAccount = () => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
 	const user = getState().account.myLoginData;
 
-	if(user) {
-		await accountAPI.deleteUser(user);
-		await accountAPI.deleteUserData(user.uid);
-		
-		dispatch(loginDataReceived(null));
-		dispatch(myAccountDataReceived(null));
+	try {
+		if(user) {
+			await accountAPI.deleteUser(user);
+			await accountAPI.deleteUserData(user.uid);
+			
+			dispatch(loginDataReceived(null));
+			dispatch(myAccountDataReceived(null));
+		}
+	} catch(e) {
+		dispatch(globalErrorStateChanged(true)); 
 	}
 }
 
@@ -434,11 +439,15 @@ export const sendPasswordResetEmail = (email: string) => async (dispatch: AppDis
 
 export const sendMyCurrentAvatar = (file: File | Blob | undefined, uid: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
 	console.log('send avatar file', file);
-	if(file) {
-		console.log('send avatar(redux)')
-		await accountAPI.sendAvatar(file, uid);
-		const avatarUrl = await accountAPI.getAvatarUrl(uid);
-		dispatch(currMyAvatarUrlReceived(avatarUrl));
+	try {
+		if(file) {
+			console.log('send avatar(redux)')
+			await accountAPI.sendAvatar(file, uid);
+			const avatarUrl = await accountAPI.getAvatarUrl(uid);
+			dispatch(currMyAvatarUrlReceived(avatarUrl));
+		}
+	} catch(e) {
+		dispatch(globalErrorStateChanged(true));
 	}
 }
 
@@ -447,8 +456,11 @@ export const addQuestionToLiked = (id: string) => async (dispatch: AppDispatchTy
 	const uid = getState().account.myAccountData?.uid || '';
 	const likedArr = getState().account.myAccountData?.liked || [];
 
-	await accountAPI.addQuestionToLiked(id, uid, likedArr);
-
+	try {
+		await accountAPI.addQuestionToLiked(id, uid, likedArr);
+	} catch(e) {
+		dispatch(globalErrorStateChanged(true));
+	}
 }
 
 export const removeQuestionFromLiked = (id: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
@@ -457,8 +469,11 @@ export const removeQuestionFromLiked = (id: string) => async (dispatch: AppDispa
 	const uid = getState().account.myAccountData?.uid || '';
 	const likedArr = getState().account.myAccountData?.liked || [];
 
-	await accountAPI.removeQuestionFromLiked(id, uid, likedArr);
-
+	try {
+		await accountAPI.removeQuestionFromLiked(id, uid, likedArr);
+	} catch(e) {
+		dispatch(globalErrorStateChanged(true));
+	}
 }
 
 export const userAnswerMarkedAsCorrect = (uid: string) => async (dispatch: AppDispatchType) => {
@@ -466,38 +481,45 @@ export const userAnswerMarkedAsCorrect = (uid: string) => async (dispatch: AppDi
 	const userRating: UserRatingsType = userData ? userData.rating : 'Ніхто';
 	const prevCorrAnswersCount = userData ? userData.correctAnswersCount : 0;
 
-	await usersAPI.userAnswerMarkedAsCorrect(uid, prevCorrAnswersCount);
+	try {
+		await usersAPI.userAnswerMarkedAsCorrect(uid, prevCorrAnswersCount);
 
-	//щоб змінювати рейинг залежно від кількості вірних відповідей
-	if(userRating) {
-		//insted of if else..if else
-		const currCount = prevCorrAnswersCount + 1;
-		//dependency by index
-		const checkingCountArray: number[] = [0, 10, 30, 50, 75, 100, 150];
-		const checkingRatingsArray: UserRatingsType[] = [
-			'Новачок', 
-			'Може підказати', 
-			'Можна списати', 
-			'Знає багато', 
-			'Ботанік', 
-			'Легенда', 
-			'Сенсей'
-		];
+		//щоб змінювати рейинг залежно від кількості вірних відповідей
+		if(userRating) {
+			//insted of if else..if else
+			const currCount = prevCorrAnswersCount + 1;
+			//dependency by index
+			const checkingCountArray: number[] = [0, 10, 30, 50, 75, 100, 150];
+			const checkingRatingsArray: UserRatingsType[] = [
+				'Новачок', 
+				'Може підказати', 
+				'Можна списати', 
+				'Знає багато', 
+				'Ботанік', 
+				'Легенда', 
+				'Сенсей'
+			];
 
-		//cycle
-		for(let i = 0; i <= checkingCountArray.length; i++) {
-			if(currCount > checkingCountArray[i] && userRating !== checkingRatingsArray[i]) {
-				usersAPI.updateUserRating(uid, checkingRatingsArray[i]);
+			//cycle
+			for(let i = 0; i <= checkingCountArray.length; i++) {
+				if(currCount > checkingCountArray[i] && userRating !== checkingRatingsArray[i]) {
+					usersAPI.updateUserRating(uid, checkingRatingsArray[i]);
+				}
 			}
 		}
+	} catch(e) {
+		dispatch(globalErrorStateChanged(true));
 	}
 }
 
 
 export const setUserQuestions = (uid: string) => async (dispatch: AppDispatchType) => {
-	const questions = await streamAPI.getUserQuestions(uid);
-
-	dispatch(currUserQuestionsReceived(questions));
+	try {
+		const questions = await streamAPI.getUserQuestions(uid);
+		dispatch(currUserQuestionsReceived(questions));
+	} catch(e) {
+		dispatch(globalErrorStateChanged(true));
+	}
 }
 
 export default accountReducer;

@@ -62,20 +62,18 @@ export const streamAPI =  {
 	},
 
 	async getUserQuestions(uid: string) {
-		try {
-			const questionRef = collection(firestore, 'questions');
-			const docs = query(questionRef, where('authorId', '==', uid));
+		const questionRef = collection(firestore, 'questions');
+		const docs = query(questionRef, where('authorId', '==', uid));
 
-			const snapshots = await getDocs(docs);
+		const snapshots = await getDocs(docs);
 
-			const questions: PostDataType[] = [];
+		const questions: PostDataType[] = [];
 
-			snapshots.forEach(snap => {
-				if(snap.exists()) questions.push(snap.data() as PostDataType);
-			});
+		snapshots.forEach(snap => {
+			if(snap.exists()) questions.push(snap.data() as PostDataType);
+		});
 
-			return questions;
-		} catch (e) {}
+		return questions;
 	},
 
 	async editPost(data: PostDataType, newText: string) {
@@ -87,7 +85,9 @@ export const streamAPI =  {
 				text: newText,
 				isEdited: true,
 			})
-		} catch (e) {}
+		} catch (e) {
+			return e;
+		}
 	},
 
 	async addNewPost(data: PostDataType) {
@@ -104,18 +104,16 @@ export const streamAPI =  {
 
 	//no in use
 	async getPostById(id: string) {
-		try {
-			const docRef = doc(firestore, 'questions', id);
-			const docSnap = await getDoc(docRef);
+		const docRef = doc(firestore, 'questions', id);
+		const docSnap = await getDoc(docRef);
 
-			let postData;
+		let postData;
 
-			if(docSnap.exists()) {
-				postData = docSnap.data();
-			}
+		if(docSnap.exists()) {
+			postData = docSnap.data();
+		}
 
-			return postData as PostDataType;
-		} catch (e) {}
+		return postData as PostDataType;
 	},
 
 	async addStarToQuestion(id: string) {
@@ -191,18 +189,14 @@ export const streamAPI =  {
 		const postsQ = query(postsRef, where('category', '==', category));
 		const docs = await getDocs(postsQ);
 
-		try {
-			let posts: DocumentData[] = [];
-			docs.forEach(doc => {
-				if(doc.exists()) {
-					if(doc.data().text.includes(queryStr)) posts.push(doc.data());
-				}
-			});
+		let posts: DocumentData[] = [];
+		docs.forEach(doc => {
+			if(doc.exists()) {
+				if(doc.data().text.includes(queryStr)) posts.push(doc.data());
+			}
+		});
 
-			return posts as PostDataType[];
-		} catch(e) {
-
-		}
+		return posts as PostDataType[];
 	},
 
 	async getPostAnswers(postId: string) {
@@ -210,19 +204,14 @@ export const streamAPI =  {
 		const answersQ = query(answerRef);
 		const docs = await getDocs(answersQ);
 
+		let answers: DocumentData[] = [];
+		docs.forEach(doc => {
+			if(doc.exists()) {
+				answers.push(doc.data());
+			}
+		});
 
-		try {
-			let answers: DocumentData[] = [];
-			docs.forEach(doc => {
-				if(doc.exists()) {
-					answers.push(doc.data());
-				}
-			});
-
-			return answers as CommentType[];
-		} catch(e) {
-
-		}
+		return answers as CommentType[];
 	},
 
 	async addCorrentAnswerMark(qId: string, aId: string) {

@@ -15,8 +15,7 @@ type PropsType = {
 export const AvatarStep: React.FC<PropsType> = ({errors, setValue, getValues}) => {
 	const [selectedFile, setSelectedFile] = useState<File | Blob | null>(null);
 
-	const name = getValues('name');
-	const surname = getValues('surname');
+	const [name, surname] = getValues('fullName').split(' ');
 
 	//run after positive validiting in SaveBtn
 	const handleSubmit = async () => {

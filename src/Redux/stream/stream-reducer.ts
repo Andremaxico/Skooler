@@ -3,7 +3,7 @@ import { createReducer, createAction } from '@reduxjs/toolkit';
 import { streamAPI } from '../../api/streamApi';
 import { CommentType, PostDataType, QuestionCategoriesType } from '../../utils/types';
 import { AppDispatchType } from '../store';
-import { userActionStatusChanged } from '../app/appReducer';
+import { globalErrorStateChanged, userActionStatusChanged } from '../app/appReducer';
 
 //=================ACTIONS========================
 export const newPostsReceived = createAction<PostDataType[]>('stream/NEW_POSTS_RECEIVED');
@@ -235,16 +235,20 @@ export const getNextPosts = () => async (dispatch: AppDispatchType, getState: ()
 
 	console.log(lastVisiblePostId);
 
-	const nextPosts = await streamAPI.getPosts(lastVisiblePostId);
+	try {
+		const nextPosts = await streamAPI.getPosts(lastVisiblePostId);
 
-	console.log('nextPosts', nextPosts);
+		console.log('nextPosts', nextPosts);
 
-	if(nextPosts) {
-		//set last post for triggering loading next posts if we see lastPost 
-		const lastPost = nextPosts[nextPosts.length - 1];
+		if(nextPosts) {
+			//set last post for triggering loading next posts if we see lastPost 
+			const lastPost = nextPosts[nextPosts.length - 1];
 
-		dispatch(lastVisiblePostChanged(lastPost));
-		dispatch(nextPostsReceived(nextPosts));	
+			dispatch(lastVisiblePostChanged(lastPost));
+			dispatch(nextPostsReceived(nextPosts));	
+		}
+	} catch(e) {
+		dispatch(globalErrorStateChanged(true));
 	}
 }
 

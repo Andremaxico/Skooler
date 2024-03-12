@@ -20,7 +20,7 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { Auth, User, onAuthStateChanged } from 'firebase/auth';
 import MySchool from './components/MySchool';
 
-import { selectFooterHeight, selectHeaderHeight, selectNetworkError, selectPrevPage, selectUserAction } from './Redux/app/appSelectors';
+import { selectFooterHeight, selectGlobalErrorState, selectHeaderHeight, selectNetworkError, selectPrevPage, selectUserAction } from './Redux/app/appSelectors';
 import { NetworkError } from './UI/NetworkError';
 import { AppFooter } from './components/AppFooter';
 import Stream from './components/Stream';
@@ -40,6 +40,8 @@ import { ResetPassword } from './components/Login/ResetPassword';
 import dayjs from 'dayjs';
 import { SearchUsers } from './components/SearchUsers';
 import { getSuccessTextByTarget } from './utils/helpers/getSuccessTextByTarget';
+import ErrorBoundary from 'antd/es/alert/ErrorBoundary';
+import { ErrorBanner } from './UI/ErrorBanner';
 
 //const Chat = React.lazy(() => import('./components/Chat'));
 const Chats = React.lazy(() => import('./components/Chats'));
@@ -61,6 +63,7 @@ const App = () => {
   const networkError = useSelector(selectNetworkError);
   const userAction = useSelector(selectUserAction); 
   const prevPage = useSelector(selectPrevPage);
+  const isGlobalError = useSelector(selectGlobalErrorState);
 
   const dispatch = useAppDispatch();
 
@@ -153,6 +156,7 @@ const App = () => {
         >
           <div className={classes.container} style={{flex: '1 1 auto'}}>
             {networkError && <NetworkError message={networkError || ''} />}
+            {isGlobalError && <ErrorBanner />}
             <Suspense fallback={<Preloader />}>
               <Routes>
                 <Route path='/login' element={<Login />} />

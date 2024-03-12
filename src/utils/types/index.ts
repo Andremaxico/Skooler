@@ -120,8 +120,7 @@ export type AccountDataType = {
 	gender: 'male' | 'female',
 	aboutMe: string | null,
 	avatar: File | Blob | undefined,
-	name: string,
-	surname: string,
+	fullName: string,
 }
 
 //comes to server and from server

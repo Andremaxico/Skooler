@@ -9,6 +9,7 @@ export const headerHeightReceived = createAction<number>('app/HEADER_HEIGHT_RECE
 export const prevPageChanged = createAction<string>('app/PREV_PAGE_CHANGED');
 export const returnBtnShowStatusChanged = createAction<boolean>('app/RETURN_BTN_SHOW_STATUS_CHANGED');
 export const userActionStatusChanged = createAction<UserActionType | null>('app/USER_ACTION_STATUS_CHANGED');
+export const globalErrorStateChanged = createAction<boolean>('app/GLOBAL_ERROR_STATE_CHANGED');
 
 //==================	REDUCER===================
 type AppStateType = {
@@ -18,7 +19,8 @@ type AppStateType = {
 	headerHeight: number | null,
 	prevPage: string | null,
 	isReturnBtnShow: boolean, 
-	userAction: UserActionType | null
+	userAction: UserActionType | null,
+	globalError: boolean,
 };
 
 const initialState: AppStateType = {
@@ -29,6 +31,7 @@ const initialState: AppStateType = {
 	prevPage: null,
 	isReturnBtnShow: false,
 	userAction: null,
+	globalError: false,
 };
 
 export const appReducer = createReducer(initialState, (builder) => {
@@ -53,6 +56,9 @@ export const appReducer = createReducer(initialState, (builder) => {
 		})
 		.addCase(userActionStatusChanged, (state, action) => {
 			state.userAction = action.payload;
+		})
+		.addCase(globalErrorStateChanged, (state, action) => {
+			state.globalError = action.payload;
 		})
 		.addDefaultCase((state, action) => {})
 });

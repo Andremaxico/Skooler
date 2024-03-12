@@ -25,3 +25,7 @@ export const selectReturnBtnShowStatus = (state: RootStateType) => {
 export const selectUserAction = (state: RootStateType) => {
 	return state.app.userAction;
 }
+
+export const selectGlobalErrorState = (state: RootStateType) => {
+	return state.app.globalError;
+}
