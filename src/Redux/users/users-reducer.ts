@@ -4,6 +4,7 @@ import { createReducer, createAction, AnyAction } from '@reduxjs/toolkit';
 import { AppDispatchType } from '../store';
 import { usersAPI } from '../../api/usersApi';
 import { currUserAccountReceived } from '../account/account-reducer';
+import { globalErrorStateChanged } from '../app/appReducer';
 
 
 
@@ -38,16 +39,24 @@ export const usersReducer = createReducer(initialState, (builder) => {
 //=====================THUNKS=================
 
 
+//we cant set try/catch for whole reducer, because disable to export 
 //========================THUNKS============================
 export const setUsers = () => async (dispatch: AppDispatchType) => {
-	const data = await usersAPI.getUsers();
-	dispatch(usersReceived(data));
+	try {
+		const data = await usersAPI.getUsers();
+		dispatch(usersReceived(data));
+	} catch(e) {
+		dispatch(globalErrorStateChanged(true));
+	}
 }
 
 export const searchUsersByFullname = (fullName: string) => async (dispatch: AppDispatchType) => {
-	const users = await usersAPI.getUsersByQuery(fullName);
-	
-	if(users) {
-		dispatch(usersFound(users));
+	try {
+		const users = await usersAPI.getUsersByQuery(fullName);
+		if(users) {
+			dispatch(usersFound(users));
+		}
+	} catch(e) {
+		dispatch(globalErrorStateChanged(true));
 	}
 }

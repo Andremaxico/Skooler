@@ -146,6 +146,7 @@ const App = () => {
   if(isFetching) return <Preloader />  
   return (
     <div className={classes.App}>
+        {isGlobalError && <ErrorBanner />}
         <AppHeader />
         <div
           className={classes.content} 
@@ -156,7 +157,6 @@ const App = () => {
         >
           <div className={classes.container} style={{flex: '1 1 auto'}}>
             {networkError && <NetworkError message={networkError || ''} />}
-            {isGlobalError && <ErrorBanner />}
             <Suspense fallback={<Preloader />}>
               <Routes>
                 <Route path='/login' element={<Login />} />
