@@ -4,6 +4,7 @@ import { createReducer, createAction, createAsyncThunk, createSlice } from '@red
 import { AppDispatchType, RootStateType } from '../store';
 import chatAPI, { FetchingSubscriberType } from '../../api/chatApi';
 import { usersAPI } from '../../api/usersApi';
+import { globalErrorStateChanged } from '../app/appReducer';
 
 export type ChatStateType = {
 	messagesData: Array<MessageDataType> | null,
@@ -114,6 +115,7 @@ export const unsubscribeFromChat = () => async (dispatch: AppDispatchType) => {
 	chatAPI.unsubscribeFromChatInfo();
 }
 
+
 //messages interaction
 export const sendMessage = (data: MessageDataType, uid1: string, contactUid: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
 	console.log('send message');
@@ -152,33 +154,49 @@ export const getChatsData = () => async (dispatch: AppDispatchType, getState: ()
 	const uid = getState().account.myAccountData?.uid;
 
 	if(uid) {
-		const data = await chatAPI.getChatsData(uid);
-		console.log('data', data);
-		dispatch(chatsDataReceived(data));
+		try {
+			const data = await chatAPI.getChatsData(uid);
+			console.log('data', data);
+			dispatch(chatsDataReceived(data));
+		} catch(e) {
+			dispatch(globalErrorStateChanged(true));
+		}
 	}
 }
 
 export const setChatInfo = (data: ChatDataType, uid1: string, contactUid: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
 	const uid = getState().account.myAccountData?.uid;
 	if(uid) {
-		chatAPI.setChatInfo(data, uid1, contactUid);
+		try {
+			chatAPI.setChatInfo(data, uid1, contactUid);
+		} catch(e) {
+			dispatch(globalErrorStateChanged(true));
+		}
 	}
 }
 
 export const setContactData = (uid: string) => async (dispatch: AppDispatchType) => {
-	const data = await usersAPI.getUserById(uid);
-	if(data) {
-		console.log('contact data', data);
-		dispatch(contactDataReceived(data));
+	try {
+		const data = await usersAPI.getUserById(uid);
+		if(data) {
+			console.log('contact data', data);
+			dispatch(contactDataReceived(data));
+		}
+	} catch(e) {
+		dispatch(globalErrorStateChanged(true));
 	}
 }
 
 export const updateChatInfo = (data: ChatDataType, uid1: string, contactUid: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
 	if(uid1) {
-		console.log('update chat info');
-		chatAPI.increaceUnreadCount(uid1, contactUid);
-		chatAPI.updateChatInfo(data, uid1, contactUid);
-		chatAPI.updateChatInfo(data, contactUid, uid1);
+		try {
+			console.log('update chat info');
+			chatAPI.increaceUnreadCount(uid1, contactUid);
+			chatAPI.updateChatInfo(data, uid1, contactUid);
+			chatAPI.updateChatInfo(data, contactUid, uid1);
+		} catch(e) {
+			dispatch(globalErrorStateChanged(true));
+		}
 	}
 }
  

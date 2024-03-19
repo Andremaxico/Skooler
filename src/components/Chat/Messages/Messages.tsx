@@ -155,7 +155,11 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({
 							showDeleteConfirm={showDeleteConfirm} 
 							openInfoModal={setUsersWhoReadCurrMessage}  
 							isShort={isShort} 
-							ref={data.isRead ? lastReadedMessageRef: null}
+							ref={
+								data.isRead || data.uid === myAccountData.uid ?
+								lastReadedMessageRef : 
+								null
+							}
 							contactId={contactId}
 						/>
 					);
@@ -244,136 +248,6 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({
 	useEffect(() => {
 		setMaxHeightValue(`calc(100vh - ${(footerHeight || 0) + (headerHeight || 0)}px`);
 	}, [footerHeight, headerHeight]);
-
-	//add new message to state
-	/* useEffect(() => {
-		if(messagesList && messagesList.length > 0 && prevMessagesData.length !== messagesData.length) {
-			const diff = messagesData.filter(({ id: id1 }, i) => {
-				const isDifferent = prevMessagesData[i]?.id !== id1;
-
-				console.log('is different', isDifferent);
-
-				return isDifferent;
-			});
-
-			//to chnage this if we create new group
-			const lastGroup = messagesList.pop();
-
-			//to add new message to this
-			const groupMessages = lastGroup?.props.children;
-
-			if(diff.length > 0) {
-				const newGroups = diff.map((data, i) => {
-					const lastMessage: MessageDataType = i === 0 ? prevMessagesData[prevMessagesData.length - 1] : diff[i - 1];
-					//we need to create new group
-					const lastAccountId = lastMessage.uid ;
-					
-					//get messages dates
-					//@ts-ignore
-					const lastDate = lastMessage.createdAt?.seconds ? new Date(lastMessage.createdAt.seconds * 1000) : null;
-
-					console.log('last date', lastDate);
-
-					//@ts-ignore
-					const currDate = data.createdAt?.seconds ? new Date(data.createdAt.seconds * 1000) : new Date();
-	
-					//comparing dates
-					const isNewDate = lastDate ? lastDate.toLocaleDateString() !== currDate.toLocaleDateString() : false;
-
-					//create new group or not
-					const isNewGroup: boolean = lastAccountId !== data.uid;
-					const isMy = data.uid === myAccountData?.uid;
-	
-					const currMessage = (
-						<Message 
-							messageData={data} 
-							myAccountId={myAccountData?.uid || ''} 
-							setEditMessageData={setEditMessageData}
-							key={`${data.createdAt}${data.uid}`} 
-							showDeleteConfirm={showDeleteConfirm} 
-							openInfoModal={setUsersWhoReadCurrMessage}  
-							isShort={isNewGroup} 
-							ref={isMy ? myMessageRef : undefined}
-						/>
-					);
-		
-					if(!isNewGroup && !isNewDate) {
-						groupMessages.push(currMessage);
-					}
-	
-					const metadata: MessagesGroupMetadataType = {
-						isMy: isNewGroup,
-						avatarData: {
-							photoUrl: data.photoUrl,
-							uid: data.uid,
-						}
-					}
-				
-					return (
-						<>
-							{isNewGroup && !isNewDate ?
-								<>
-									{lastGroup}
-									<MessagesGroup listRef={listRef} metadata={metadata}>
-										<></>
-										{currMessage}
-									</MessagesGroup>
-								</>
-								: isNewDate ?
-								<>
-									{lastGroup}
-									<div className={classes.messagesDate}>{currDate.toLocaleDateString()}</div>, 
-									<MessagesGroup listRef={listRef} metadata={metadata}>
-										<></>
-										{currMessage}
-									</MessagesGroup>
-								</>
-								:
-								<MessagesGroup listRef={listRef} metadata={metadata}>
-									{groupMessages}
-								</MessagesGroup>
-							}
-						</>
-					)
-				})
-	
-	
-				const updatedList = [...messagesList, ...newGroups];
-	
-				//set JSX.Elements -> rerender
-				setMessagesList((updatedList));
-				//for next new messages compare
-				setPrevMessagesData(messagesData);
-			}
-		}
-	}, [messagesData]);
-
-	//change messages
-	useEffect(() => {
-		if(messagesData !== prevMessagesData) {
-			const changedEl: JSX.Element[] = [];
-
-			const diff = messagesData.filter(({ text: text1 }, i) => {
-				const isDifferent = prevMessagesData[i]?.text !== text1;
-
-				console.log('is different', isDifferent);
-
-				return isDifferent;
-			});
-
-			if(diff.length > 0) {
-
-				diff.forEach(data => {
-					
-				});
-			}
-		}
-	}, [messagesData]);
-	*/
-
-	//if(!myAccountData || !messagesList) return <Preloader fixed={true} />;
-
-
 
 	console.log('list ref', window.document.body.offsetWidth - (listRef.current?.getBoundingClientRect().right || 0));
 

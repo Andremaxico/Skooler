@@ -39,7 +39,9 @@
 				overflow: hidden;
 			}
 			.newMessagesCount {
-				@include unreadCount;
+				&.styled {
+					@include unreadCount;
+				}
 			}
 		}
 	}

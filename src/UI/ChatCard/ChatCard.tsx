@@ -49,6 +49,10 @@ const getMessageTime = (date: Date): string => {
 	}
 }
 
+const checkUnreadCount = (count: number | undefined) => (
+	count && count > 0
+);
+
 export const ChatCard: React.FC<PropsType> = ({data, active = false}) => {
 	const { 
 		contactAvatarUrl, contactFullname, contactId, 
@@ -106,10 +110,10 @@ export const ChatCard: React.FC<PropsType> = ({data, active = false}) => {
 						{isCut && <span className={classes.ending}>...</span>}
 					</p>
 					<span 
-						className={classes.newMessagesCount} 
+						className={cn(classes.newMessagesCount, checkUnreadCount(unreadCount) ? classes.styled : '')} 
 						ref={counterRef}
 					>
-						{unreadCount && unreadCount > 0 ? unreadCount : ''}
+						{checkUnreadCount(unreadCount) ? unreadCount : ''}
 					</span>
 				</div>
 			</div>

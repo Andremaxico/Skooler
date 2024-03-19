@@ -145,18 +145,13 @@ const chatAPI = {
 		const qSnapshot = await getDocs(q);
 
 		const chatsData: ChatDataType[] = []; 
+		qSnapshot.forEach(snap => {
+			if(snap.exists()) {
+				chatsData.push(snap.data() as ChatDataType);
+			}
+		});
 
-		try {
-			qSnapshot.forEach(snap => {
-				if(snap.exists()) {
-					chatsData.push(snap.data() as ChatDataType);
-				}
-			});
-	
-			return chatsData;
-		} catch(e) {
-
-		}
+		return chatsData;
 	},    
 
 	async subscribeOnChats(uid: string, subscriber: ChatsSubscriberType) {
