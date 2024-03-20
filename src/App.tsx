@@ -42,6 +42,8 @@ import { SearchUsers } from './components/SearchUsers';
 import { getSuccessTextByTarget } from './utils/helpers/getSuccessTextByTarget';
 import ErrorBoundary from 'antd/es/alert/ErrorBoundary';
 import { ErrorBanner } from './UI/ErrorBanner';
+import { GENERAL_CHAT_ID } from './utils/constants';
+import GeneralChat from './components/GeneralChat';
 
 //const Chat = React.lazy(() => import('./components/Chat'));
 const Chats = React.lazy(() => import('./components/Chats'));
@@ -166,6 +168,7 @@ const App = () => {
                   <Route path=':userId'/>
                 </Route>
                 <Route path='/chats' element={<Chats />} />
+                <Route path={`/chats/${GENERAL_CHAT_ID}`} element={<GeneralChat />} />
                 <Route path='/account' element={<SuspensedAccount />}>
                   <Route path=':userId'/>
                 </Route>

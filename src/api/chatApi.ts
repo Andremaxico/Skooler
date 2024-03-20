@@ -1,6 +1,7 @@
 import { ChatDataType, MessageDataType, MessagesDataType } from './../utils/types/index';
 import { query, collection, Firestore, orderBy, onSnapshot, DocumentData, getDocs, setDoc, doc, updateDoc, getDoc, deleteDoc, addDoc } from "firebase/firestore";
 import { firestore } from "../firebase/firebaseApi";
+import { GENERAL_CHAT_ID } from '../utils/constants';
 
 export type MessageSubscriberType = (messages: MessagesDataType) => void;
 export type FetchingSubscriberType = (value: boolean) => void;
@@ -78,31 +79,52 @@ const chatAPI = {
 		}
 	},
 
+	async subscribeOnGeneralChatMessages(subscriber: MessageSubscriberType) {
+		notifyFetchingSubscribers(true);
+
+		let q = query(
+			collection(firestore as Firestore, `messages/chat/${GENERAL_CHAT_ID}`), 
+			orderBy('createdAt')
+		);
+		unsubscribers.messages = onSnapshot(q, 
+			(querySnapshot) => {
+				let messages: DocumentData = [];
+
+				console.log('snapshot');
+
+				querySnapshot.forEach((doc) => {
+					console.log('doc data', doc.data());
+					messages.push({...doc.data(), id: doc.id});
+				});
+
+				notifyMessagesSubscribers(messages as MessagesDataType);
+			},
+			(error) => {
+				console.log('error' ,error.message);
+			}
+		);
+
+		subscribers['messages-subs'].push(subscriber);
+
+		notifyFetchingSubscribers(false);
+	},
+
 	async fetchingSubscribe(subscriber: FetchingSubscriberType) {
 		subscribers['fetching-sub'].push(subscriber);
 	},
 	
 	async sendMessage(messageData: MessageDataType, uid1: string, contactUid: string)  {
-		try {
-			const messageDoc = doc(firestore, `messages/chat/${uid1}/${contactUid}/messages`, messageData.id)
-			await setDoc(messageDoc, messageData); 
-			
-		} catch(e) {
-
-		}
+		const messageDoc = doc(firestore, `messages/chat/${uid1}/${contactUid}/messages`, messageData.id)
+		await setDoc(messageDoc, messageData); 
 	},
 
 	async readMessage(messageId: string, uid: string, contactUid: string) {
 		const docRef = doc(firestore, 'messages', 'chat', uid, contactUid, 'messages', messageId);
 		//const messageData = await getDoc(docRef);
-		try {
-			await updateDoc(docRef, {
-				//usersWhoRead: [...messageData.data()?.usersWhoRead, uid]
-				isRead: true,
-			});
-		} catch(e) {
-
-		}
+		await updateDoc(docRef, {
+			//usersWhoRead: [...messageData.data()?.usersWhoRead, uid]
+			isRead: true,
+		});
 	},
 
 	unsubscribe() {
@@ -115,25 +137,18 @@ const chatAPI = {
 	async deleteMessage(messageId: string) {
 		const docRef = doc(firestore, 'messages', messageId);
 
-		try {
-			//delete document
-			await deleteDoc(docRef);
-		} catch(e) {
-
-		}
+		//delete document
+		await deleteDoc(docRef);
 	},
 
 	async updateMessage(messageId: string, newText: string, uid1: string, contactUid: string,) {
 		const docRef = doc(firestore, 'messages', 'chat', uid1, contactUid, 'messages', messageId);
 		console.log('update message', messageId, newText);
-		try {
-			await updateDoc(docRef, {
-				text: newText,
-				edited: true,
-			})
-		} catch(e) {
 
-		}
+		await updateDoc(docRef, {
+			text: newText,
+			edited: true,
+		})
 	},
 
 	async getChatsData(uid: string) {
@@ -162,26 +177,20 @@ const chatAPI = {
 			orderBy('lastMessageTime', 'desc')
 		);
 
-		try {
-			unsubscribers.chats = onSnapshot(q, 
-				(snap) => {
-					const chatsData: ChatDataType[] = [];
-	
-					snap.forEach(doc => {
-						if(doc.exists()) {
-							console.log('doc data', doc.data());
-							chatsData.push(doc.data() as ChatDataType);
-						}
-					});
-	
-					notifyChatsSubscribers(chatsData);
-				}
-			);
-		} catch(e) {
+		unsubscribers.chats = onSnapshot(q, 
+			(snap) => {
+				const chatsData: ChatDataType[] = [];
 
-		}
+				snap.forEach(doc => {
+					if(doc.exists()) {
+						console.log('doc data', doc.data());
+						chatsData.push(doc.data() as ChatDataType);
+					}
+				});
 
-
+				notifyChatsSubscribers(chatsData);
+			}
+		);
 	},
 
 	async subscribeOnChatInfo(uid1: string, contactUid: string, subscriber: ChatSubscriberType) {

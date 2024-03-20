@@ -21,7 +21,6 @@ import { ScrollBtn } from '../../../UI/ScrollBtn';
 type PropsType = {
 	setEditMessageData: (data: EditMessageDataType) => void, 
 	messagesData: MessageDataType[],
-	contactId: string,
 	cancelEdit: () => void,
 	unreadMessagesCount: number,
 	newMessageFormHeight: number, 
@@ -63,7 +62,7 @@ const getSortedByDateMessages = (messagesData: MessagesDataType): FormattedMessa
 }
 
 const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({
-	setEditMessageData, messagesData, contactId, unreadMessagesCount, newMessageFormHeight
+	setEditMessageData, messagesData, unreadMessagesCount, newMessageFormHeight
 }, ref) => {
 	const isFetching = useSelector(selectIsMessagesFetching);
 	const myAccountData = useSelector(selectMyAccountData);
@@ -156,11 +155,11 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({
 							openInfoModal={setUsersWhoReadCurrMessage}  
 							isShort={isShort} 
 							ref={
-								data.isRead || data.uid === myAccountData.uid ?
+								data.isRead || isMy ?
 								lastReadedMessageRef : 
 								null
 							}
-							contactId={contactId}
+							contactId={data.uid}
 						/>
 					);
 					

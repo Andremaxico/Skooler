@@ -18,14 +18,12 @@ import { selectFooterHeight } from '../../../Redux/app/appSelectors';
 type ContactDataType = ReceivedAccountDataType | Promise<ReceivedAccountDataType | undefined>;
 
 type PropsType = {
-	authData: UserType | null,
+	uid: string,
 	isMessageEdit: boolean,
 	currValue?: string, 
 	ScrollBtn: HTMLButtonElement | null,
 	updateMessage: (value: string) => void,
-	setHeight: (n: number) => void,
 	contactUid: string,
-	unreadCount: number,
 }
 
 type FieldValues = {
@@ -33,7 +31,7 @@ type FieldValues = {
 }
 
 export const NewMessageForm: React.FC<PropsType> = React.memo(({
-	authData, isMessageEdit, currValue, updateMessage, ScrollBtn, contactUid, unreadCount, setHeight
+	uid, isMessageEdit, currValue, updateMessage, ScrollBtn, contactUid
 }): ReactElement<any, any> => {
 	//react-hook-form
 	const { control, formState: {errors, isValid}, handleSubmit, reset, setValue, trigger, watch } = useForm<FieldValues>();
@@ -108,11 +106,11 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 	}, [currValue])
 
 	//changed ref -> set height for chat body padding
-	useEffect(() => {
-		const heightValue = formRef.current?.offsetHeight || 0;
-		//for Chat.tsx(upper level)
-		setHeight(heightValue);
-	}, [formRef]);
+	// useEffect(() => {
+	// 	const heightValue = formRef.current?.offsetHeight || 0;
+	// 	//for Chat.tsx(upper level)
+	// 	setHeight(heightValue);
+	// }, [formRef]);
 
 	//changed ref -> set height for -bottom value of form
 	useEffect(() => {
@@ -138,7 +136,7 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 					lastMessageData: messageData,
 					lastMessageTime: messageData.createdAt,
 					contactAvatarUrl: userData?.avatarUrl || undefined,
-					contactFullname: userData.name + ' ' + userData.surname,
+					contactFullname: userData.fullName,
 					contactId: userData.uid,
 					unreadCount: 0,
 				}
@@ -158,13 +156,13 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 	const addMessage = async (newMessage: string) => {
 		//create new message data
 		const newMessageData: MessageDataType = {
-			uid: authData?.uid || 'undefined',
-			displayName: `${accountData?.name} ${accountData?.surname}` || 'Анонім',
+			uid: uid || 'undefined',
+			displayName: `${accountData?.fullName}` || 'Анонім',
 			photoUrl: accountData?.avatarUrl || '',
 			text: newMessage,
 			createdAt: serverTimestamp(),
 			id: v1(),
-			usersWhoRead: [authData?.uid || null],
+			usersWhoRead: [uid || null],
 			edited: false,
 			sent: false,
 			isRead: false,
@@ -206,9 +204,9 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 			className={classes.NewMessageForm} 
 			onSubmit={handleSubmit(onSubmit)} 
 			ref={formRef}
-			style={{
-				bottom: `-${formHeight}px`
-			}}
+			// style={{
+			// 	bottom: `-${formHeight}px`
+			// }}
 		>
 			<Controller
 				name='message'

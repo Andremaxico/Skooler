@@ -2,9 +2,6 @@
 
 .NewMessageForm {
 	@include column-align;
-	position: absolute;
-	right: 0;
-	bottom: 0;
 	padding-top: 8px;
 	width: 100%;
 	max-width: 100%;

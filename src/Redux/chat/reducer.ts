@@ -98,8 +98,12 @@ export const startMessaging = (contactUid: string) => (dispatch: AppDispatchType
 }
 
 export const stopMessaging = () => (dispatch: AppDispatchType) => {
-	dispatch(messagesReceived(null));
-	chatAPI.unsubscribe();
+	try {
+		dispatch(messagesReceived(null));
+		chatAPI.unsubscribe();
+	} catch(e) {
+		dispatch(globalErrorStateChanged(true));
+	}
 }
 
 export const subscribeOnChat = (uid1: string, contactUid: string) => async (dispatch: AppDispatchType) => {
@@ -142,14 +146,34 @@ export const deleteMessage = (messageId: string) => async (dispatch: AppDispatch
 export const subscribeOnChats = () => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
 	const uid = getState().account.myAccountData?.uid;
 
-	const chatsSubscriber = (data: ChatDataType[]) => {
-		dispatch(chatsDataReceived(data));
-	}
+	try {
+		const chatsSubscriber = (data: ChatDataType[]) => {
+			dispatch(chatsDataReceived(data));
+		}
 
-	if(uid) {  
-		chatAPI.subscribeOnChats(uid, chatsSubscriber);
+		if(uid) {  
+			chatAPI.subscribeOnChats(uid, chatsSubscriber);
+		}
+	} catch(e) {
+		dispatch(globalErrorStateChanged(true));
 	}
 }
+
+export const subscribeOnGeneralChat = () => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
+	try {
+		const messagesSubscriber = (data: MessagesDataType) => {
+			console.log('messages data', data);
+			dispatch(messagesReceived(data));
+		}
+
+		await chatAPI.subscribeOnGeneralChatMessages(messagesSubscriber);
+
+		console.log('subscribe on general chat');
+	} catch(e) {
+		dispatch(globalErrorStateChanged(true));
+	}
+}
+
 export const getChatsData = () => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
 	const uid = getState().account.myAccountData?.uid;
 

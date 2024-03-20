@@ -39,12 +39,15 @@ const Chat = () => {
 
 	const contactUid = params.userId;
 
+
 	//fucking kostyl
 	if(contactUid === authData?.uid) navigate('/', {replace: true});
 
 	//messages list ref
 	const scrollBtnRef = useRef<HTMLButtonElement>(null);
 	const chatRef = useRef<HTMLDivElement>(null);
+	const newMessageFormRef = useRef<HTMLDivElement>(null);
+
 	console.log('edit message data', editMessageData);
 
 	const dispatch = useAppDispatch();
@@ -73,6 +76,12 @@ const Chat = () => {
 			cancelEdit();
 			dispatch(editMessage(editMessageData.id, value, myAccountData.uid, contactUid));
 		}
+	}
+
+	const changeEditMessageData = (data: EditMessageDataType) => {
+		setEditMessageData(data);
+		setIsEdit(true);
+		console.log('set edit message data', data);
 	}
 
 	//set body height
@@ -114,10 +123,18 @@ const Chat = () => {
 		}
 	}, [contactUid]);	
 
+	//set newMessageFormHeihgt for paddings(UI)
+	useEffect(() => {
+		const el = newMessageFormRef.current;
+		if(el) {
+			setNewMessageFormHeight(el.offsetHeight);
+		}
+	}, [newMessageFormRef.current])
 
 	if(isFetching || messagesData?.length === 0) return <Preloader fixed={true} />;
 	
-	if(!authData) return <Navigate to='/login' replace={true}/>	
+	// if(!authData) return <Navigate to='/login' replace={true}/>	
+	if(!myAccountData) return <Preloader fixed/>	
 
 	return (
 		<div className={classes.Chat} ref={chatRef}>
@@ -135,28 +152,28 @@ const Chat = () => {
 						ref={scrollBtnRef} 
 						unreadMessagesCount={unreadMessagesCount || 0}
 						newMessageFormHeight={newMessageFormHeight}
-						contactId={contactUid || ''}
 						messagesData={messagesData}
-						setEditMessageData={(data: EditMessageDataType) => {
-							setEditMessageData(data);
-							setIsEdit(true);
-							console.log('set edit message data', data);
-						}
-					}
+						setEditMessageData={changeEditMessageData}
 						cancelEdit={cancelEdit}
 					/>
 					: <div>Немає повідомлень</div>
 				}
-				<NewMessageForm   
-					contactUid={contactUid || ''}
-					authData={authData} 
-					ScrollBtn={scrollBtnRef.current} 
-					isMessageEdit={isEdit} 
-					updateMessage={sendUpdatedMessage} 
-					currValue={editMessageData?.value}
-					unreadCount={unreadMessagesCount || 0}
-					setHeight={setNewMessageFormHeight}
-				/>
+				<div 
+					className={classes.newMessageFormWrap}
+					ref={newMessageFormRef}
+					style={{
+						transform: `translateY(${newMessageFormHeight}px)`
+					}}
+				>
+					<NewMessageForm   
+						contactUid={contactUid || ''}
+						uid={myAccountData.uid} 
+						ScrollBtn={scrollBtnRef.current} 
+						isMessageEdit={isEdit} 
+						updateMessage={sendUpdatedMessage} 
+						currValue={editMessageData?.value}
+					/>
+				</div>
 			</div>
 		</div>
 	)

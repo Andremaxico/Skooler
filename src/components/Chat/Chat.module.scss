@@ -9,6 +9,16 @@
 	box-sizing: border-box;
 	.body {
 		position: relative;
-		flex: 1 1 80%;
+		flex: 1 1 auto;
+		@media (max-width: $md2) {
+			flex: 1 1 80%;
+		}
+	}
+	.newMessageFormWrap {
+		position: absolute;
+		right: 0;
+		bottom: 0;
+		max-width: 100%;
+		width: 100%;
 	}
 }

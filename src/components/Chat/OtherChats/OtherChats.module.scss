@@ -1,6 +1,7 @@
 @import '../../../global-styles';
 
 .OtherChats {
+	@include column-align;
 	flex: 0 0 30%;
 	margin-right: 4px;
 	overflow-y: auto;
