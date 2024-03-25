@@ -25,6 +25,7 @@ export const OtherChats: React.FC<PropsType> = ({openedChatId}) => {
 
 	return (
 		<aside className={classes.OtherChats}>
+			
 			{chatsData?.map(data => (
 				<ChatCard 
 					data={data}

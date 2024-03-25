@@ -1,5 +1,5 @@
 import { ChatDataType, MessageDataType, MessagesDataType } from './../utils/types/index';
-import { query, collection, Firestore, orderBy, onSnapshot, DocumentData, getDocs, setDoc, doc, updateDoc, getDoc, deleteDoc, addDoc } from "firebase/firestore";
+import { query, collection, Firestore, orderBy, onSnapshot, DocumentData, getDocs, setDoc, doc, updateDoc, getDoc, deleteDoc, addDoc, DocumentReference } from "firebase/firestore";
 import { firestore } from "../firebase/firebaseApi";
 import { GENERAL_CHAT_ID } from '../utils/constants';
 
@@ -41,6 +41,16 @@ const notifyChatSubscriber = (data: ChatDataType) => {
 	}
 }
 
+const getMessageDoc = (contactUid: string, uid: string, messageId?: string) => {
+	let docRef: null | DocumentReference<DocumentData> = null;
+	if(contactUid === GENERAL_CHAT_ID || uid === GENERAL_CHAT_ID) {
+		docRef = doc(firestore, `messages/${GENERAL_CHAT_ID}/messsages/${messageId}`);
+	} else {
+		docRef = doc(firestore, `messages/chat/${uid}/${contactUid}/messages/${messageId}`);
+	}
+
+	return docRef;
+}
 
 const unsubscribers: UnsubscribersType = {}; //nothing -> function after subscribe
 
@@ -114,12 +124,13 @@ const chatAPI = {
 	},
 	
 	async sendMessage(messageData: MessageDataType, uid1: string, contactUid: string)  {
-		const messageDoc = doc(firestore, `messages/chat/${uid1}/${contactUid}/messages`, messageData.id)
-		await setDoc(messageDoc, messageData); 
+		let messageDoc: null | DocumentReference<DocumentData> = getMessageDoc(contactUid, uid1, messageData.id, )
+
+		if(messageDoc) await setDoc(messageDoc, messageData); 
 	},
 
 	async readMessage(messageId: string, uid: string, contactUid: string) {
-		const docRef = doc(firestore, 'messages', 'chat', uid, contactUid, 'messages', messageId);
+		let docRef: null | DocumentReference<DocumentData> = getMessageDoc(contactUid, uid, messageId);
 		//const messageData = await getDoc(docRef);
 		await updateDoc(docRef, {
 			//usersWhoRead: [...messageData.data()?.usersWhoRead, uid]
@@ -134,16 +145,16 @@ const chatAPI = {
 		}
 	},
 
-	async deleteMessage(messageId: string) {
-		const docRef = doc(firestore, 'messages', messageId);
+	async deleteMessage(uid: string, contactId: string, messageId: string) {
+		let docRef: null | DocumentReference<DocumentData> = getMessageDoc(contactId, uid, messageId);
 
 		//delete document
 		await deleteDoc(docRef);
 	},
 
 	async updateMessage(messageId: string, newText: string, uid1: string, contactUid: string,) {
-		const docRef = doc(firestore, 'messages', 'chat', uid1, contactUid, 'messages', messageId);
-		console.log('update message', messageId, newText);
+		let docRef: null | DocumentReference<DocumentData> = getMessageDoc(contactUid, uid1, messageId);
+		console.log('update message', messageId, newText, uid1, contactUid);
 
 		await updateDoc(docRef, {
 			text: newText,
@@ -199,18 +210,13 @@ const chatAPI = {
 		const ref = doc(firestore, 'messages', 'chat', uid1, contactUid);
 
 		let chatInfo: ChatDataType | null = null;
-
-		try {
-			unsubscribers.chat = onSnapshot(ref, (snap) => {
-				console.log('chat data updated');
-				if(snap.exists()) {
-					chatInfo = snap.data() as ChatDataType;
-					notifyChatSubscriber(chatInfo);
-				}
-			});
-		} catch(e) {
-
-		}
+		unsubscribers.chat = onSnapshot(ref, (snap) => {
+			console.log('chat data updated');
+			if(snap.exists()) {
+				chatInfo = snap.data() as ChatDataType;
+				notifyChatSubscriber(chatInfo);
+			}
+		});
 	},
 
 	async unsubscribeFromChatInfo() {
@@ -221,25 +227,17 @@ const chatAPI = {
 	},
 
 	async setChatInfo(data: ChatDataType, uid1: string, contactUid: string) {
-		try {
-			setDoc(
-				doc(firestore, `messages/chat/${uid1}/${contactUid}`), 
-				data,   
-			);
-		} catch(e) {
-
-		}
+		setDoc(
+			doc(firestore, `messages/chat/${uid1}/${contactUid}`), 
+			data,   
+		);
 	},
 
 	async updateChatInfo(data: ChatDataType, uid1: string, contactUid: string) {
-		try {
-			updateDoc(
-				doc(firestore, `messages/chat/${uid1}/${contactUid}`), 
-				data,   
-			);
-		} catch(e) {
-
-		}
+		updateDoc(
+			doc(firestore, `messages/chat/${uid1}/${contactUid}`), 
+			data,   
+		);
 	},
 
 	async increaceUnreadCount(uid1: string, contactUid: string) {
@@ -248,20 +246,16 @@ const chatAPI = {
 
 		let prevData: null | ChatDataType = null;
 
-		try {
-			if(prevDoc.exists()) {
-				prevData = prevDoc.data() as ChatDataType;
-				console.log('increase unread count', prevData);
-				if(prevData && prevData.unreadCount) {
-					updateDoc(
-						ref, {
-							unreadCount: (prevData?.unreadCount || 0) + 1,
-						}
-					)
-				}
+		if(prevDoc.exists()) {
+			prevData = prevDoc.data() as ChatDataType;
+			console.log('increase unread count', prevData);
+			if(prevData && prevData.unreadCount) {
+				updateDoc(
+					ref, {
+						unreadCount: (prevData?.unreadCount || 0) + 1,
+					}
+				)
 			}
-		} catch(e) {
-
 		}
 	},
 	async decreaceUnreadCount(uid1: string, contactUid: string) {
@@ -271,20 +265,16 @@ const chatAPI = {
 		console.log('decrese unread count', prevDoc);
 
 		let prevData: null | ChatDataType = null;
-		try {
-			if(prevDoc.exists()) {
-				prevData = prevDoc.data() as ChatDataType;
-	
-				if(prevData && prevData.unreadCount) {
-					updateDoc( 
-						ref, {
-							unreadCount: prevData.unreadCount - 1,
-						}
-					)
-				}
-			}
-		} catch(e) {
+		if(prevDoc.exists()) {
+			prevData = prevDoc.data() as ChatDataType;
 
+			if(prevData && prevData.unreadCount) {
+				updateDoc( 
+					ref, {
+						unreadCount: prevData.unreadCount - 1,
+					}
+				)
+			}
 		}
 	},
 }

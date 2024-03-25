@@ -5,49 +5,12 @@ import { Avatar, useTheme } from '@mui/joy';
 import { getStringDate } from '../../utils/helpers/date/getStringDate';
 import { Link } from 'react-router-dom';
 import cn from 'classnames';
+import { getMessageTime } from '../../utils/helpers/date/getMessageTime';
 
 type PropsType = {
 	data: ChatDataType,
 	active?: boolean
 };
-
-const getMessageTime = (date: Date): string => {
-	const currDate = new Date();
-	const currTime = currDate.getTime();
-	const messageTime = date.getTime();
-
-	const diff = currTime - messageTime;
-	const minutesDiff = Math.floor(diff / 1000 / 60);
-	const hoursDiff = Math.floor(minutesDiff / 60);
-	const timeDiff =  hoursDiff ;
-
-	console.log('hoursDiff', timeDiff);
-	console.log('message datee', date);
-
-	const isToday = currDate.getHours() - hoursDiff > 0;
-
-	console.log('is today', isToday);
-
-	const day = 1000 * 60 * 60* 24;  
-	const week = day * 7;
-
-	if(isToday) {
-		//show time
-		const result = `${date.getHours()}:${date.getMinutes()}`;
-		return result;
-	} else if(!isToday && diff < 2 * day) {
-		//show "yesterday"
-		return 'Вчора';
-	} else if(diff > day && diff <= (week - day)) {
-		//show day of the week
-		const days = ['Понеділок', 'Вівторок', 'Середа', 'Четвер', "П'ятниця", 'Субота', 'Неділя'];
-		const day = days[date.getDay()];
-
-		return day;
-	} else {
-		return getStringDate(messageTime);
-	}
-}
 
 const checkUnreadCount = (count: number | undefined) => (
 	count && count > 0

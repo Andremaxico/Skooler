@@ -129,18 +129,34 @@ export const sendMessage = (data: MessageDataType, uid1: string, contactUid: str
 }
 
 export const markMessageAsRead = (messageId: string, uid1: string, contactUid: string) => async (dispatch: AppDispatchType) => {
-	chatAPI.readMessage(messageId, uid1, contactUid);
-	chatAPI.decreaceUnreadCount(uid1, contactUid);
+	try {
+		await chatAPI.readMessage(messageId, uid1, contactUid);
+		await chatAPI.decreaceUnreadCount(uid1, contactUid);
+
+		await chatAPI.readMessage(messageId, contactUid, uid1);
+		await chatAPI.decreaceUnreadCount(contactUid, uid1);
+	} catch(e) {
+		dispatch(globalErrorStateChanged(true));
+	}
 }
 
 export const editMessage = (messageId: string, newText: string, uid1: string, contactUid: string) => async (dispatch: AppDispatchType) => {
 	console.log('edit message', messageId, newText);
-	chatAPI.updateMessage(messageId, newText, uid1, contactUid);
-	await chatAPI.updateMessage(messageId, newText, contactUid, uid1) ;
+	try {
+		await chatAPI.updateMessage(messageId, newText, uid1, contactUid);
+		await chatAPI.updateMessage(messageId, newText, contactUid, uid1);
+	} catch(e) {
+		dispatch(globalErrorStateChanged(true));
+	}
 } 
 
-export const deleteMessage = (messageId: string) => async (dispatch: AppDispatchType) => {
-	await chatAPI.deleteMessage(messageId);
+export const deleteMessage = (uid: string, contactId: string, messageId: string) => async (dispatch: AppDispatchType) => {
+	try {
+		await chatAPI.deleteMessage(uid, contactId, messageId);
+		await chatAPI.deleteMessage(contactId, uid, messageId);
+	} catch(e) {
+		dispatch(globalErrorStateChanged(true));
+	}
 }
 
 export const subscribeOnChats = () => async (dispatch: AppDispatchType, getState: () => RootStateType) => {

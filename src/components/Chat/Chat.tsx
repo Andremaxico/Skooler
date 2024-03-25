@@ -5,13 +5,14 @@ import classes from './Chat.module.scss';
 import { NewMessageForm } from './NewMessageForm';
 import { useSelector } from 'react-redux';
 import { selectCurrChatData, selectIsMessagesFetching, selectMessages } from '../../Redux/chat/selectors';
-import { contactDataReceived, editMessage, setContactData, startMessaging, stopMessaging, subscribeOnChat, unsubscribeFromChat } from '../../Redux/chat/reducer';
+import { contactDataReceived, editMessage, setContactData, startMessaging, stopMessaging, subscribeOnChat, subscribeOnGeneralChat, unsubscribeFromChat } from '../../Redux/chat/reducer';
 import Preloader from '../../UI/Preloader';
 import { useAppDispatch } from '../../Redux/store';
 import { ScrollBtn } from '../../UI/ScrollBtn';
 import { selectMyAccountData, selectMyLoginData } from '../../Redux/account/account-selectors';
 import { OtherChats } from './OtherChats';
 import { selectFooterHeight, selectHeaderHeight } from '../../Redux/app/appSelectors';
+import { BASE_PAGE_PADDING, GENERAL_CHAT_ID } from '../../utils/constants';
 
 export type EditMessageDataType = {
 	value: string,
@@ -88,7 +89,7 @@ const Chat = () => {
 	//= 100vh - container's padding - footerH - headerH
 	useEffect(() => {
 		console.log('new message for height', newMessageFormHeight);
-		const value = `calc(100vh - ${(footerHeight || 0) + (headerHeight || 0) + 32 + newMessageFormHeight}px)`;
+		const value = `calc(100vh - ${(footerHeight || 0) + (headerHeight || 0) + BASE_PAGE_PADDING * 2 + newMessageFormHeight}px)`;
 
 		setBodyHeight(value);
 		console.log('body height value', value);
@@ -96,8 +97,10 @@ const Chat = () => {
 
 	//start messaging
 	useEffect(() => {
-		if(contactUid) {
+		if(contactUid && contactUid !== GENERAL_CHAT_ID) {
 			dispatch(startMessaging(contactUid));
+		} else if(contactUid) {
+			dispatch(subscribeOnGeneralChat());
 		}
 		return () => {
 			dispatch(stopMessaging());
@@ -113,7 +116,7 @@ const Chat = () => {
 
 	//set contact data for current chat
 	useEffect(() => {
-		if(contactUid) {
+		if(contactUid && contactUid !== GENERAL_CHAT_ID) {
 			console.log('set contact data');
 			dispatch(setContactData(contactUid));
 		}
@@ -133,7 +136,7 @@ const Chat = () => {
 
 	if(isFetching || messagesData?.length === 0) return <Preloader fixed={true} />;
 	
-	// if(!authData) return <Navigate to='/login' replace={true}/>	
+	if(!authData) return <Navigate to='/login' replace={true}/>	
 	if(!myAccountData) return <Preloader fixed/>	
 
 	return (
@@ -167,7 +170,7 @@ const Chat = () => {
 				>
 					<NewMessageForm   
 						contactUid={contactUid || ''}
-						uid={myAccountData.uid} 
+						senderId={myAccountData.uid} 
 						ScrollBtn={scrollBtnRef.current} 
 						isMessageEdit={isEdit} 
 						updateMessage={sendUpdatedMessage} 

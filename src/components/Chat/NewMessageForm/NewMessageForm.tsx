@@ -14,11 +14,12 @@ import { FormControl, IconButton, Textarea } from '@mui/joy';
 import { footerHeightReceived } from '../../../Redux/app/appReducer';
 import { selectContactData, selectMessages } from '../../../Redux/chat/selectors';
 import { selectFooterHeight } from '../../../Redux/app/appSelectors';
+import { GENERAL_CHAT_ID } from '../../../utils/constants';
 
 type ContactDataType = ReceivedAccountDataType | Promise<ReceivedAccountDataType | undefined>;
 
 type PropsType = {
-	uid: string,
+	senderId: string,
 	isMessageEdit: boolean,
 	currValue?: string, 
 	ScrollBtn: HTMLButtonElement | null,
@@ -31,7 +32,7 @@ type FieldValues = {
 }
 
 export const NewMessageForm: React.FC<PropsType> = React.memo(({
-	uid, isMessageEdit, currValue, updateMessage, ScrollBtn, contactUid
+	senderId, isMessageEdit, currValue, updateMessage, ScrollBtn, contactUid
 }): ReactElement<any, any> => {
 	//react-hook-form
 	const { control, formState: {errors, isValid}, handleSubmit, reset, setValue, trigger, watch } = useForm<FieldValues>();
@@ -156,13 +157,13 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 	const addMessage = async (newMessage: string) => {
 		//create new message data
 		const newMessageData: MessageDataType = {
-			uid: uid || 'undefined',
+			uid: senderId || 'undefined',
 			displayName: `${accountData?.fullName}` || 'Анонім',
 			photoUrl: accountData?.avatarUrl || '',
 			text: newMessage,
 			createdAt: serverTimestamp(),
 			id: v1(),
-			usersWhoRead: [uid || null],
+			usersWhoRead: [senderId || null],
 			edited: false,
 			sent: false,
 			isRead: false,
@@ -172,14 +173,17 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 		setIsSendBtnShowing(false);
 
 		//if authed -> send message and set chat info
-		console.log('contactdata', contactData);
-		if(accountData && contactData) {
+		console.log('contactdata', contactData, senderId, accountData);
+		if(accountData && contactUid === GENERAL_CHAT_ID) {
+			//uid1->contactUid->messages
+			dispatch(sendMessage(newMessageData, accountData.uid, GENERAL_CHAT_ID));
+		} else if(accountData && contactData) {
 			console.log('have account data');
 			//uid1 -> contactUid-> data (api)
 			createChatInfo(newMessageData, contactData, accountData.uid, contactUid);
 			//uid1->contactUid->messages
 			dispatch(sendMessage(newMessageData, accountData.uid, contactUid));
-			//uid1->contactUid->messages
+			//contactUid->uid1->messages
 			await dispatch(sendMessage(newMessageData, contactUid, accountData.uid));
 		}
 	}
