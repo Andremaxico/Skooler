@@ -99,7 +99,7 @@ const Chat = () => {
 	useEffect(() => {
 		if(contactUid && contactUid !== GENERAL_CHAT_ID) {
 			dispatch(startMessaging(contactUid));
-		} else if(contactUid) {
+		} else {
 			dispatch(subscribeOnGeneralChat());
 		}
 		return () => {
@@ -134,7 +134,7 @@ const Chat = () => {
 		}
 	}, [newMessageFormRef.current])
 
-	if(isFetching || messagesData?.length === 0) return <Preloader fixed={true} />;
+	if(isFetching && messagesData?.length === 0) return <Preloader fixed={true} />;
 	
 	if(!authData) return <Navigate to='/login' replace={true}/>	
 	if(!myAccountData) return <Preloader fixed/>	

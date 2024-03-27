@@ -6,15 +6,12 @@ import { getStringDate } from '../../utils/helpers/date/getStringDate';
 import { Link } from 'react-router-dom';
 import cn from 'classnames';
 import { getMessageTime } from '../../utils/helpers/date/getMessageTime';
+import { checkUnreadCount } from '../../utils/helpers/checkUnreadCount';
 
 type PropsType = {
 	data: ChatDataType,
 	active?: boolean
 };
-
-const checkUnreadCount = (count: number | undefined) => (
-	count && count > 0
-);
 
 export const ChatCard: React.FC<PropsType> = ({data, active = false}) => {
 	const { 

@@ -5,6 +5,7 @@ import { AppDispatchType, RootStateType } from '../store';
 import chatAPI, { FetchingSubscriberType } from '../../api/chatApi';
 import { usersAPI } from '../../api/usersApi';
 import { globalErrorStateChanged } from '../app/appReducer';
+import { GENERAL_CHAT_ID } from '../../utils/constants';
 
 export type ChatStateType = {
 	messagesData: Array<MessageDataType> | null,
@@ -24,6 +25,7 @@ export const newMessageReceived = createAction<MessageDataType>('chat/NEW_MESSAG
 export const chatsDataReceived = createAction<ChatDataType[] | null>('chat/CHATS_DATA_RECEIVED');
 export const contactDataReceived = createAction<ReceivedAccountDataType | null>('chat/CONTACT_DATA_RECEIVED');
 export const currChatDataReceived = createAction<ChatDataType | null>('chat/CURR_CHAT_DATA_RECEIVED');
+export const generalChatDataReceived = createAction<ChatDataType | null>('chat/GENERAL_CHAT_DATA_RRECEIVED');
 
 //===========================REDUCER========================
 const initialState: ChatStateType = {
@@ -57,6 +59,9 @@ const chatReducer = createReducer(initialState, (builder) => {
 		})
 		.addCase(currChatDataReceived, (state, action) => {
 			state.currChatData = action.payload;
+		})
+		.addCase(generalChatDataReceived, (state, action) => {
+			if(action.payload) state.chatsData?.unshift(action.payload);
 		})
 		.addDefaultCase((state, action) => {});
 });
@@ -122,7 +127,6 @@ export const unsubscribeFromChat = () => async (dispatch: AppDispatchType) => {
 
 //messages interaction
 export const sendMessage = (data: MessageDataType, uid1: string, contactUid: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
-	console.log('send message');
 	const myUid = getState().account.myAccountData?.uid;
 	if(myUid === uid1) dispatch(newMessageReceived(data));
 	await chatAPI.sendMessage({...data, sent: true}, uid1, contactUid);
@@ -166,13 +170,27 @@ export const subscribeOnChats = () => async (dispatch: AppDispatchType, getState
 		const chatsSubscriber = (data: ChatDataType[]) => {
 			dispatch(chatsDataReceived(data));
 		}
+		const generalChatSubscriber = (data: ChatDataType) => {
+			dispatch(generalChatDataReceived(data));
+		}
 
 		if(uid) {  
-			chatAPI.subscribeOnChats(uid, chatsSubscriber);
+			chatAPI.subscribeOnChats(uid, chatsSubscriber, generalChatSubscriber);
 		}
+	} catch(e) {
+		console.log(e);
+		dispatch(globalErrorStateChanged(true));
+	}
+}
+
+export const unsubscribeFromChats = () => async (dispatch: AppDispatchType) => {
+	try {
+		unsubscribeFromChats();
+		dispatch(chatsDataReceived(null));
 	} catch(e) {
 		dispatch(globalErrorStateChanged(true));
 	}
+
 }
 
 export const subscribeOnGeneralChat = () => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
@@ -186,6 +204,7 @@ export const subscribeOnGeneralChat = () => async (dispatch: AppDispatchType, ge
 
 		console.log('subscribe on general chat');
 	} catch(e) {
+		console.log(e);
 		dispatch(globalErrorStateChanged(true));
 	}
 }
@@ -208,7 +227,7 @@ export const setChatInfo = (data: ChatDataType, uid1: string, contactUid: string
 	const uid = getState().account.myAccountData?.uid;
 	if(uid) {
 		try {
-			chatAPI.setChatInfo(data, uid1, contactUid);
+			await chatAPI.setChatInfo(data, uid1, contactUid);
 		} catch(e) {
 			dispatch(globalErrorStateChanged(true));
 		}

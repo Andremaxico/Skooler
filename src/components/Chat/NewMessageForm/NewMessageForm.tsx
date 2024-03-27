@@ -15,6 +15,7 @@ import { footerHeightReceived } from '../../../Redux/app/appReducer';
 import { selectContactData, selectMessages } from '../../../Redux/chat/selectors';
 import { selectFooterHeight } from '../../../Redux/app/appSelectors';
 import { GENERAL_CHAT_ID } from '../../../utils/constants';
+import { getMessageTime } from '../../../utils/helpers/date/getMessageTime';
 
 type ContactDataType = ReceivedAccountDataType | Promise<ReceivedAccountDataType | undefined>;
 
@@ -153,6 +154,29 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 		}
 	}
 
+	const createGeneralChatInfo = async (lastMessageData: MessageDataType) => {
+		let chatInfo: null | ChatDataType = null;
+		
+		//create chat info if we hadn't messages before
+		if(messages && messages.length === 0) {
+			chatInfo = {
+				lastMessageData,
+				lastMessageTime: lastMessageData.createdAt,
+				contactAvatarUrl: GENERAL_CHAT_ID,
+				contactFullname: 'Загальний чат',
+				contactId: GENERAL_CHAT_ID,
+				unreadCount: 0
+			}
+		//update chat info
+		} else {
+			chatInfo = {
+				lastMessageData,
+				lastMessageTime: lastMessageData.createdAt
+			}
+		}
+		dispatch(setChatInfo(chatInfo, senderId, GENERAL_CHAT_ID));
+	}
+
 	//send message to thunk
 	const addMessage = async (newMessage: string) => {
 		//create new message data
@@ -177,6 +201,7 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 		if(accountData && contactUid === GENERAL_CHAT_ID) {
 			//uid1->contactUid->messages
 			dispatch(sendMessage(newMessageData, accountData.uid, GENERAL_CHAT_ID));
+			createGeneralChatInfo(newMessageData);
 		} else if(accountData && contactData) {
 			console.log('have account data');
 			//uid1 -> contactUid-> data (api)

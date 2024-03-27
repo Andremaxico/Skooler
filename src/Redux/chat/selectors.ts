@@ -1,3 +1,4 @@
+import { GENERAL_CHAT_ID } from '../../utils/constants';
 import { RootStateType } from './../store';
 
 export const selectMessages = (state: RootStateType) => {
@@ -22,4 +23,8 @@ export const selectContactData = (state: RootStateType) => {
 
 export const selectCurrChatData = (state: RootStateType) => {
 	return state.messages.currChatData;
+}
+
+export const selectGeneralChatData = (state: RootStateType) => {
+	return state.messages.chatsData?.filter(data => data.contactId === GENERAL_CHAT_ID)[0];
 }

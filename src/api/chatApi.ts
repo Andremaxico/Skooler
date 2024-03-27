@@ -13,12 +13,14 @@ type UnsubscribersType = {
 	messages?: Function,
 	chats?: Function,
 	chat?: Function,
+	generalChat?: Function,
 }
 
 const subscribers = {
 	'messages-subs': [] as MessageSubscriberType[],
 	'fetching-sub': [] as FetchingSubscriberType[],
 	'chats-sub': [] as ChatsSubscriberType[],
+	'generalChat-sub': null as ChatSubscriberType | null,
 	'chat-sub': null as ChatSubscriberType | null,
 }
 
@@ -41,12 +43,30 @@ const notifyChatSubscriber = (data: ChatDataType) => {
 	}
 }
 
-const getMessageDoc = (contactUid: string, uid: string, messageId?: string) => {
+const notifyGeneralChatSubscriber = (data: ChatDataType) => {
+	const sub = subscribers['generalChat-sub'];
+	if(sub) {
+		sub(data);
+	}
+}
+
+const getMessageDoc = (contactUid: string, uid: string, messageId: string) => {
 	let docRef: null | DocumentReference<DocumentData> = null;
 	if(contactUid === GENERAL_CHAT_ID || uid === GENERAL_CHAT_ID) {
-		docRef = doc(firestore, `messages/${GENERAL_CHAT_ID}/messsages/${messageId}`);
+		docRef = doc(firestore, `messages/${GENERAL_CHAT_ID}/messages/${messageId}`);
 	} else {
 		docRef = doc(firestore, `messages/chat/${uid}/${contactUid}/messages/${messageId}`);
+	}
+
+	return docRef;
+}
+
+const getChatDoc = (contactUid: string, uid: string) => {
+	let docRef: null | DocumentReference<DocumentData> = null;
+	if(contactUid === GENERAL_CHAT_ID || uid === GENERAL_CHAT_ID) {
+		docRef = doc(firestore, `messages/${GENERAL_CHAT_ID}`);
+	} else {
+		docRef = doc(firestore, `messages/chat/${uid}/${contactUid}`);
 	}
 
 	return docRef;
@@ -62,38 +82,33 @@ const chatAPI = {
 			collection(firestore as Firestore, `messages/chat/${uid}/${contactUid}/messages`), 
 			orderBy('createdAt')
 		);
+		unsubscribers.messages = onSnapshot(q, 
+			(querySnapshot) => {
+				let messages: DocumentData = [];
 
-		try {
-			unsubscribers.messages = onSnapshot(q, 
-				(querySnapshot) => {
-					let messages: DocumentData = [];
+				console.log('snapshot');
 
-					console.log('snapshot');
+				querySnapshot.forEach((doc) => {
+					messages.push({...doc.data(), id: doc.id});
+				});
 
-					querySnapshot.forEach((doc) => {
-						messages.push({...doc.data(), id: doc.id});
-					});
+				notifyMessagesSubscribers(messages as MessagesDataType);
+			},
+			(error) => {
+				console.log('error' ,error.message);
+			}
+		);
 
-					notifyMessagesSubscribers(messages as MessagesDataType);
-				},
-				(error) => {
-					console.log('error' ,error.message);
-				}
-			);
+		subscribers['messages-subs'].push(subscriber);
 
-			subscribers['messages-subs'].push(subscriber);
-
-			notifyFetchingSubscribers(false);
-		} catch(e) {
-
-		}
+		notifyFetchingSubscribers(false);
 	},
 
 	async subscribeOnGeneralChatMessages(subscriber: MessageSubscriberType) {
 		notifyFetchingSubscribers(true);
 
 		let q = query(
-			collection(firestore as Firestore, `messages/chat/${GENERAL_CHAT_ID}`), 
+			collection(firestore as Firestore, `messages/${GENERAL_CHAT_ID}/messages`), 
 			orderBy('createdAt')
 		);
 		unsubscribers.messages = onSnapshot(q, 
@@ -124,13 +139,13 @@ const chatAPI = {
 	},
 	
 	async sendMessage(messageData: MessageDataType, uid1: string, contactUid: string)  {
-		let messageDoc: null | DocumentReference<DocumentData> = getMessageDoc(contactUid, uid1, messageData.id, )
+		let messageDoc = getMessageDoc(contactUid, uid1, messageData.id)
 
-		if(messageDoc) await setDoc(messageDoc, messageData); 
+		if(messageDoc) await setDoc(messageDoc, messageData);
 	},
 
 	async readMessage(messageId: string, uid: string, contactUid: string) {
-		let docRef: null | DocumentReference<DocumentData> = getMessageDoc(contactUid, uid, messageId);
+		let docRef = getMessageDoc(contactUid, uid, messageId);
 		//const messageData = await getDoc(docRef);
 		await updateDoc(docRef, {
 			//usersWhoRead: [...messageData.data()?.usersWhoRead, uid]
@@ -180,8 +195,10 @@ const chatAPI = {
 		return chatsData;
 	},    
 
-	async subscribeOnChats(uid: string, subscriber: ChatsSubscriberType) {
+
+	async subscribeOnChats(uid: string, subscriber: ChatsSubscriberType, generalChatSubscriber: ChatSubscriberType) {
 		subscribers['chats-sub'].push(subscriber);
+		subscribers['generalChat-sub'] = generalChatSubscriber;
 
 		const q = query(
 			collection(firestore, `messages/chat/${uid}`),
@@ -202,12 +219,27 @@ const chatAPI = {
 				notifyChatsSubscribers(chatsData);
 			}
 		);
+
+		unsubscribers.generalChat = onSnapshot(doc(firestore, 'messages', GENERAL_CHAT_ID), (doc) => {
+			if(doc.exists()) {
+				const data = doc.data();
+				notifyGeneralChatSubscriber(data as ChatDataType);
+			}
+		})
+	},
+
+	async unsubscribeFromChats() {
+		const {generalChat, chats} = unsubscribers;
+		if(generalChat && chats) {
+			generalChat();
+			chats();
+		}
 	},
 
 	async subscribeOnChatInfo(uid1: string, contactUid: string, subscriber: ChatSubscriberType) {
 		subscribers['chat-sub'] = subscriber;
 
-		const ref = doc(firestore, 'messages', 'chat', uid1, contactUid);
+		const ref = getChatDoc(contactUid, uid1);
 
 		let chatInfo: ChatDataType | null = null;
 		unsubscribers.chat = onSnapshot(ref, (snap) => {
@@ -227,10 +259,17 @@ const chatAPI = {
 	},
 
 	async setChatInfo(data: ChatDataType, uid1: string, contactUid: string) {
-		setDoc(
-			doc(firestore, `messages/chat/${uid1}/${contactUid}`), 
-			data,   
-		);
+		if(contactUid === GENERAL_CHAT_ID) {
+			setDoc(
+				doc(firestore, `messages/${GENERAL_CHAT_ID}`), 
+				data,   
+			);
+		} else {
+			setDoc(
+				doc(firestore, `messages/chat/${uid1}/${contactUid}`), 
+				data,   
+			);
+		}
 	},
 
 	async updateChatInfo(data: ChatDataType, uid1: string, contactUid: string) {
@@ -241,7 +280,7 @@ const chatAPI = {
 	},
 
 	async increaceUnreadCount(uid1: string, contactUid: string) {
-		const ref = doc(firestore, 'messages', 'chat', contactUid, uid1)
+		const ref = getChatDoc(contactUid, uid1);
 		const prevDoc = await getDoc(ref);
 
 		let prevData: null | ChatDataType = null;
@@ -259,7 +298,7 @@ const chatAPI = {
 		}
 	},
 	async decreaceUnreadCount(uid1: string, contactUid: string) {
-		const ref = doc(firestore, 'messages', 'chat', uid1, contactUid)
+		const ref = getChatDoc(contactUid, uid1);
 		const prevDoc = await getDoc(ref);
 
 		console.log('decrese unread count', prevDoc);
