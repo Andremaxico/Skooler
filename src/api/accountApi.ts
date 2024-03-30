@@ -135,23 +135,18 @@ export const accountAPI = {
 		// axios.post('http://localhost:5000/send_email', email)
 		// 	.then(() => console.log('email sent'))
 		// 	.catch(error => console.log('error', error));
-
-		try {
-			await axios({
-				method: 'post',
-				url: 'http://localhost:5000/send_email',
-				data: {
-					email, 
-					code: code.toString(),
-				},
-				//it must be here for working
-				validateStatus: (status) => {
-					return true; // I'm always returning true, you may want to do it depending on the status received
-				},
-			});
-		} catch(e) {
-
-		}
+		await axios({
+			method: 'post',
+			url: `${process.env.BASE_URL}/send_email`,
+			data: {
+				email, 
+				code: code.toString(),
+			},
+			//it must be here for working
+			validateStatus: (status) => {
+				return true; // I'm always returning true, you may want to do it depending on the status received
+			},
+		});
 
 		//axios.get('http://localhost:5000').then(res => console.log('res', res));
 	},

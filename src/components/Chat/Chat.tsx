@@ -170,7 +170,7 @@ const Chat = () => {
 				>
 					<NewMessageForm   
 						contactUid={contactUid || ''}
-						senderId={myAccountData.uid} 
+						myId={myAccountData.uid} 
 						ScrollBtn={scrollBtnRef.current} 
 						isMessageEdit={isEdit} 
 						updateMessage={sendUpdatedMessage} 

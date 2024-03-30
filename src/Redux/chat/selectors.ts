@@ -26,5 +26,5 @@ export const selectCurrChatData = (state: RootStateType) => {
 }
 
 export const selectGeneralChatData = (state: RootStateType) => {
-	return state.messages.chatsData?.filter(data => data.contactId === GENERAL_CHAT_ID)[0];
+	return state.messages.generalChatData;
 }

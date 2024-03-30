@@ -147,10 +147,11 @@ const chatAPI = {
 	async readMessage(messageId: string, uid: string, contactUid: string) {
 		let docRef = getMessageDoc(contactUid, uid, messageId);
 		//const messageData = await getDoc(docRef);
-		await updateDoc(docRef, {
-			//usersWhoRead: [...messageData.data()?.usersWhoRead, uid]
-			isRead: true,
-		});
+		console.log('doc ref', docRef);
+		// await updateDoc(docRef, {
+		// 	//usersWhoRead: [...messageData.data()?.usersWhoRead, uid]
+		// 	isRead: true,
+		// });
 	},
 
 	unsubscribe() {
@@ -259,22 +260,16 @@ const chatAPI = {
 	},
 
 	async setChatInfo(data: ChatDataType, uid1: string, contactUid: string) {
-		if(contactUid === GENERAL_CHAT_ID) {
-			setDoc(
-				doc(firestore, `messages/${GENERAL_CHAT_ID}`), 
-				data,   
-			);
-		} else {
-			setDoc(
-				doc(firestore, `messages/chat/${uid1}/${contactUid}`), 
-				data,   
-			);
-		}
+		const docRef = getChatDoc(contactUid, uid1);
+
+		setDoc(docRef, data);
 	},
 
 	async updateChatInfo(data: ChatDataType, uid1: string, contactUid: string) {
+		const docRef = getChatDoc(contactUid, uid1);
+		
 		updateDoc(
-			doc(firestore, `messages/chat/${uid1}/${contactUid}`), 
+			docRef, 
 			data,   
 		);
 	},

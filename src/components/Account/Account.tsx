@@ -35,6 +35,7 @@ const Account: React.FC<PropsType> = ({}) => {
 			dispatch(setAnotherUserAccount(userId));
 		}
 		setIsLoading(false);
+		
 	}, [userId]);
 
 	console.log('axxoun data', accountData);

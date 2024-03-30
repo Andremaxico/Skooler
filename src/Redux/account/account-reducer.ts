@@ -279,28 +279,33 @@ export const updateMyAccountData = (data: UpdatedAccountDataType) => async (disp
 	console.log('data', data);
 
 	if(uid) {
-		//if user didn't change avatar, without getting it we setting it to null
-		let avatarUrl: string | null | undefined = getState().account.myAccountData?.avatarUrl || null; 
-		if(avatar) {
-			avatarUrl = await accountAPI.sendAvatar(avatar, uid);
-			if(avatarUrl === undefined) avatarUrl = null;
+		try {
+
+			//if user didn't change avatar, without getting it we setting it to null
+			let avatarUrl: string | null | undefined = getState().account.myAccountData?.avatarUrl || null; 
+			if(avatar) {
+				avatarUrl = await accountAPI.sendAvatar(avatar, uid);
+				if(avatarUrl === undefined) avatarUrl = null;
+			}
+
+			//get large data about school
+			const schoolData = await schoolsAPI.getSchoolInfo(schoolInfo.id);
+
+
+			const finalData: FinalUpdatedAccountDataType = {
+				class: classNum,
+				school: schoolData,
+				avatarUrl,
+				aboutMe
+			}
+			await accountAPI.updateMyAccountData(finalData, uid);
+			
+			if(currData) {
+				dispatch(myAccountDataReceived({...currData, ...finalData}));
+			} 
+		} catch(e) {
+			dispatch(globalErrorStateChanged(true));
 		}
-
-		//get large data about school
-		const schoolData = await schoolsAPI.getSchoolInfo(schoolInfo.id);
-
-
-		const finalData: FinalUpdatedAccountDataType = {
-			class: classNum,
-			school: schoolData,
-			avatarUrl,
-			aboutMe
-		}
-		await accountAPI.updateMyAccountData(finalData, uid);
-		
-		if(currData) {
-			dispatch(myAccountDataReceived({...currData, ...finalData}));
-		} 
 	}
 }
 export const logOut = () => async (dispatch: AppDispatchType) => {
@@ -312,6 +317,7 @@ export const logOut = () => async (dispatch: AppDispatchType) => {
 		dispatch(authStatusChanged(false));
 	} catch(error: any) {
 		console.log('error', error.code);
+		dispatch(globalErrorStateChanged(true));
 	}
 }
 

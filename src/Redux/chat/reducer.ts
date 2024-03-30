@@ -14,6 +14,7 @@ export type ChatStateType = {
 	chatsData: ChatDataType[] | null,
 	contactData: ReceivedAccountDataType | null,
 	currChatData: ChatDataType | null,
+	generalChatData: ChatDataType | null,
 }
 
 
@@ -35,6 +36,7 @@ const initialState: ChatStateType = {
 	chatsData: [],
 	contactData: null,
 	currChatData: null,
+	generalChatData: null,
 }
 
 const chatReducer = createReducer(initialState, (builder) => {
@@ -61,7 +63,7 @@ const chatReducer = createReducer(initialState, (builder) => {
 			state.currChatData = action.payload;
 		})
 		.addCase(generalChatDataReceived, (state, action) => {
-			if(action.payload) state.chatsData?.unshift(action.payload);
+			state.generalChatData = action.payload;
 		})
 		.addDefaultCase((state, action) => {});
 });
@@ -204,7 +206,7 @@ export const subscribeOnGeneralChat = () => async (dispatch: AppDispatchType, ge
 
 		console.log('subscribe on general chat');
 	} catch(e) {
-		console.log(e);
+		console.log('error', e);
 		dispatch(globalErrorStateChanged(true));
 	}
 }

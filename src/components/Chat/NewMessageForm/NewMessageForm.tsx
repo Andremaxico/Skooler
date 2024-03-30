@@ -20,7 +20,7 @@ import { getMessageTime } from '../../../utils/helpers/date/getMessageTime';
 type ContactDataType = ReceivedAccountDataType | Promise<ReceivedAccountDataType | undefined>;
 
 type PropsType = {
-	senderId: string,
+	myId: string,
 	isMessageEdit: boolean,
 	currValue?: string, 
 	ScrollBtn: HTMLButtonElement | null,
@@ -33,7 +33,7 @@ type FieldValues = {
 }
 
 export const NewMessageForm: React.FC<PropsType> = React.memo(({
-	senderId, isMessageEdit, currValue, updateMessage, ScrollBtn, contactUid
+	myId, isMessageEdit, currValue, updateMessage, ScrollBtn, contactUid
 }): ReactElement<any, any> => {
 	//react-hook-form
 	const { control, formState: {errors, isValid}, handleSubmit, reset, setValue, trigger, watch } = useForm<FieldValues>();
@@ -158,7 +158,7 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 		let chatInfo: null | ChatDataType = null;
 		
 		//create chat info if we hadn't messages before
-		if(messages && messages.length === 0) {
+		if(messages && messages.length < 2) {
 			chatInfo = {
 				lastMessageData,
 				lastMessageTime: lastMessageData.createdAt,
@@ -167,27 +167,28 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 				contactId: GENERAL_CHAT_ID,
 				unreadCount: 0
 			}
+			dispatch(setChatInfo(chatInfo, myId, GENERAL_CHAT_ID));
 		//update chat info
 		} else {
 			chatInfo = {
 				lastMessageData,
 				lastMessageTime: lastMessageData.createdAt
 			}
+			dispatch(updateChatInfo(chatInfo, myId, GENERAL_CHAT_ID));
 		}
-		dispatch(setChatInfo(chatInfo, senderId, GENERAL_CHAT_ID));
 	}
 
 	//send message to thunk
 	const addMessage = async (newMessage: string) => {
 		//create new message data
 		const newMessageData: MessageDataType = {
-			uid: senderId || 'undefined',
+			uid: myId,
 			displayName: `${accountData?.fullName}` || 'Анонім',
 			photoUrl: accountData?.avatarUrl || '',
 			text: newMessage,
 			createdAt: serverTimestamp(),
 			id: v1(),
-			usersWhoRead: [senderId || null],
+			usersWhoRead: [myId || null],
 			edited: false,
 			sent: false,
 			isRead: false,
@@ -197,10 +198,10 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 		setIsSendBtnShowing(false);
 
 		//if authed -> send message and set chat info
-		console.log('contactdata', contactData, senderId, accountData);
+		console.log('contactdata', contactData, myId, accountData);
 		if(accountData && contactUid === GENERAL_CHAT_ID) {
 			//uid1->contactUid->messages
-			dispatch(sendMessage(newMessageData, accountData.uid, GENERAL_CHAT_ID));
+			dispatch(sendMessage(newMessageData, accountData.uid, contactUid));
 			createGeneralChatInfo(newMessageData);
 		} else if(accountData && contactData) {
 			console.log('have account data');
