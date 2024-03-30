@@ -17,6 +17,7 @@ import { debounce } from 'lodash';
 import { getStringDate } from '../../../utils/helpers/date/getStringDate';
 import { selectFooterHeight, selectHeaderHeight } from '../../../Redux/app/appSelectors';
 import { ScrollBtn } from '../../../UI/ScrollBtn';
+import { getMessageGroupDate } from '../../../utils/helpers/date/getMessageGroupDate';
 
 type PropsType = {
 	setEditMessageData: (data: EditMessageDataType) => void, 
@@ -24,6 +25,7 @@ type PropsType = {
 	cancelEdit: () => void,
 	unreadMessagesCount: number,
 	newMessageFormHeight: number, 
+	contactUid: string,
 	//ref: React.RefObject<HTMLButtonElement>,
 }
 
@@ -48,7 +50,7 @@ const getSortedByDateMessages = (messagesData: MessagesDataType): FormattedMessa
 	messagesData.forEach((messageData: MessageDataType) => {
 		//@ts-ignore
 		const createMilisecs = messageData.createdAt?.seconds * 1000;
-		const createDateString = getStringDate(createMilisecs || new Date().getTime());
+		const createDateString = getMessageGroupDate(createMilisecs);
 
 		if(!sortedMessages[createDateString]) {
 			sortedMessages[createDateString] = [];
@@ -62,7 +64,7 @@ const getSortedByDateMessages = (messagesData: MessagesDataType): FormattedMessa
 }
 
 const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({
-	setEditMessageData, messagesData, unreadMessagesCount, newMessageFormHeight
+	setEditMessageData, messagesData, unreadMessagesCount, newMessageFormHeight, contactUid
 }, ref) => {
 	const isFetching = useSelector(selectIsMessagesFetching);
 	const myAccountData = useSelector(selectMyAccountData);
@@ -92,8 +94,8 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({
 		setCurrDeleteMessageId(null);
 	}
 	const deleteMess = () => {
-		if(currDeleteMessageId) {
-			dispatch(deleteMessage(currDeleteMessageId));
+		if(currDeleteMessageId && myAccountData) {
+			dispatch(deleteMessage(myAccountData?.uid, contactUid, currDeleteMessageId));
 		}
 	}
 
