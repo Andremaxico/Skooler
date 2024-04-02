@@ -150,7 +150,7 @@ const Chat = () => {
 					height: bodyHeight,
 				}}
 			>
-				{messagesData !== null ? 
+				{messagesData !== null && contactUid ? 
 					<Messages 
 						ref={scrollBtnRef} 
 						unreadMessagesCount={unreadMessagesCount || 0}
@@ -158,6 +158,7 @@ const Chat = () => {
 						messagesData={messagesData}
 						setEditMessageData={changeEditMessageData}
 						cancelEdit={cancelEdit}
+						contactUid={contactUid}
 					/>
 					: <div>Немає повідомлень</div>
 				}

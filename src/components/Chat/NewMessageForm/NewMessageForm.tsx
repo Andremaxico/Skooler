@@ -12,7 +12,7 @@ import { v1 } from 'uuid';
 import { useAppDispatch } from '../../../Redux/store';
 import { FormControl, IconButton, Textarea } from '@mui/joy';
 import { footerHeightReceived } from '../../../Redux/app/appReducer';
-import { selectContactData, selectMessages } from '../../../Redux/chat/selectors';
+import { selectContactData, selectErrorsWithSendingMessages, selectMessages } from '../../../Redux/chat/selectors';
 import { selectFooterHeight } from '../../../Redux/app/appSelectors';
 import { GENERAL_CHAT_ID } from '../../../utils/constants';
 import { getMessageTime } from '../../../utils/helpers/date/getMessageTime';
@@ -44,12 +44,15 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 	const [textareaEl, setTextareaEl] = useState<HTMLTextAreaElement | null>(null);
 	const [isSendBtnShowing, setIsSendBtnShowing] = useState<boolean>(false);
 	const [formHeight, setFormHeight] = useState<number>(0);
+	const [lastSentMessageData, setlastSentMessageData] = useState<MessageDataType | null>(null);
+
 
 	//ant design form(щоб показувати зарашнє значення коментара) & reset formmessa
 
 	const accountData = useSelector(selectMyAccountData);
 	const messages = useSelector(selectMessages);
 	const contactData = useSelector(selectContactData);
+	const errorsWithSending = useSelector(selectErrorsWithSendingMessages);
 
 	//for autofocus
 	const messageField = useRef<HTMLDivElement>(null);
@@ -202,17 +205,29 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 		if(accountData && contactUid === GENERAL_CHAT_ID) {
 			//uid1->contactUid->messages
 			dispatch(sendMessage(newMessageData, accountData.uid, contactUid));
-			createGeneralChatInfo(newMessageData);
 		} else if(accountData && contactData) {
 			console.log('have account data');
-			//uid1 -> contactUid-> data (api)
-			createChatInfo(newMessageData, contactData, accountData.uid, contactUid);
 			//uid1->contactUid->messages
 			dispatch(sendMessage(newMessageData, accountData.uid, contactUid));
-			//contactUid->uid1->messages
-			await dispatch(sendMessage(newMessageData, contactUid, accountData.uid));
 		}
 	}
+
+	//we send message and check is it sended successfully -> then change Chat info
+	useEffect(() => {
+		if(
+			lastSentMessageData 
+			&& !errorsWithSending.includes(lastSentMessageData.id) 
+			&& accountData 
+			&& contactData
+		) {
+			if(contactUid === GENERAL_CHAT_ID) {
+				createGeneralChatInfo(lastSentMessageData);
+			} else {
+				//uid1 -> contactUid-> data (api)
+				createChatInfo(lastSentMessageData, contactData, accountData.uid, contactUid);
+			}
+		}
+	}, [lastSentMessageData, errorsWithSending])
 
 	//trigger message field for start validation
 	useEffect(() => {

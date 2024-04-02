@@ -28,3 +28,7 @@ export const selectCurrChatData = (state: RootStateType) => {
 export const selectGeneralChatData = (state: RootStateType) => {
 	return state.messages.generalChatData;
 }
+
+export const selectErrorsWithSendingMessages = (state: RootStateType) => {
+	return state.messages.errorsWithSendingMessages;
+}

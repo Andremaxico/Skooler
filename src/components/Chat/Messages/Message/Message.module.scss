@@ -85,5 +85,11 @@ $textColor: $black;
 		.edited {
 			color: #fff;
 		}
+		.sendingErrorBtn {
+			.icon {
+				font-size: 14px;
+				color: $error;
+			}
+		}
 	}
 }

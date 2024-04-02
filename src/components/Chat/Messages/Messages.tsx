@@ -50,7 +50,7 @@ const getSortedByDateMessages = (messagesData: MessagesDataType): FormattedMessa
 	messagesData.forEach((messageData: MessageDataType) => {
 		//@ts-ignore
 		const createMilisecs = messageData.createdAt?.seconds * 1000;
-		const createDateString = getMessageGroupDate(createMilisecs);
+		const createDateString = getMessageGroupDate(createMilisecs || new Date().getTime()); // createMilisecs can be undefiend
 
 		if(!sortedMessages[createDateString]) {
 			sortedMessages[createDateString] = [];

@@ -15,6 +15,7 @@ export type ChatStateType = {
 	contactData: ReceivedAccountDataType | null,
 	currChatData: ChatDataType | null,
 	generalChatData: ChatDataType | null,
+	errorsWithSendingMessages: string[], //ids of messages
 }
 
 
@@ -27,6 +28,8 @@ export const chatsDataReceived = createAction<ChatDataType[] | null>('chat/CHATS
 export const contactDataReceived = createAction<ReceivedAccountDataType | null>('chat/CONTACT_DATA_RECEIVED');
 export const currChatDataReceived = createAction<ChatDataType | null>('chat/CURR_CHAT_DATA_RECEIVED');
 export const generalChatDataReceived = createAction<ChatDataType | null>('chat/GENERAL_CHAT_DATA_RRECEIVED');
+export const errorWithSendingMessageAppeared = createAction<string>('chat/ERROR_WITH_SENDING_MESSAGE_APPEARED');
+export const errorWithSendingMessagesDisappeared = createAction<string>('chat/ERROR_WITH_SENDING_MESSAGE_DISAPPEARED');
 
 //===========================REDUCER========================
 const initialState: ChatStateType = {
@@ -37,6 +40,7 @@ const initialState: ChatStateType = {
 	contactData: null,
 	currChatData: null,
 	generalChatData: null,
+	errorsWithSendingMessages: [],
 }
 
 const chatReducer = createReducer(initialState, (builder) => {
@@ -64,6 +68,12 @@ const chatReducer = createReducer(initialState, (builder) => {
 		})
 		.addCase(generalChatDataReceived, (state, action) => {
 			state.generalChatData = action.payload;
+		})
+		.addCase(errorWithSendingMessageAppeared, (state, action) => {
+			state.errorsWithSendingMessages.push(action.payload);
+		})
+		.addCase(errorWithSendingMessagesDisappeared, (state, action) => {
+			state.errorsWithSendingMessages = state.errorsWithSendingMessages.filter(id => id !== action.payload);
 		})
 		.addDefaultCase((state, action) => {});
 });
@@ -131,7 +141,13 @@ export const unsubscribeFromChat = () => async (dispatch: AppDispatchType) => {
 export const sendMessage = (data: MessageDataType, uid1: string, contactUid: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
 	const myUid = getState().account.myAccountData?.uid;
 	if(myUid === uid1) dispatch(newMessageReceived(data));
-	await chatAPI.sendMessage({...data, sent: true}, uid1, contactUid);
+	try {
+		await chatAPI.sendMessage({...data, sent: true}, uid1, contactUid);
+		await chatAPI.sendMessage({...data, sent: true}, contactUid, uid1);
+		dispatch(errorWithSendingMessagesDisappeared(data.id));
+	} catch(e) {
+		dispatch(errorWithSendingMessageAppeared(data.id));
+	}
 }
 
 export const markMessageAsRead = (messageId: string, uid1: string, contactUid: string) => async (dispatch: AppDispatchType) => {

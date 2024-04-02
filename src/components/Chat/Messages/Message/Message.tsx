@@ -17,6 +17,9 @@ import cn from 'classnames';
 import DoneAllOutlinedIcon from '@mui/icons-material/DoneAllOutlined';
 import DoneOutlinedIcon from '@mui/icons-material/DoneOutlined';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import { selectErrorsWithSendingMessages } from '../../../../Redux/chat/selectors';
+import { useSelector } from 'react-redux';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 
 type PropsType = {
 	messageData: MessageDataType,
@@ -32,6 +35,9 @@ const Message = React.forwardRef<HTMLDivElement, PropsType>(({
 	messageData, myAccountId, showDeleteConfirm, setEditMessageData, openInfoModal, isShort, contactId
 }, ref) => {
 	const { text, photoUrl, uid, id, usersWhoRead, createdAt, displayName, sent, edited, isRead} = messageData;
+
+	const errorsWithSendingMessages = useSelector(selectErrorsWithSendingMessages);
+	const isErrorWithSending = errorsWithSendingMessages.filter(messageId => messageId === id).length > 0;
 
 	const menuRef = useRef<HTMLDivElement>(null);
 	
@@ -79,10 +85,13 @@ const Message = React.forwardRef<HTMLDivElement, PropsType>(({
 							<p className={classes.createDate}>{sendTime}</p>
 
 							{isMy && <p className={classes.receivedStatus}>
-								{ isRead 
+								{ isErrorWithSending ?
+									<button className={classes.sendingErrorBtn}>
+										<ErrorOutlineIcon className={classes.icon} color='error'/>
+									</button>
+									: isRead 
 									? <DoneAllOutlinedIcon className={classes.icon} /> 
-									: 
-									sent 
+									: sent 
 									? <DoneOutlinedIcon className={classes.icon} /> 
 									: <AccessTimeIcon className={classes.icon} />}
 							</p>}
