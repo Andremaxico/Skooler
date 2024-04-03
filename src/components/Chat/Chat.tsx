@@ -20,10 +20,8 @@ export type EditMessageDataType = {
 }
 
 const Chat = () => {
-	const messagesData = useSelector(selectMessages);
 	const myAccountData = useSelector(selectMyAccountData);
 	const authData = useSelector(selectMyLoginData);
-	const isFetching = useSelector(selectIsMessagesFetching);
 	const chatData = useSelector(selectCurrChatData); 
 	const footerHeight = useSelector(selectFooterHeight);
 	const headerHeight = useSelector(selectHeaderHeight);
@@ -95,18 +93,6 @@ const Chat = () => {
 		console.log('body height value', value);
 	}, [footerHeight, headerHeight, newMessageFormHeight]);
 
-	//start messaging
-	useEffect(() => {
-		if(contactUid && contactUid !== GENERAL_CHAT_ID) {
-			dispatch(startMessaging(contactUid));
-		} else {
-			dispatch(subscribeOnGeneralChat());
-		}
-		return () => {
-			dispatch(stopMessaging());
-		}
-	}, [myAccountData, contactUid]);
-
 	//set unread messages count from chat data
 	useEffect(() => {
 		const unreadCount = chatData?.unreadCount;
@@ -133,8 +119,6 @@ const Chat = () => {
 			setNewMessageFormHeight(el.offsetHeight);
 		}
 	}, [newMessageFormRef.current])
-
-	if(isFetching && messagesData?.length === 0) return <Preloader fixed={true} />;
 	
 	if(!authData) return <Navigate to='/login' replace={true}/>	
 	if(!myAccountData) return <Preloader fixed/>	
@@ -150,12 +134,11 @@ const Chat = () => {
 					height: bodyHeight,
 				}}
 			>
-				{messagesData !== null && contactUid ? 
+				{contactUid ? 
 					<Messages 
 						ref={scrollBtnRef} 
 						unreadMessagesCount={unreadMessagesCount || 0}
 						newMessageFormHeight={newMessageFormHeight}
-						messagesData={messagesData}
 						setEditMessageData={changeEditMessageData}
 						cancelEdit={cancelEdit}
 						contactUid={contactUid}

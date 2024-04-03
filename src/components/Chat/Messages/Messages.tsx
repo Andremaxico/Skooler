@@ -1,13 +1,13 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { selectMyAccountData } from '../../../Redux/account/account-selectors';
-import { selectCurrMessageWhoReadList, selectIsMessagesFetching } from '../../../Redux/chat/selectors'; 
+import { selectCurrMessageWhoReadList, selectIsMessagesFetching, selectMessages } from '../../../Redux/chat/selectors'; 
 import Preloader from '../../../UI/Preloader';
 import { MessageDataType, MessagesDataType, UsersWhoReadMessageType } from '../../../utils/types';
 import Message from './Message';
 import classes from './Messages.module.scss';
 import { useAppDispatch } from '../../../Redux/store';
-import { deleteMessage, setCurrMessageWhoReadList } from '../../../Redux/chat/reducer';
+import { deleteMessage, setCurrMessageWhoReadList, startMessaging, stopMessaging, subscribeOnGeneralChat } from '../../../Redux/chat/reducer';
 import { EditMessageDataType } from '../Chat';
 import { ReadMessageUser } from '../../../UI/ReadMessageUser';
 import { MessagesGroup } from './MessagesGroup';
@@ -18,10 +18,10 @@ import { getStringDate } from '../../../utils/helpers/date/getStringDate';
 import { selectFooterHeight, selectHeaderHeight } from '../../../Redux/app/appSelectors';
 import { ScrollBtn } from '../../../UI/ScrollBtn';
 import { getMessageGroupDate } from '../../../utils/helpers/date/getMessageGroupDate';
+import { GENERAL_CHAT_ID } from '../../../utils/constants';
 
 type PropsType = {
 	setEditMessageData: (data: EditMessageDataType) => void, 
-	messagesData: MessageDataType[],
 	cancelEdit: () => void,
 	unreadMessagesCount: number,
 	newMessageFormHeight: number, 
@@ -64,21 +64,24 @@ const getSortedByDateMessages = (messagesData: MessagesDataType): FormattedMessa
 }
 
 const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({
-	setEditMessageData, messagesData, unreadMessagesCount, newMessageFormHeight, contactUid
+	setEditMessageData, unreadMessagesCount, newMessageFormHeight, contactUid
 }, ref) => {
 	const isFetching = useSelector(selectIsMessagesFetching);
 	const myAccountData = useSelector(selectMyAccountData);
 	const usersWhoReadCurrMessageData = useSelector(selectCurrMessageWhoReadList);
 	const headerHeight = useSelector(selectHeaderHeight);
 	const footerHeight = useSelector(selectFooterHeight);
+	const messagesData = useSelector(selectMessages);
 
+	const [isLoading, setIsLoading] = useState<boolean>(true);
 	const [usersWhoReadCurrMessage, setUsersWhoReadCurrMessage] = useState<UsersWhoReadMessageType | null>(null);
 	const [isUsersFetching, setIsUsersFetching] = useState<boolean>(false);
 	const [messagesList, setMessagesList] = useState<JSX.Element[] | null>(null);
-	const [prevMessagesData, setPrevMessagesData] = useState<MessagesDataType>(messagesData);
+	const [prevMessagesData, setPrevMessagesData] = useState<MessagesDataType | null>(messagesData);
 	const [myMessages, setMyMessages] = useState<JSX.Element[]>([]);
 	const [currDeleteMessageId, setCurrDeleteMessageId] = useState<string | null>(null);
 	const [maxHeightValue, setMaxHeightValue] = useState<string>('100%');
+	const [isMessagesRequested, setIsMessagesRequested] = useState<boolean>(false); // because we see "Немає повідомлень" на початку сторінки перед завантаженням повідомлень
 
 	const listRef = useRef<HTMLDivElement>(null);
 	const scrollBtnRef = useRef<HTMLButtonElement>(null);
@@ -99,6 +102,22 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({
 		}
 	}
 
+	//start messaging
+	useEffect(() => {
+		if(contactUid && contactUid !== GENERAL_CHAT_ID) {
+			dispatch(startMessaging(contactUid));
+		} else {
+			dispatch(subscribeOnGeneralChat());
+		}
+		return () => {
+			dispatch(stopMessaging());
+		}
+	}, [myAccountData, contactUid]);
+
+	//sync local and from redux fetching state
+	// useEffect(() => {
+	// 	if(!isFetching) setIsLoading(false);
+	// }, [isFetching]);
 
 	//on scroll listener
 	useEffect(() => {
@@ -127,97 +146,101 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({
 	//sorted messages data -> messagesList(JSX.Element[])
 	useEffect(() => {
 		//set messages list
-		let messages: JSX.Element[] = []; // messages list
+		setIsLoading(true);
+		if(messagesData) {
+			let messages: JSX.Element[] = []; // messages list
 
-			
-		//sorting messages on groups by create date
-		const sortedMessages: FormattedMessagesType = getSortedByDateMessages(messagesData);
+				
+			//sorting messages on groups by create date
+			const sortedMessages: FormattedMessagesType = getSortedByDateMessages(messagesData);
 
-		if(myAccountData) {
-			Object.keys(sortedMessages).forEach(dateStr => {
-				let currMessages: JSX.Element[] = []; // curr date messages
-				let currGroupIndex = -1; // index of current filling group
-				let messagesGroups: MessagesGroupType[] = []; // groups of messages by 1 user in a row
+			if(myAccountData) {
+				Object.keys(sortedMessages).forEach(dateStr => {
+					let currMessages: JSX.Element[] = []; // curr date messages
+					let currGroupIndex = -1; // index of current filling group
+					let messagesGroups: MessagesGroupType[] = []; // groups of messages by 1 user in a row
 
-				let currMyMessages: JSX.Element[] = [];
+					let currMyMessages: JSX.Element[] = [];
 
-				//set messages groups of 1 day
-				sortedMessages[dateStr].map((data, i) => {
-					const prevUid = i > 0 ? sortedMessages[dateStr][i-1].uid : null;
-					const isShort: boolean = prevUid == data.uid;
-					const isMy = data.uid === myAccountData.uid;
+					//set messages groups of 1 day
+					sortedMessages[dateStr].map((data, i) => {
+						const prevUid = i > 0 ? sortedMessages[dateStr][i-1].uid : null;
+						const isShort: boolean = prevUid == data.uid;
+						const isMy = data.uid === myAccountData.uid;
 
-					const currMessage = (
-						<Message 
-							messageData={data} 
-							myAccountId={myAccountData?.uid || ''} 
-							setEditMessageData={setEditMessageData}
-							key={`${data.createdAt}${data.uid}`} 
-							showDeleteConfirm={showDeleteConfirm} 
-							openInfoModal={setUsersWhoReadCurrMessage}  
-							isShort={isShort} 
-							ref={
-								data.isRead || isMy ?
-								lastReadedMessageRef : 
-								null
-							}
-							contactId={data.uid}
-						/>
-					);
-					
-					if(isMy) {
-						currMyMessages = [...currMyMessages, currMessage];
-					}
-
-					//create new group
-					if(!isShort) {
-						//if not my, add user avatar, that wrote these messages(data)
-						if(!isMy) {
-							messagesGroups.push({
-								messages: [],
-								metadata: {
-									isMy: false,
-									avatarData: {
-										photoUrl: data.photoUrl,
-										uid: data.uid,
-									}
+						const currMessage = (
+							<Message 
+								messageData={data} 
+								myAccountId={myAccountData?.uid || ''} 
+								setEditMessageData={setEditMessageData}
+								key={`${data.createdAt}${data.uid}`} 
+								showDeleteConfirm={showDeleteConfirm} 
+								openInfoModal={setUsersWhoReadCurrMessage}  
+								isShort={isShort} 
+								ref={
+									data.isRead || isMy ?
+									lastReadedMessageRef : 
+									null
 								}
-							});
-							//add current message to new group
-							messagesGroups[currGroupIndex+1].messages.push(currMessage)
-						} else {
-							messagesGroups.push({
-								messages: [currMessage],
-								metadata: {isMy: true}
-							});
+								contactId={data.uid}
+							/>
+						);
+						
+						if(isMy) {
+							currMyMessages = [...currMyMessages, currMessage];
 						}
-						currGroupIndex++;
-					} else {
-						messagesGroups[currGroupIndex].messages.push(currMessage);
-					}
+
+						//create new group
+						if(!isShort) {
+							//if not my, add user avatar, that wrote these messages(data)
+							if(!isMy) {
+								messagesGroups.push({
+									messages: [],
+									metadata: {
+										isMy: false,
+										avatarData: {
+											photoUrl: data.photoUrl,
+											uid: data.uid,
+										}
+									}
+								});
+								//add current message to new group
+								messagesGroups[currGroupIndex+1].messages.push(currMessage)
+							} else {
+								messagesGroups.push({
+									messages: [currMessage],
+									metadata: {isMy: true}
+								});
+							}
+							currGroupIndex++;
+						} else {
+							messagesGroups[currGroupIndex].messages.push(currMessage);
+						}
+					});
+
+					//sorted data -> JSX.Element[]
+					currMessages = messagesGroups.map(group => {
+						return (
+							<MessagesGroup metadata={group.metadata} listRef={listRef}>
+								{group.messages}
+							</MessagesGroup>
+						)	
+					});
+
+					const addedElements = [
+						<div className={classes.messagesDate}>{dateStr}</div>, 
+						...currMessages
+					];
+
+					setMyMessages((prevMessages) => [...prevMessages, ...currMyMessages]);
+
+					messages = [...messages, ...addedElements];
 				});
+			}
 
-				//sorted data -> JSX.Element[]
-				currMessages = messagesGroups.map(group => {
-					return (
-						<MessagesGroup metadata={group.metadata} listRef={listRef}>
-							{group.messages}
-						</MessagesGroup>
-					)	
-				});
-
-				const addedElements = [
-					<div className={classes.messagesDate}>{dateStr}</div>, 
-					...currMessages
-				];
-
-				setMyMessages((prevMessages) => [...prevMessages, ...currMyMessages]);
-
-				messages = [...messages, ...addedElements];
-			});
+			setMessagesList(messages);
 		}
-
-		setMessagesList(messages);
+		setIsLoading(false);
 	}, [myAccountData, messagesData]);
 
 	//get users that read curr message data (uid[] -> userData[])
@@ -252,13 +275,13 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({
 
 	console.log('list ref', window.document.body.offsetWidth - (listRef.current?.getBoundingClientRect().right || 0));
 
+	console.log('is loading', isLoading);
+
 	return (
 		<div 
 			className={classes.Messages} 
 			ref={listRef}
 		>
-			{isFetching && <Preloader />}
-
 			<UsersWhoReadDialog
 				isOpen={!!usersWhoReadCurrMessage}
 				onClose={closeModal}
@@ -274,9 +297,10 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({
 				onClose={cancelDelete}
 			/>
 
-			{!!messagesList && messagesList['length'] > 0
-				? 
-					messagesList
+			{isLoading
+				? <Preloader />
+				: !!messagesList && messagesList['length'] > 0 
+				? messagesList
 				: <div>Немає повідомлень</div>
 			}
 

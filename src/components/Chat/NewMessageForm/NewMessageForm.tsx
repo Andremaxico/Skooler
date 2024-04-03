@@ -44,7 +44,7 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 	const [textareaEl, setTextareaEl] = useState<HTMLTextAreaElement | null>(null);
 	const [isSendBtnShowing, setIsSendBtnShowing] = useState<boolean>(false);
 	const [formHeight, setFormHeight] = useState<number>(0);
-	const [lastSentMessageData, setlastSentMessageData] = useState<MessageDataType | null>(null);
+	const [lastSentMessageData, setLastSentMessageData] = useState<MessageDataType | null>(null);
 
 
 	//ant design form(щоб показувати зарашнє значення коментара) & reset formmessa
@@ -200,6 +200,8 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 		if(textareaEl) textareaEl.value = '';
 		setIsSendBtnShowing(false);
 
+		setLastSentMessageData(newMessageData);
+
 		//if authed -> send message and set chat info
 		console.log('contactdata', contactData, myId, accountData);
 		if(accountData && contactUid === GENERAL_CHAT_ID) {
@@ -212,17 +214,22 @@ export const NewMessageForm: React.FC<PropsType> = React.memo(({
 		}
 	}
 
+	useEffect(() => {
+		console.log('last message data changed-------------------------------', lastSentMessageData);
+	}, [lastSentMessageData]);
+
 	//we send message and check is it sended successfully -> then change Chat info
 	useEffect(() => {
+		console.log('laste sent message data', lastSentMessageData);
+		console.log('error with sending', errorsWithSending);
+		console.log(accountData, contactData);
 		if(
 			lastSentMessageData 
 			&& !errorsWithSending.includes(lastSentMessageData.id) 
-			&& accountData 
-			&& contactData
 		) {
 			if(contactUid === GENERAL_CHAT_ID) {
 				createGeneralChatInfo(lastSentMessageData);
-			} else {
+			} else if(contactData && accountData) {
 				//uid1 -> contactUid-> data (api)
 				createChatInfo(lastSentMessageData, contactData, accountData.uid, contactUid);
 			}

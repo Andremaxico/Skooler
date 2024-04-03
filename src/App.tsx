@@ -143,7 +143,7 @@ const App = () => {
     }
   }, [location])
 
-  if(isFetching) return <Preloader />  
+  if(isFetching) return <Preloader fixed />  
   return (
     <div className={classes.App}>
         {isGlobalError && <ErrorBanner />}

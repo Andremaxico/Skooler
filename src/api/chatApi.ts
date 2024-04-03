@@ -118,7 +118,6 @@ const chatAPI = {
 				console.log('snapshot');
 
 				querySnapshot.forEach((doc) => {
-					console.log('doc data', doc.data());
 					messages.push({...doc.data(), id: doc.id});
 				});
 
@@ -136,6 +135,10 @@ const chatAPI = {
 
 	async fetchingSubscribe(subscriber: FetchingSubscriberType) {
 		subscribers['fetching-sub'].push(subscriber);
+	},
+
+	async fetchingUnsubscribe(subscriber: FetchingSubscriberType) {
+		subscribers['fetching-sub'] = subscribers['fetching-sub'].filter(sub => sub !== subscriber);
 	},
 	
 	async sendMessage(messageData: MessageDataType, uid1: string, contactUid: string)  {
