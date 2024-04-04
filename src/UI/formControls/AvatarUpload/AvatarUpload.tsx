@@ -135,9 +135,8 @@ export const AvatarUpload: React.FC<PropsType> = ({ name, surname, setSelectedFi
 		>
 			{!isLoading ?
 				<UserAvatar 
-					src={localImgSrc} 
-					name={name} 
-					surname={surname}
+					src={localImgSrc}
+					fullName={`${name} ${surname}`}
 					className={classes.userAvatar}
 				/>
 			: 

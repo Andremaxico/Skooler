@@ -82,7 +82,7 @@ export const Events: React.FC<PropsType> = ({isAdmin}) => {
 		console.log('past events list', pastEventsList);
 	}
 
-	if(isFetching) return <Preloader />
+	if(isFetching) return <Preloader fixed />
 
 	return (
 		<div className={classes.Events}>

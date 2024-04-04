@@ -9,6 +9,9 @@ import classes from './AccountQuestions.module.scss';
 import cn from 'classnames';
 import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
 import { ScrollBtn } from '../../../UI/ScrollBtn';
+import { selectFooterHeight } from '../../../Redux/app/appSelectors';
+import { ScrollBtnPositionType } from '../../../utils/types';
+import { BASE_PAGE_PADDING } from '../../../utils/constants';
 
 type PropsType = {
 	uid: string,
@@ -16,9 +19,12 @@ type PropsType = {
 
 export const AccountQuestions: React.FC<PropsType> = ({uid}) => {
 	const questions = useSelector(selectCurrUserQuestions);
+	const footerHeight = useSelector(selectFooterHeight);
+
 
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [isOpen, setIsOpen] = useState<boolean>(false);
+	const [scrollBtnPosition, setScrollBtnPosition] = useState<ScrollBtnPositionType | null>(null);
 
 	const listRef = useRef<HTMLDivElement>(null);
 
@@ -39,12 +45,30 @@ export const AccountQuestions: React.FC<PropsType> = ({uid}) => {
 		return () => {
 			dispatch(currUserQuestionsReceived(null));
 		}
-	}, [])
+	}, []);
+
+	useEffect(() => {
+		if(footerHeight && listRef.current) {
+			const right = listRef.current.offsetLeft;
+			const bottom = footerHeight + BASE_PAGE_PADDING;
+
+			setScrollBtnPosition({
+				right, 
+				bottom
+			});
+		}
+	}, [footerHeight, listRef.current]);
+
+	useEffect(() => {
+		console.log('body scroll top', window.document.body.scrollTop);
+	}, [window.document.body.scrollTop]);
 
 	console.log('condition', isOpen && !isLoading && listRef.current);
 
 	return (
-		<div className={classes.AccountQuestions}>
+		<div 
+			className={classes.AccountQuestions}
+		>
 			<button 
 				className={cn(classes.top, isOpen && classes._open)} 
 				onClick={() => setIsOpen(open => !open)}
@@ -59,7 +83,7 @@ export const AccountQuestions: React.FC<PropsType> = ({uid}) => {
 
 				{  
 				isLoading ? 
-					<Preloader /> 
+					<Preloader absolute /> 
 				: 
 				questions ? 
 					questions.map(data => (
@@ -73,8 +97,20 @@ export const AccountQuestions: React.FC<PropsType> = ({uid}) => {
 					<p className={classes.noQuestions}>Немає запитань</p>
 				}
 			</div>
-			{isOpen && !isLoading && listRef.current && 
-			<ScrollBtn element={listRef.current} up={true} />}
+			{isOpen && !isLoading && window.document.body && 
+				<div 
+					className={classes.ScrollBtnWrap}
+					style={{
+						position: 'fixed',
+						bottom: `${scrollBtnPosition?.bottom || 0}px`,
+						right: `${scrollBtnPosition?.right || 0}px`
+					}}
+				>
+					<ScrollBtn 
+						isWindow up={true} 
+					/>
+				</div>
+			}
 		</div>
 	)
 }

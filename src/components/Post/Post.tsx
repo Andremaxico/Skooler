@@ -97,7 +97,7 @@ export const Post: React.FC<PropsType> = ({}) => {
 				: 
 					isFetching ? 
 					<div className={classes.loaderWrap}>
-						<Preloader />
+						<Preloader absolute />
 					</div>
 				: 
 					<NoAnswers />

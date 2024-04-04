@@ -1,7 +1,6 @@
 @import '../../global-styles';
 
 .ScrollBtn {
-	position: fixed;
 	@include size(40px);
 	display: flex;
 	justify-content: flex-end;

@@ -8,6 +8,11 @@ import { BirthDateObject } from '../../Redux/account/account-reducer';
 import { AnyMxRecord } from 'dns';
 import dayjs, { Dayjs } from 'dayjs';
 
+export type ScrollBtnPositionType = {
+	right: number,
+	bottom: number,
+}
+
 export type LinkDataType = {
 	path: PathsType,
 	text: string,

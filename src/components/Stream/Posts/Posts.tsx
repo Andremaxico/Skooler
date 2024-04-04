@@ -138,7 +138,7 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 						</button>
 					</div>
 					{searchedPosts.map(data => (
-						<PostCard data={data} key={data.id} isOpen={false}/>
+						<PostCard data={data} key={`search${data.id}`} isOpen={false}/>
 					))}
 				</>
 			: searchedPosts == null && !!posts && posts.length || 0 > 0 ?

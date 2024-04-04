@@ -1,9 +1,10 @@
-export const scrollElementToBottom = (element: HTMLDivElement, value?: number) => {
+export const scrollElementToBottom = (element: HTMLElement | Window, value?: number) => {
 	console.log('scrolll elmenet to bottom', value);
 
 	let scrollToBottomHeight = 0;
 	if(!value) {
-		scrollToBottomHeight = element.scrollHeight - element.clientHeight
+		//@ts-ignore
+		scrollToBottomHeight = (element.scrollHeight || element.scrollY) - element.clientHeight
 	}
 	element.scrollTo({
 		behavior: 'smooth',

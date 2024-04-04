@@ -157,7 +157,7 @@ const App = () => {
         >
           <div className={classes.container} style={{flex: '1 1 auto'}}>
             {networkError && <NetworkError message={networkError || ''} />}
-            <Suspense fallback={<Preloader />}>
+            <Suspense fallback={<Preloader fixed />}>
               <Routes>
                 <Route path='/login' element={<Login />} />
                 <Route path='/login/reset-password' element={<ResetPassword />} />

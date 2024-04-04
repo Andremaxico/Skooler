@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { selectMyAccountData } from '../../../Redux/account/account-selectors';
 import { selectCurrMessageWhoReadList, selectIsMessagesFetching, selectMessages } from '../../../Redux/chat/selectors'; 
 import Preloader from '../../../UI/Preloader';
-import { MessageDataType, MessagesDataType, UsersWhoReadMessageType } from '../../../utils/types';
+import { MessageDataType, MessagesDataType, ScrollBtnPositionType, UsersWhoReadMessageType } from '../../../utils/types';
 import Message from './Message';
 import classes from './Messages.module.scss';
 import { useAppDispatch } from '../../../Redux/store';
@@ -18,7 +18,7 @@ import { getStringDate } from '../../../utils/helpers/date/getStringDate';
 import { selectFooterHeight, selectHeaderHeight } from '../../../Redux/app/appSelectors';
 import { ScrollBtn } from '../../../UI/ScrollBtn';
 import { getMessageGroupDate } from '../../../utils/helpers/date/getMessageGroupDate';
-import { GENERAL_CHAT_ID } from '../../../utils/constants';
+import { BASE_PAGE_PADDING, GENERAL_CHAT_ID } from '../../../utils/constants';
 
 type PropsType = {
 	setEditMessageData: (data: EditMessageDataType) => void, 
@@ -74,6 +74,7 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({
 	const messagesData = useSelector(selectMessages);
 
 	const [isLoading, setIsLoading] = useState<boolean>(true);
+	const [scrollBtnPosition, setScrollBtnPosition] = useState<ScrollBtnPositionType | null>(null);
 	const [usersWhoReadCurrMessage, setUsersWhoReadCurrMessage] = useState<UsersWhoReadMessageType | null>(null);
 	const [isUsersFetching, setIsUsersFetching] = useState<boolean>(false);
 	const [messagesList, setMessagesList] = useState<JSX.Element[] | null>(null);
@@ -118,6 +119,19 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({
 	// useEffect(() => {
 	// 	if(!isFetching) setIsLoading(false);
 	// }, [isFetching]);
+
+	//set Scroll bottom btn position
+	useEffect(() => {
+		if(footerHeight && listRef.current) {
+			const right = window.document.body.offsetWidth - (listRef.current?.getBoundingClientRect().right || 0);
+			const bottom = newMessageFormHeight + footerHeight + BASE_PAGE_PADDING;
+
+			setScrollBtnPosition({
+				right, 
+				bottom
+			})
+		}
+	}, [footerHeight, listRef.current, newMessageFormHeight])
 
 	//on scroll listener
 	useEffect(() => {
@@ -277,6 +291,8 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({
 
 	console.log('is loading', isLoading);
 
+	const rightPositionStyleForScrollBtnValue = window.document.body.offsetWidth - (listRef.current?.getBoundingClientRect().right || 0);
+
 	return (
 		<div 
 			className={classes.Messages} 
@@ -305,13 +321,20 @@ const Messages = React.forwardRef<HTMLButtonElement, PropsType>(({
 			}
 
 			{listRef.current && 
-				<ScrollBtn 
-					newMessageFormH={newMessageFormHeight}
-					right={window.document.body.offsetWidth - (listRef.current?.getBoundingClientRect().right || 0)}
-					element={listRef.current} 
-					ref={scrollBtnRef} 
-					unreadCount={unreadMessagesCount || undefined} 
-				/>
+				<div className={classes.ScrollBtnWrap}
+					style={{
+						position: 'fixed',
+						bottom: `${scrollBtnPosition?.bottom || 0}px`,
+						right: `${scrollBtnPosition?.right || 0}px`,
+					}}
+				>
+					<ScrollBtn 
+						//right={}
+						element={listRef.current} 
+						ref={scrollBtnRef} 
+						unreadCount={unreadMessagesCount || undefined} 
+					/>
+				</div>
 			}
 		</div>
 	)
