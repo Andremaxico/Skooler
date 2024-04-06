@@ -49,7 +49,7 @@ export const AccountQuestions: React.FC<PropsType> = ({uid}) => {
 
 	useEffect(() => {
 		if(footerHeight && listRef.current) {
-			const right = listRef.current.offsetLeft;
+			const right = listRef.current.getBoundingClientRect().x; //left padding
 			const bottom = footerHeight + BASE_PAGE_PADDING;
 
 			setScrollBtnPosition({

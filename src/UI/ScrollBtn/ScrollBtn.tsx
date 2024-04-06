@@ -23,6 +23,7 @@ export const ScrollBtn = React.forwardRef<HTMLButtonElement, PropsType>(({
 	const remainingScroll = element && !isWindow 
 		? element.scrollHeight - (element.scrollTop + element.clientHeight) 
 		: window.outerHeight - (window.screenY + window.innerHeight);
+
 	const [isBottom, setIsBottom ] = useState<boolean>(remainingScroll < 100);
 	const [isShowing, setIsShowing] = useState<boolean>(false);
 	const [prevUnreadCount, setPrevUnreadCount] = useState<number | undefined>(unreadCount);
@@ -40,27 +41,31 @@ export const ScrollBtn = React.forwardRef<HTMLButtonElement, PropsType>(({
 				: window.outerHeight - (currScroll + window.innerHeight) < 100;
 			setIsBottom(isInBottom);
 
+			const isInTop = element && !isWindow ? element.scrollTop : window.scrollY === 0;
+
 			//in down
-			if(isInBottom) {
-				setIsShowing(false);
-				//scrolling up
-			} else if(prevScroll >= currScroll)  {
-				setIsShowing(false);
-				//scrolling down
-			} else if(prevScroll < currScroll) {
-				setIsShowing(true);
+			if(!up) {
+				if(isInBottom) {
+					setIsShowing(false);
+					//scrolling up
+				} else if(prevScroll >= currScroll)  {
+					setIsShowing(false);
+					//scrolling down
+				} else if(prevScroll < currScroll) {
+					setIsShowing(true);
+				}
+			} else {
+				setIsShowing(!isInTop);
 			}
 	
 			prevScroll = currScroll;
 		}, 15);
 
-		if(!up) {
-			//visible / unvisible
-			if(element && !isWindow) {
-				element.addEventListener('scroll', changeVisibility);
-			} else {
-				window.addEventListener('scroll', changeVisibility);
-			}
+		//visible / unvisible
+		if(element && !isWindow) {
+			element.addEventListener('scroll', changeVisibility);
+		} else {
+			window.addEventListener('scroll', changeVisibility);
 		}
 
 		return () => {
@@ -70,7 +75,7 @@ export const ScrollBtn = React.forwardRef<HTMLButtonElement, PropsType>(({
 				window.removeEventListener('scroll', changeVisibility);
 			}
 		}
-	}, [element]);  
+	}, [element, window]);  
 
 	//set scroll to bottom value
 	useEffect(() => {
@@ -92,12 +97,10 @@ export const ScrollBtn = React.forwardRef<HTMLButtonElement, PropsType>(({
 	}, [unreadCount]);
 
 	const scrollBottom = () => {
-
 		scrollElementToBottom(element || window, scrollToBottomHeight);
 		(element || window).scrollTo({
 			top: scrollToBottomHeight, 
-		})
-		console.log('clicked');
+		});
 	}
 
 	const scrollTop = () => {
@@ -111,7 +114,7 @@ export const ScrollBtn = React.forwardRef<HTMLButtonElement, PropsType>(({
 		<div 
 			className={cn(
 				classes.ScrollBtn, 
-				isBottom || !isShowing ? classes._hidden : '', 
+				(!up ? isBottom: false) || !isShowing ? classes._hidden : '', 
 				className
 			)}
 		>
