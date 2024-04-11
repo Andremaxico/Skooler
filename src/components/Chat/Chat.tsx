@@ -13,6 +13,7 @@ import { selectMyAccountData, selectMyLoginData } from '../../Redux/account/acco
 import { OtherChats } from './OtherChats';
 import { selectFooterHeight, selectHeaderHeight } from '../../Redux/app/appSelectors';
 import { BASE_PAGE_PADDING, GENERAL_CHAT_ID } from '../../utils/constants';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 export type EditMessageDataType = {
 	value: string,
@@ -125,9 +126,14 @@ const Chat = () => {
 
 	return (
 		<div className={classes.Chat} ref={chatRef}>
-			<OtherChats 
-				openedChatId={contactUid}
-			/>
+			<div className={classes.openOtherChatsBtn}>
+				<ArrowForwardIosIcon className={classes.icon} />
+			</div>
+			<div className={classes.otherChatsWrap}>
+				<OtherChats 
+					openedChatId={contactUid}
+				/>
+			</div>
 
 			<div className={classes.body}
 				style={{
