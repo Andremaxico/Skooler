@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { MouseEvent, useEffect, useRef, useState } from 'react'
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import Messages from './Messages';
 import classes from './Chat.module.scss';
@@ -14,6 +14,7 @@ import { OtherChats } from './OtherChats';
 import { selectFooterHeight, selectHeaderHeight } from '../../Redux/app/appSelectors';
 import { BASE_PAGE_PADDING, GENERAL_CHAT_ID } from '../../utils/constants';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import cn from 'classnames';
 
 export type EditMessageDataType = {
 	value: string,
@@ -33,6 +34,8 @@ const Chat = () => {
 	const [editMessageData, setEditMessageData] = useState<EditMessageDataType | null>(null);
 	const [bodyHeight, setBodyHeight] = useState<string>('auto');
 	const [newMessageFormHeight, setNewMessageFormHeight] = useState<number>(0);
+	const [isChatsShow, setIsChatsShow] = useState<boolean>(false); // when screen <768px
+
 
 	const params = useParams();
 	const navigate = useNavigate();
@@ -84,6 +87,14 @@ const Chat = () => {
 		console.log('set edit message data', data);
 	}
 
+	//event handlers
+	const handleOtherChatsBtnClick = (e: MouseEvent<HTMLButtonElement>) => {
+		setIsChatsShow(!isChatsShow);
+	}
+
+	const handleOtherChatsWrapClick = (e: MouseEvent<HTMLDivElement>) => {
+		setIsChatsShow(false);
+	}
 	//set body height
 	//= 100vh - container's padding - footerH - headerH
 	useEffect(() => {
@@ -126,10 +137,14 @@ const Chat = () => {
 
 	return (
 		<div className={classes.Chat} ref={chatRef}>
-			<div className={classes.openOtherChatsBtn}>
+			<button className={cn(classes.openOtherChatsBtn, isChatsShow ? classes._opened : '')}
+				onClick={handleOtherChatsBtnClick}
+			>
 				<ArrowForwardIosIcon className={classes.icon} />
-			</div>
-			<div className={classes.otherChatsWrap}>
+			</button>
+			<div className={cn(classes.otherChatsWrap, isChatsShow ? classes._show : '')}
+				onClick={handleOtherChatsWrapClick}
+			>
 				<OtherChats 
 					openedChatId={contactUid}
 				/>
