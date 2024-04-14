@@ -19,6 +19,8 @@ export const ChatCard: React.FC<PropsType> = ({data, active = false}) => {
 		lastMessageData, lastMessageTime, unreadCount
 	} = data;
 
+	console.log('is active', active);
+
 	const [isCut, setIsCut] = useState<boolean>(false);
 	const [widthForText, setWidthForText] = useState<number | undefined>(undefined);
 

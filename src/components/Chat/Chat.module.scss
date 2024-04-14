@@ -7,28 +7,9 @@
 		max-width: 100vw;
 	}
 	box-sizing: border-box;
-	.openOtherChatsBtn {
-		display: none;
-		@media (max-width: $md2) {
-			position: absolute;
-			top: 100px;
-			left: 0px;
-			@include center-align;
-			@include size(20px, 35px);
-			box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.2);
-			background-color: #fff;
-			border-radius: 0 4px 4px 0;
-			transition: 0.2s;
-			z-index: 2;
-			&._opened {
-				left: 80vw;
-				.icon {
-					transform: rotate(180deg);
-				}
-			}
-		}
-	}
 	.otherChatsWrap {
+		flex: 0 0 30%;
+		margin-right: 4px;
 		background-color: #fff;
 		@media (max-width: $md2) {
 			position: absolute;
@@ -43,7 +24,27 @@
 			&._show {
 				transform: translateX(0);
 			}
-
+		}
+		.openOtherChatsBtn {
+			display: none;
+			@media (max-width: $md2) {
+				position: absolute;
+				top: 100px;
+				right: 0px;
+				@include center-align;
+				@include size(20px, 35px);
+				box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.2);
+				background-color: #fff;
+				border-radius: 0 4px 4px 0;
+				transform: translateX(100%);
+				transition: 0.2s;
+				z-index: 2;
+				&._opened {
+					.icon {
+						transform: rotate(180deg);
+					}
+				}
+			}
 		}
 	}
 

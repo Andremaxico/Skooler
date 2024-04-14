@@ -50,6 +50,7 @@ const Chat = () => {
 	const scrollBtnRef = useRef<HTMLButtonElement>(null);
 	const chatRef = useRef<HTMLDivElement>(null);
 	const newMessageFormRef = useRef<HTMLDivElement>(null);
+	const openChatsBtnRef = useRef<HTMLButtonElement>(null);
 
 	console.log('edit message data', editMessageData);
 
@@ -90,10 +91,18 @@ const Chat = () => {
 	//event handlers
 	const handleOtherChatsBtnClick = (e: MouseEvent<HTMLButtonElement>) => {
 		setIsChatsShow(!isChatsShow);
+		console.log('btn clicked');
 	}
 
-	const handleOtherChatsWrapClick = (e: MouseEvent<HTMLDivElement>) => {
-		setIsChatsShow(false);
+	const handleOtherChatsWrapClick = (e: MouseEvent) => {
+		console.log('classname', openChatsBtnRef.current?.className);
+		const target = (e.target as HTMLElement).closest(`.${openChatsBtnRef.current?.className}`);
+		const btn = openChatsBtnRef.current;
+		console.log('elements', target, btn);
+		//btn in chats block
+		if(target !== btn) {
+			setIsChatsShow(false);
+		}
 	}
 	//set body height
 	//= 100vh - container's padding - footerH - headerH
@@ -137,14 +146,15 @@ const Chat = () => {
 
 	return (
 		<div className={classes.Chat} ref={chatRef}>
-			<button className={cn(classes.openOtherChatsBtn, isChatsShow ? classes._opened : '')}
-				onClick={handleOtherChatsBtnClick}
-			>
-				<ArrowForwardIosIcon className={classes.icon} />
-			</button>
 			<div className={cn(classes.otherChatsWrap, isChatsShow ? classes._show : '')}
 				onClick={handleOtherChatsWrapClick}
 			>
+				<button className={cn(classes.openOtherChatsBtn, isChatsShow ? classes._opened : '')}
+					onClick={handleOtherChatsBtnClick}
+					ref={openChatsBtnRef}
+				>
+					<ArrowForwardIosIcon className={classes.icon} />
+				</button>
 				<OtherChats 
 					openedChatId={contactUid}
 				/>

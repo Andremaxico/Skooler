@@ -32,6 +32,8 @@ export const OtherChats: React.FC<PropsType> = ({openedChatId}) => {
 		}
 	}, [myAccountData?.uid]);
 
+	console.log('opened chat uid', openedChatId);
+
 	return (
 		<aside className={classes.OtherChats}>
 			{generalChatData &&
@@ -47,7 +49,7 @@ export const OtherChats: React.FC<PropsType> = ({openedChatId}) => {
 				<ChatCard 
 					data={data}
 					key={data.contactId}
-					active={openedChatId === data.contactId}
+					active={openedChatId == data.contactId}
 				/>
 			))}
 		</aside>
