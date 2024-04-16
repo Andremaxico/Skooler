@@ -82,8 +82,8 @@ export const ScrollBtn = React.forwardRef<HTMLButtonElement, PropsType>(({
 		//@ts-ignore
 		//console.log(element.scrollHeight, element.scrollTop, element.clientHeight);
 		const value = element && !isWindow 
-			? element.scrollHeight - (element.clientHeight + element.scrollTop)
-			: window.outerHeight - (window.innerHeight + window.scrollY);
+			? element.scrollHeight - element.clientHeight
+			: window.outerHeight - window.innerHeight;
 		setScrollToBottomHeight(value);
 	}, [element && !isWindow ? element.scrollTop : window.scrollY]);
 
@@ -97,6 +97,7 @@ export const ScrollBtn = React.forwardRef<HTMLButtonElement, PropsType>(({
 	}, [unreadCount]);
 
 	const scrollBottom = () => {
+		console.log('scroll to bottom heihgt', scrollBottom);
 		scrollElementToBottom(element || window, scrollToBottomHeight);
 		(element || window).scrollTo({
 			top: scrollToBottomHeight, 
