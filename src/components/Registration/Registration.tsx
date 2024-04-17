@@ -10,7 +10,7 @@ import { authActionStatusRemoved, authErrorRemoved, createAccountByEmail, logOut
 import { LoginFields } from './Steps/LoginFields';
 import { AvatarUpload } from '../../UI/formControls/AvatarUpload/AvatarUpload';
 import { useSelector } from 'react-redux';
-import { selectAuthActionsStatuses, selectAuthErrors, selectAuthedStatus, selectMyAccountData, selectMyUid } from '../../Redux/account/account-selectors';
+import { selectAuthActionsStatuses, selectAuthErrors, selectAuthedStatus, selectMyAccountData, selectMyLoginData, selectMyUid } from '../../Redux/account/account-selectors';
 import { FirebaseContext } from '../../main';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { AboutField } from '../../UI/formControls/AboutField';
@@ -56,6 +56,8 @@ export const FormContext = createContext<ContextType | null>(null);
 const headerAccountLink = document.getElementById('headerAccountLink');
 
 export const Registration: React.FC<PropsType> = ({}) => {
+	const loginData = useSelector(selectMyLoginData);
+
 	//number of step
 	const [isLoading, setIsLoading] = useState<boolean>(true);
 	const [step, setStep] = useState<number>(0);
@@ -65,7 +67,13 @@ export const Registration: React.FC<PropsType> = ({}) => {
 		control, handleSubmit, reset, formState: {errors}, 
 		trigger, watch, setValue, register, getValues, 
 		getFieldState, setError
-	} = useForm<RegistrationFieldValues>();
+	} = useForm<RegistrationFieldValues>({
+		defaultValues: {
+			email: loginData?.email || undefined,
+			avatar: loginData?.photoURL || undefined,
+			fullName: loginData?.displayName || undefined
+		}
+	});
 
 	const authErrors = useSelector(selectAuthErrors);
 	const authActionsStatuses = useSelector(selectAuthActionsStatuses);

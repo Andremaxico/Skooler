@@ -2,12 +2,15 @@ import React from 'react';
 import classes from './LoginMethodsBtns.module.scss';
 import { IconButton } from '@mui/joy';
 import { GoogleAuthProvider, signInWithPopup, Auth } from 'firebase/auth';
-import { loginDataReceived, sendMyAccountData } from '../../Redux/account/account-reducer';
+import { loginDataReceived, sendMyAccountData, setMyAccountData } from '../../Redux/account/account-reducer';
 import { UserType } from '../../utils/types';
 import { GoogleIcon } from '../Icons';
 import { auth } from '../../firebase/firebaseApi';
 import { useAppDispatch } from '../../Redux/store';
 import cn from 'classnames';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { selectMyAccountData } from '../../Redux/account/account-selectors';
 
 type PropsType = {
 	className?: string,
@@ -15,10 +18,13 @@ type PropsType = {
 
 export const GoogleBtn: React.FC<PropsType> = ({className}) => {
 	const dispatch = useAppDispatch();
+	const navigate = useNavigate();
 
-	const setLoginData = (data: UserType) => {
+	const setLoginData = async (data: UserType) => {
 		dispatch(loginDataReceived(data));
-		dispatch(sendMyAccountData(null));
+
+		//snavigate('/registration', {replace: true});
+		//dispatch(sendMyAccountData(data));
 	}
 
 	const loginGoogle = async () => {

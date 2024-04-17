@@ -170,6 +170,8 @@ export const setMyAccountData = (authData: UserType) => async (dispatch: AppDisp
 	dispatch(isFetchingStatusChanged(true));
 	const data: ReceivedAccountDataType | undefined | Error = await usersAPI.getUserById(authData.uid as string);
 
+	console.log('set my account data, data', data);
+
 	if(data) {
 		dispatch(myAccountDataReceived(data));
 		dispatch(authStatusChanged(true));
