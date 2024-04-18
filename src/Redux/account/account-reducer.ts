@@ -364,17 +364,14 @@ export const checkEmailForExisting = (email: string) => async (dispatch: AppDisp
 } 
 
 export const sendEmailVerificationLink = (email: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
-	const code = getRandomSixDigitCode();
-
-	dispatch(activeRegistrationCodeReceived(code));
 	dispatch(authActionStatusUpdated('register', 'loading'));
 
 	try {
-		console.log('send email verify link', email);
-		await accountAPI.sendEmailVerificationLink(email, code);	
+		await accountAPI.sendEmailVerificationLink(email);
 		dispatch(authActionStatusUpdated('register', 'success'));
-		dispatch(authErrorRemoved('register'))
+		dispatch(authErrorRemoved('register'));
 	} catch(error: any) {
+		console.log(error.code, error.message);
 		dispatch(authErrorReceived('register', error.message));
 		dispatch(authActionStatusUpdated('register', 'error'));
 	}

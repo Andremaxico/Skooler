@@ -34,8 +34,6 @@ export const SaveBtn: React.FC<PropsType> = ({className, fieldsNames, errors, su
 	const [isTriggerred, setIsTriggerred] = useState<boolean>(false);
 	const [currSubmitIndex, setCurrSubmitIndex] = useState<number>(0);
 
-	console.log('---------------------------------------------');  
-
 	// we use trigger and nextStep, because they are static
 	const { 
 		trigger, nextStep, control, setValue
@@ -112,7 +110,6 @@ export const SaveBtn: React.FC<PropsType> = ({className, fieldsNames, errors, su
 	}, [isValid]);
 
 	useEffect(() => {
-		console.log('trigger');
 		if(trigger && isTriggerred) trigger(fieldsNames);
 	}, [values, isTriggerred])
 
@@ -125,7 +122,6 @@ export const SaveBtn: React.FC<PropsType> = ({className, fieldsNames, errors, su
 				//values - array based on fieldsNames, so order is right
 				//setValue can be null
 				if(setValue) {
-					console.log('set value of', fieldsNames[i], values[i]);
 					setValue(fieldsNames[i], values[i]);
 				}
 			}
@@ -170,7 +166,6 @@ export const SaveBtn: React.FC<PropsType> = ({className, fieldsNames, errors, su
 				endSubmit();
 			}
 		} else if(actionStatus === 'error') {
-			console.log('error, currSubmitIndex = 0');
 			setCurrSubmitIndex(0);
 		}
 	}, [actionStatus, serverError]);

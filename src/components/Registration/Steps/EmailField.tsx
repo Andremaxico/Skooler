@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import classes from './Steps.module.scss';
 import { Controller, FieldErrors, useWatch } from 'react-hook-form';
 import { FormContext, RegistrationFieldValues } from '../Registration';
@@ -23,9 +23,10 @@ export const EmailField: React.FC<PropsType> = ({errors}) => {
 	const dispatch = useAppDispatch();
 
 	//run after positive validation
-	const onSubmit = async () => {
+	const createUser = async () => {
+		//if error -> don't send link
 		await dispatch(checkEmailForExisting(value));
-		await dispatch(sendEmailVerificationLink());
+		//await dispatch(sendEmailVerificationLink());
 	}
 
 	return (
@@ -62,7 +63,7 @@ export const EmailField: React.FC<PropsType> = ({errors}) => {
 					errors={errors}
 					fieldsNames={['email']}
 					className={classes.btn}
-					onSubmit={onSubmit}
+					onSubmitFunctions={[createUser]}
 				/>
 			</div>
 		</div>

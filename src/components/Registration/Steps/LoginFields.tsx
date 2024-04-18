@@ -13,7 +13,7 @@ import { FormControl, FormHelperText, FormLabel, Input, TextField } from '@mui/j
 import IconButton from '@mui/joy/IconButton';
 import { useAppDispatch } from '../../../Redux/store';
 import { LoginForm } from '../../../UI/LoginForm/LoginForm';
-import { checkEmailForExisting, sendEmailVerificationLink } from '../../../Redux/account/account-reducer';
+import { checkEmailForExisting, createAccountByEmail, sendEmailVerificationLink } from '../../../Redux/account/account-reducer';
 
 
 type PropsType = {
@@ -26,12 +26,20 @@ export const LoginFields: React.FC<PropsType> = ({errors}) => {
 	const email = useWatch({
 		control,
 		name: 'email',
-	})
+	});
+	const password = useWatch({
+		control,
+		name: 'password',
+	});
 
 	const dispatch = useAppDispatch();
 
 	const checkForExisting = async () => await dispatch(checkEmailForExisting(email));
-	const sendCode = async () => await dispatch(sendEmailVerificationLink(email));
+	//const sendCode = async () => await dispatch(sendEmailVerificationLink(email));
+
+	const createUser = async () => {
+		await dispatch(createAccountByEmail(email, password));
+	}
 
 	return (
 		<section className={classes.Step}>
@@ -49,7 +57,8 @@ export const LoginFields: React.FC<PropsType> = ({errors}) => {
 			<SaveBtn 
 				className={classes.btn}
 				errors={errors}
-				onSubmitFunctions={[checkForExisting, sendCode]}
+				onValid={createUser}
+				onSubmitFunctions={[checkForExisting]}
 				waitForAction={true}
 				//strict order adherence(дотримання) for firebase functions(-> array)
 				fieldsNames={['email', 'password']}

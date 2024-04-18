@@ -130,7 +130,6 @@ export const Registration: React.FC<PropsType> = ({}) => {
 		setIsLoading(false);
 		//account register in firestore run after 1 step 
 		//because we need new uid in 5 step(avatarupload )
-
 	}
 
 	const closeModal = () => {
