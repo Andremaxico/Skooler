@@ -122,6 +122,7 @@ export const accountAPI = {
 
 	async deleteUser(user: User) {
 		await deleteUser(user);
+		console.log('user deleted');
 	},
 
 	async deleteUserData(uid: string) {

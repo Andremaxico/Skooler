@@ -27,6 +27,8 @@ export const AppFooter: React.FC<PropsType> = ({}) => {
 
   const isAuthed = useSelector(selectAuthedStatus);
 
+  console.log('is authed', isAuthed);
+
   //isAuthed, beacause on the start small login icon -> big ask icon
   useEffect(() => {
     const footerHeight = footerRef.current?.offsetHeight || 0;

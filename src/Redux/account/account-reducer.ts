@@ -387,6 +387,7 @@ export const removeAccount = () => async (dispatch: AppDispatchType, getState: (
 			
 			dispatch(loginDataReceived(null));
 			dispatch(myAccountDataReceived(null));
+			dispatch(authStatusChanged(false));
 		}
 	} catch(e) {
 		dispatch(globalErrorStateChanged(true)); 
