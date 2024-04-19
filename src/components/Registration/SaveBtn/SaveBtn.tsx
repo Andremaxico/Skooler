@@ -23,7 +23,7 @@ type PropsType = {
 	submit?: boolean,
 	waitForAction?: boolean, //if we dispatching thunk that have validation out of form
 	onSubmitFunctions?: Array<() => Promise<void>>, //after click on btn, while validation
-	onValid?: () => void, //after positive validation
+	onValid?: () => Promise<void>, //after positive validation
 }
 
 export const SaveBtn: React.FC<PropsType> = ({className, fieldsNames, errors, submit, onSubmitFunctions, onValid, waitForAction}) => {
@@ -57,9 +57,6 @@ export const SaveBtn: React.FC<PropsType> = ({className, fieldsNames, errors, su
 
 	const dispatch = useAppDispatch();
 
-	//check if we submitting email and password
-	const isLoginFields = fieldsNames.includes('password') || fieldsNames.includes('email');
-
 	const increaseSubmitIndex = () => setCurrSubmitIndex(i => i + 1);
 	const decreaseSubmitIndex = () => setCurrSubmitIndex(i => i > 0 ? i - 1 : i); 
 		
@@ -75,7 +72,7 @@ export const SaveBtn: React.FC<PropsType> = ({className, fieldsNames, errors, su
 	const endSubmit = () => {
 		console.log('end submit');
 		clearStatus();
-		if(onValid) onValid();
+		//if(onValid) onValid();
 		if(nextStep) nextStep();
 	}
 
@@ -156,13 +153,12 @@ export const SaveBtn: React.FC<PropsType> = ({className, fieldsNames, errors, su
 		console.log('action status', actionStatus);
 		if(actionStatus === 'success' && waitForAction) {
 			const currOnSubmitFunc = getCurrentSubmitFunc();
-			if(currOnSubmitFunc) {
+			if(onValid) {
 				(async () => {
-					console.log('next function, curr on submit func', currOnSubmitFunc);
+					console.log('next function, curr on valid funct', onValid);
 					increaseSubmitIndex();
-					await currOnSubmitFunc();
+					await onValid();
 				})();
-			} else {
 				endSubmit();
 			}
 		} else if(actionStatus === 'error') {
@@ -177,7 +173,6 @@ export const SaveBtn: React.FC<PropsType> = ({className, fieldsNames, errors, su
 			//actionStatus dont showing because status(error) dont changing
 			//to solvwe this error we removing status for his updating
 			setTimeout(() => {
-				console.log('remove action status');
 				clearStatus();
 			}, 2000);
 		}
@@ -185,6 +180,7 @@ export const SaveBtn: React.FC<PropsType> = ({className, fieldsNames, errors, su
 
 	useEffect(() => {
 		return () => {
+			console.log('destroy submit btn');
 			clearStatus();
 		}
 	}, []);

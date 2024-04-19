@@ -331,7 +331,6 @@ export const createAccountByEmail = (email: string, password: string) => async (
 		dispatch(authErrorRemoved('register'));
 
 		if(user) {
-			console.log('we got user', user);
 			dispatch(loginDataReceived(user));
 			dispatch(authStatusChanged(true));
 		}
@@ -348,6 +347,7 @@ export const checkEmailForExisting = (email: string) => async (dispatch: AppDisp
 	try {
 		dispatch(authActionStatusUpdated('register', 'loading'));
 		const isExisting = await accountAPI.checkEmailForExisting(email);
+
 
 		if(isExisting) {
 			dispatch(authErrorReceived('register', 'auth/email-already-exists'));

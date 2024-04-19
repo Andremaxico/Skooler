@@ -91,6 +91,7 @@ export const accountAPI = {
 	},
 	
 	async createAccountByEmail(email: string, password: string) {
+		console.log('create account');
 		const {user} = await createUserWithEmailAndPassword(auth, email, password);
 		return user;
 	},
