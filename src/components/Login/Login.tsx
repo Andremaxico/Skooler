@@ -11,6 +11,7 @@ import { selectPrevPage } from '../../Redux/app/appSelectors';
 import { SignInForm } from './SignInForm';
 import { OtherLoginMethods } from './OtherLoginMethods';
 import { Links } from './Links';
+import { authErrorRemoved } from '../../Redux/account/account-reducer';
 
 type PropsType = {}
 
@@ -20,6 +21,8 @@ const Login: React.FC<PropsType> = ({}) => {
 	const prevPage = useSelector(selectPrevPage);
 
 	const navigate = useNavigate();
+
+	const dispatch = useAppDispatch();
 
 	useEffect(() => {
 		//if we went to this page accidantly(we have authData) -> come back
@@ -35,7 +38,12 @@ const Login: React.FC<PropsType> = ({}) => {
 		}
 	}, [accountData, isAuthed]);
 
-
+	//remove sign-in error when leving Login page
+	useEffect(() => {
+		return () => {
+			dispatch(authErrorRemoved('signin'));
+		}
+	}, []);
 	
 	const toNavigation = ()   => {
 		console.log('to navigation');
@@ -45,7 +53,7 @@ const Login: React.FC<PropsType> = ({}) => {
 	return (
 		<div className={classes.Login}>
 			<div className={classes.content}>
-				<h1 className={classes.title}>З поверненням!</h1>
+				<h1 className={classes.title}>Вітаємо!</h1>
 				<SignInForm />
 				<OtherLoginMethods />
 				<Links />
