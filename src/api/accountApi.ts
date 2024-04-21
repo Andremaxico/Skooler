@@ -4,8 +4,9 @@ import { setDoc, addDoc, collection, doc, updateDoc, Unsubscribe, onSnapshot, de
 import { UserType, AccountDataType, ReceivedAccountDataType } from '../utils/types/index';
 import { ActionCodeSettings, FacebookAuthProvider, User, createUserWithEmailAndPassword, deleteUser, fetchSignInMethodsForEmail, getAuth, sendEmailVerification, sendPasswordResetEmail, sendSignInLinkToEmail, signInWithEmailAndPassword, signInWithPopup, signOut } from 'firebase/auth';
 import { auth, firestore, storage } from '../firebase/firebaseApi';
-import { deleteObject, getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { connectStorageEmulator, deleteObject, getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import axios from 'axios';
+import { firebase } from 'googleapis/build/src/apis/firebase';
 
 let unsubscribeFromMyAccountChanges: Unsubscribe | null = null;
 
@@ -97,9 +98,14 @@ export const accountAPI = {
 	},
 
 	async sendEmailVerificationLink(email: string) {
-		const url = window.location.href;
+		const user = auth.currentUser;
+		//set url for main page -> send Email Verification
+		//cliick email verification link -> main page
+		//read 'mode' from searchParams -> reload User
+		const url = document.location.origin;
 		console.log('url', url);
 		console.log('email', email);
+
 		const actionCodeSettings: ActionCodeSettings = {
 			// URL you want to redirect back to. The domain (www.example.com) for this
 			// URL must be in the authorized domains list in the Firebase Console.
@@ -108,7 +114,10 @@ export const accountAPI = {
 			handleCodeInApp: true,
 		};
 
-		await sendSignInLinkToEmail(auth, email, actionCodeSettings)
+		if(user) {
+			await sendEmailVerification(user, actionCodeSettings);
+		}
+		//await sendSignInLinkToEmail(auth, email, actionCodeSettings)
 		// The link was successfully sent -> Informing the user in UI
 		// Save the email locally so you don't need to ask the user for it again
 		// if they open the link on the same device.

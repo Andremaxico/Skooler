@@ -17,7 +17,7 @@ import { AboutField } from '../../UI/formControls/AboutField';
 import { Welcoming } from './Steps/Welcoming';
 import { ActionStatus } from '../../UI/ActionStatus';
 import { selectPrevPage } from '../../Redux/app/appSelectors';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { returnBtnShowStatusChanged } from '../../Redux/app/appReducer';
 import { EmailField } from './Steps/EmailField';
 import { EmailVerirficationField } from './Steps/EmailVerirficationField';
@@ -87,6 +87,9 @@ export const Registration: React.FC<PropsType> = ({}) => {
 	const dispatch: AppDispatchType = useAppDispatch();
 
 	const navigate = useNavigate();
+	const searchParams = useSearchParams();
+
+	console.log('searchParams', searchParams);
 
 	const formRef= useRef<HTMLFormElement>(null);
 	const submit = () => {

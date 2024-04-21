@@ -30,7 +30,7 @@ const firebaseConfig = {
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 const auth  = getAuth(app);
 auth.useDeviceLanguage();
-
+auth.languageCode = 'ua';
 
 const firestore = getFirestore();
 const messaging = getMessaging(app);

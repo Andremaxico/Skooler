@@ -366,6 +366,7 @@ export const checkEmailForExisting = (email: string) => async (dispatch: AppDisp
 export const sendEmailVerificationLink = (email: string) => async (dispatch: AppDispatchType, getState: () => RootStateType) => {
 	dispatch(authActionStatusUpdated('register', 'loading'));
 
+	const user = getState().account.myLoginData;
 	try {
 		await accountAPI.sendEmailVerificationLink(email);
 		dispatch(authActionStatusUpdated('register', 'success'));

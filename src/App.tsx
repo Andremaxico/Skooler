@@ -5,7 +5,7 @@ import classes from './App.module.scss';
 
 import AppHeader from './components/Header';
 
-import { HashRouter, Route, Routes, useLocation } from 'react-router-dom';
+import { HashRouter, Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
 import { unstable_HistoryRouter as HistoryRouter } from "react-router-dom";
 import { createBrowserHistory } from 'history';
 
@@ -67,6 +67,10 @@ const App = () => {
 
   const dispatch = useAppDispatch();
 
+  //if we see 'mode=emailVerificate' -> go to Registration Step 3
+  const [searchParams, setSearchParams] = useSearchParams();
+  console.log('search Params', searchParams);
+
   //internet check
   const offlineHandler = () => {
     dispatch(networkErrorStatusChanged(`Перевірте з'єднання з мережею`));
@@ -100,9 +104,10 @@ const App = () => {
     if(auth) {
       onAuthStateChanged(auth, async (user) => {
         setUser(user);
+        console.log('user', user);
         if (user) {
           dispatch(loginDataReceived({...user}));
-          await dispatch(setMyAccountData(user));	
+          //await dispatch(setMyAccountData(user));	
         } else {
           console.log('logout');
         }
