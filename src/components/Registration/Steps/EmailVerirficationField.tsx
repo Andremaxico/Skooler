@@ -29,7 +29,7 @@ export const EmailVerirficationField: React.FC<PropsType> = ({errors}) => {
 	})
 
 	const onSubmit  = async () => {
-		await dispatch(createAccountByEmail(email, password));
+		//await dispatch(markEmailAsVerified(email, password));
 	}
 
 	return (
@@ -39,7 +39,7 @@ export const EmailVerirficationField: React.FC<PropsType> = ({errors}) => {
 				Перейдіть за посиланням, що прийшло на вашу пошту
 				<span style={{'fontWeight': 'bold'}}>{email}</span> для підтвердження
 			</p>
-			<div className={classes.form}>
+			{/* <div className={classes.form}>
 				<Controller 
 					control={control}
 					name={'emailCode'}
@@ -79,7 +79,7 @@ export const EmailVerirficationField: React.FC<PropsType> = ({errors}) => {
 					onSubmitFunctions={[onSubmit]}
 					waitForAction={true}
 				/>
-			</div>
+			</div> */}
 		</div>
 	)
 }

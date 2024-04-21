@@ -97,7 +97,7 @@ export const accountAPI = {
 	},
 
 	async sendEmailVerificationLink(email: string) {
-		const url = document.location.origin;
+		const url = window.location.href;
 		console.log('url', url);
 		console.log('email', email);
 		const actionCodeSettings: ActionCodeSettings = {

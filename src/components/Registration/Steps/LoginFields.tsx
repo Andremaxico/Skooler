@@ -39,6 +39,7 @@ export const LoginFields: React.FC<PropsType> = ({errors}) => {
 
 	const createUser = async () => {
 		await dispatch(createAccountByEmail(email, password));
+		await dispatch(sendEmailVerificationLink(email));
 	}
 
 	return (
