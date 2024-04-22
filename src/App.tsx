@@ -129,6 +129,10 @@ const App = () => {
 
   console.log('locaion', location, new URLSearchParams(document.location.search).get('howDoyouDo'));
 
+  //we use document.locatiob instead of react-router dom useLocation
+  //because useLcation read params after #(we have HashRouter)
+  //but params are located before it
+  //so react-router dom doesn't see them
   //if we see 'mode=emailVerificate' -> go to Registration Step 3
   useEffect(() => {
     const searchParams = new URLSearchParams(document.location.search);
@@ -136,7 +140,7 @@ const App = () => {
     const continueRegistration = modeValue === 'verifyEmail';
 
     if(continueRegistration) {
-      navigate('registration/3');
+      navigate('/registration/3');
     }
   }, [document.location.search]);
 
@@ -179,7 +183,9 @@ const App = () => {
               <Routes>
                 <Route path='/login' element={<Login />} />
                 <Route path='/login/reset-password' element={<ResetPassword />} />
-                <Route path='/registration' element={<Registration />} />
+                <Route path='/registration' element={<Registration />}>
+                  <Route path=':stepNum' />
+                </Route>
                 <Route path='/chat' element={<Chat />}>
                   <Route path=':userId'/>
                 </Route>

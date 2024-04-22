@@ -47,7 +47,7 @@ const Login: React.FC<PropsType> = ({}) => {
 	
 	const toNavigation = ()   => {
 		console.log('to navigation');
-		navigate('/registration', {replace: true});
+		navigate('/registration/1', {replace: true});
 	}
 
 	return (

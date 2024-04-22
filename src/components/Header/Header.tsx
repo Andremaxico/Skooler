@@ -1,5 +1,5 @@
 import React, {useRef, useEffect, useState} from 'react'
-import { NavLink, unstable_useBlocker as useBlocker, useLocation } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { AccountInfo } from './AccountInfo';
 import classes from './Header.module.scss';
 import { useSelector } from 'react-redux';

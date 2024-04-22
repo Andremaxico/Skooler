@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useRef, useState } from 'react'
+import React, { createContext, useEffect, useRef, useState } from 'react'
 import { Control, FieldErrors, UseFormSetError, UseFormSetValue, UseFormTrigger, useForm } from 'react-hook-form';
 import { AccountDataType } from '../../utils/types';
 import { InitialsFields } from './Steps/InitialsFields';
@@ -6,26 +6,18 @@ import classes from './Registration.module.scss';
 import { InfoFields } from './Steps/InfoFields';
 import { SchoolFields } from './Steps/SchoolFields';
 import { AppDispatchType, useAppDispatch } from '../../Redux/store';
-import { authActionStatusRemoved, authErrorRemoved, createAccountByEmail, logOut, loginDataReceived, myAccountDataReceived, removeAccount, sendMyAccountData } from '../../Redux/account/account-reducer';
+import { authActionStatusRemoved, authErrorRemoved, logOut, removeAccount, sendMyAccountData } from '../../Redux/account/account-reducer';
 import { LoginFields } from './Steps/LoginFields';
-import { AvatarUpload } from '../../UI/formControls/AvatarUpload/AvatarUpload';
 import { useSelector } from 'react-redux';
-import { selectAuthActionsStatuses, selectAuthErrors, selectAuthedStatus, selectMyAccountData, selectMyLoginData, selectMyUid } from '../../Redux/account/account-selectors';
-import { FirebaseContext } from '../../main';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { AboutField } from '../../UI/formControls/AboutField';
+import { selectAuthActionsStatuses, selectAuthErrors, selectAuthedStatus, selectMyAccountData, selectMyLoginData } from '../../Redux/account/account-selectors';
 import { Welcoming } from './Steps/Welcoming';
 import { ActionStatus } from '../../UI/ActionStatus';
 import { selectPrevPage } from '../../Redux/app/appSelectors';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { returnBtnShowStatusChanged } from '../../Redux/app/appReducer';
-import { EmailField } from './Steps/EmailField';
 import { EmailVerirficationField } from './Steps/EmailVerirficationField';
 import { createPortal } from 'react-dom';
 import { CancelRegistrationBtn } from './CancelRegistrationBtn';
-import e from 'express';
-import { Modal } from '../../UI/Modal';
-import { Button } from '@mui/joy';
 import { CancelConfirmModal } from './CancelConfirmModal';
 import { AboutStep } from './Steps/AboutStep';
 import { AvatarStep } from './Steps/AvatarStep';
@@ -56,11 +48,13 @@ export const FormContext = createContext<ContextType | null>(null);
 const headerAccountLink = document.getElementById('headerAccountLink');
 
 export const Registration: React.FC<PropsType> = ({}) => {
+	const {stepNum} = useParams();
+	const step = Number(stepNum || 1) - 1;
+
 	const loginData = useSelector(selectMyLoginData);
 
 	//number of step
 	const [isLoading, setIsLoading] = useState<boolean>(true);
-	const [step, setStep] = useState<number>(0);
 	const [headerAccountLink, setHeaderAccountLink] = useState<HTMLElement | null>(null);
 	const [isCancelModalShow, setIsCancelModalShow] = useState<boolean>(false);
 	const { 
@@ -165,12 +159,12 @@ export const Registration: React.FC<PropsType> = ({}) => {
 
 	//перейти на наступний крок
 	const nextStep = () => {
-		if(!serverError) setStep((currStep) => currStep + 1);
+		if(!serverError) navigate(`/registration/${step+1}`)
 	}; //+1 to curr Step
 
 	//return to previous step
 	const prevStep = () => {
-		if(step > 0) setStep((currStep) => currStep - 1);
+		if(step > 0) navigate(`registration/${step-1}`);
 	}
 
 	//step element

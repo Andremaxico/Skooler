@@ -23,7 +23,7 @@ export const GoogleBtn: React.FC<PropsType> = ({className}) => {
 	const setLoginData = async (data: UserType) => {
 		dispatch(loginDataReceived(data));
 
-		//snavigate('/registration', {replace: true});
+		//snavigate('/registration/1', {replace: true});
 		//dispatch(sendMyAccountData(data));
 	}
 
