@@ -5,7 +5,7 @@ import classes from './App.module.scss';
 
 import AppHeader from './components/Header';
 
-import { HashRouter, Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
+import { HashRouter, Route, Routes, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { unstable_HistoryRouter as HistoryRouter } from "react-router-dom";
 import { createBrowserHistory } from 'history';
 
@@ -67,9 +67,8 @@ const App = () => {
 
   const dispatch = useAppDispatch();
 
-  //if we see 'mode=emailVerificate' -> go to Registration Step 3
-  const [searchParams, setSearchParams] = useSearchParams();
-  console.log('search Params', searchParams);
+  //const [searchParams, setSearchParams] = useSearchParams();
+  //console.log('search Params', searchParams);
 
   //internet check
   const offlineHandler = () => {
@@ -124,8 +123,22 @@ const App = () => {
 
   //change prev page in state
   const location = useLocation();
+  const navigate = useNavigate();
 
   const [prevLocation, setPrevLocation] = useState<string>(location.pathname)
+
+  console.log('locaion', location, new URLSearchParams(document.location.search).get('howDoyouDo'));
+
+  //if we see 'mode=emailVerificate' -> go to Registration Step 3
+  useEffect(() => {
+    const searchParams = new URLSearchParams(document.location.search);
+    const modeValue = searchParams.get('mode');
+    const continueRegistration = modeValue === 'verifyEmail';
+
+    if(continueRegistration) {
+      navigate('registration/3');
+    }
+  }, [document.location.search]);
 
   //set prev page
   useEffect(() => {
