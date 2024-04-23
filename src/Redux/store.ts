@@ -18,7 +18,10 @@ export const store = configureStore({
 		stream: streamReducer,
 	} ,
 	devTools: process.env.NODE_ENV !== 'production',
-	middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk),
+	middleware: (getDefaultMiddleware) => 
+		getDefaultMiddleware({
+			serializableCheck: false,
+		}).concat(thunk)
 });
 
 export type RootStateType = ReturnType<typeof store.getState>

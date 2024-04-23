@@ -33,6 +33,8 @@ export const SaveBtn: React.FC<PropsType> = ({className, fieldsNames, errors, su
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 	const [isTriggerred, setIsTriggerred] = useState<boolean>(false);
 	const [currSubmitIndex, setCurrSubmitIndex] = useState<number>(0);
+	//to prevent double function call if action status changes
+	const [isOnValidFuncCalled, setIsOnValidFuncCalled] = useState<boolean>(false);
 
 	// we use trigger and nextStep, because they are static
 	const { 
@@ -59,7 +61,7 @@ export const SaveBtn: React.FC<PropsType> = ({className, fieldsNames, errors, su
 
 	const increaseSubmitIndex = () => setCurrSubmitIndex(i => i + 1);
 	const decreaseSubmitIndex = () => setCurrSubmitIndex(i => i > 0 ? i - 1 : i); 
-		
+
 	const getCurrentSubmitFunc = () => {
 		return onSubmitFunctions ? onSubmitFunctions[currSubmitIndex] : undefined;
 	}
@@ -150,12 +152,13 @@ export const SaveBtn: React.FC<PropsType> = ({className, fieldsNames, errors, su
 	//and then we cant do nextStep();
 	//but in submit function we always havent an error
 	useEffect(() => {
-		console.log('action status', actionStatus);
-		if(actionStatus === 'success' && waitForAction) {
-			const currOnSubmitFunc = getCurrentSubmitFunc();
+		console.log('action status', actionStatus, waitForAction, isOnValidFuncCalled);
+
+		if(actionStatus === 'success' && waitForAction && !isOnValidFuncCalled) {
 			if(onValid) {
 				(async () => {
 					console.log('next function, curr on valid funct', onValid);
+					//setIsOnValidFuncCalled(true);
 					increaseSubmitIndex();
 					await onValid();
 				})();

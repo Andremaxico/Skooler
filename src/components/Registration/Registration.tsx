@@ -83,16 +83,12 @@ export const Registration: React.FC<PropsType> = ({}) => {
 	const navigate = useNavigate();
 	const searchParams = useSearchParams();
 
-	console.log('searchParams', searchParams);
-
 	const formRef= useRef<HTMLFormElement>(null);
 	const submit = () => {
 		formRef.current?.submit();
 	}
 
 	const lastStep = 4;
-
-	console.log('header accouynt link', headerAccountLink);
 
 	useEffect(() => {
 		//if we went to this page accidantly(we have authData) -> come back
@@ -159,6 +155,8 @@ export const Registration: React.FC<PropsType> = ({}) => {
 
 	//перейти на наступний крок
 	const nextStep = () => {
+		console.log('next step');
+		console.log('server error', serverError);
 		if(!serverError) navigate(`/registration/${step+1}`)
 	}; //+1 to curr Step
 
