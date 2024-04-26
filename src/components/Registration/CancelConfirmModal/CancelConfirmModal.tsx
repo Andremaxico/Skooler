@@ -5,11 +5,12 @@ import { Button } from '@mui/joy';
 
 type PropsType = {
 	isShow: boolean,
+	setIsCancelled: (v: boolean) => void,
 	cancelRegistration: () => void,
 	closeModal: () => void,
 }
 
-export const CancelConfirmModal: React.FC<PropsType> = ({isShow, cancelRegistration, closeModal}) => {
+export const CancelConfirmModal: React.FC<PropsType> = ({isShow, cancelRegistration, closeModal, setIsCancelled}) => {
 	return (
 		<Modal
 			isShow={isShow}

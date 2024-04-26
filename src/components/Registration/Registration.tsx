@@ -54,6 +54,7 @@ export const Registration: React.FC<PropsType> = ({}) => {
 	const loginData = useSelector(selectMyLoginData);
 
 	//number of step
+	const [isCancelled, setIsCancelled] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(true);
 	const [headerAccountLink, setHeaderAccountLink] = useState<HTMLElement | null>(null);
 	const [isCancelModalShow, setIsCancelModalShow] = useState<boolean>(false);
@@ -142,6 +143,25 @@ export const Registration: React.FC<PropsType> = ({}) => {
 		navigate(prevPage || '/');
 	}
 
+	const getIsRegistrationCancelled = async () => {
+
+	}
+
+	// useEffect(() => {
+	// 	const beforeUnloadEventHandler = (e: BeforeUnloadEvent) => {
+	// 		setIsCancelModalShow(true);
+	// 		console.log('before unload event handler');
+	// 		const isRegistrationCancelled = getIsRegistrationCancelled();
+	// 		e.preventDefault();
+	// 	};
+
+	// 	window.addEventListener('onbeforeunload', beforeUnloadEventHandler);
+
+	// 	return () => {
+	// 		window.removeEventListener('onbeforeunload', beforeUnloadEventHandler);
+	// 	}
+	// }, []);
+
 	useEffect(() => {
 		//TODO:
 		//delete this
@@ -220,6 +240,7 @@ export const Registration: React.FC<PropsType> = ({}) => {
 					isShow={isCancelModalShow}
 					closeModal={closeModal}
 					cancelRegistration={cancelRegistration}
+					setIsCancelled={setIsCancelled}
 				/>
 			</FormContext.Provider>
 		</form>

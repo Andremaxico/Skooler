@@ -71,7 +71,9 @@ export const LoginForm: React.FC<PropsType> = ({control, errors, className  }) =
 							type='email'
 							className={classes.input}
 						/>
-						<FormHelperText className={classes.errorText}></FormHelperText>
+						<FormHelperText className={classes.fieldErrorText}>
+							{errors.email?.message}
+						</FormHelperText>
 					</FormControl>
 				)}
 			/>
@@ -87,7 +89,7 @@ export const LoginForm: React.FC<PropsType> = ({control, errors, className  }) =
 						value: /(?=.*[0-9])(?=.*[a-z])[0-9a-zA-Z]{6,}/g, 
 						message: 'Пароль повинен містити мінімум 6 символів, цифри, малі і великі букви'
 					},
-					maxLength: {value: 16, message: 'Максимальна довдина пароля - 16 символів'}
+					maxLength: {value: 16, message: 'Максимальна довжина пароля - 16 символів'}
 				}}
 				render={({field: {onChange, value}} : ControllerFieldType) => (
 					<FormControl className={classes.fieldWrapper} required>
@@ -110,7 +112,9 @@ export const LoginForm: React.FC<PropsType> = ({control, errors, className  }) =
 								</IconButton>
 							}
 						/>
-						<FormHelperText className={classes.errorText}></FormHelperText>
+						<FormHelperText className={classes.fieldErrorText}>
+							{errors.password?.message}
+						</FormHelperText>
 					</FormControl>
 				)}
 			/>
