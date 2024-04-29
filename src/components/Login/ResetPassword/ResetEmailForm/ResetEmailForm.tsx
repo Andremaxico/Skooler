@@ -5,6 +5,9 @@ import { FormControl, FormLabel, FormHelperText, Input, Button } from '@mui/joy'
 import cn from 'classnames';
 import { useAppDispatch } from '../../../../Redux/store';
 import { sendPasswordResetEmail } from '../../../../Redux/account/account-reducer';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { selectPrevPage } from '../../../../Redux/app/appSelectors';
 
 type PropsType = {
 	className?: string,
@@ -17,12 +20,20 @@ type FieldsValues = {
 export const ResetEmailForm: React.FC<PropsType> = ({ className }) => {
 	const { control, formState: { errors }, handleSubmit, reset  } = useForm<FieldsValues>();
 
+	const prevPage = useSelector(selectPrevPage);
+
+	const navigate = useNavigate();
+
 	const dispatch = useAppDispatch();
 
 	const onSubmit = async (data: FieldsValues) => {
 		await dispatch(sendPasswordResetEmail(data.email.trim()));
 
 		reset();  
+	}
+
+	const returnBack = () => {
+		navigate(prevPage || '/login');
 	}
 
 	return (
@@ -52,9 +63,14 @@ export const ResetEmailForm: React.FC<PropsType> = ({ className }) => {
 					</FormControl>
 				)}
 			/>
-			<Button className={classes.submitBtn} type='submit'>
-				Зберегти
-			</Button>
+			<div className={classes.buttons}>
+				<Button className={classes.submitBtn} onClick={returnBack} color='danger'>
+					Скасувати
+				</Button>
+				<Button className={classes.submitBtn} type='submit'>
+					Зберегти
+				</Button>
+			</div>
 		</form>
 	)
 }

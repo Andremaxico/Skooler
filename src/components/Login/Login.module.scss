@@ -9,7 +9,14 @@
 	height: 100%;
 	.content {
 		@include column-align;
+		width: 100%;
 		max-width: 400px;
+		@media (max-width: $md2) {
+			max-width: 320px;
+		}	
+		@media (max-width: $md3) {
+			max-width: 280px;
+		}	
 		.title {
 			@include title;
 			text-align: center;

@@ -157,12 +157,14 @@ export const SaveBtn: React.FC<PropsType> = ({className, fieldsNames, errors, su
 		if(actionStatus === 'success' && waitForAction && !isOnValidFuncCalled) {
 			if(onValid) {
 				(async () => {
-					console.log('next function, curr on valid funct', onValid);
+					console.log('on valid finction call', onValid);
 					//setIsOnValidFuncCalled(true);
 					increaseSubmitIndex();
 					await onValid();
 				})();
 				endSubmit();
+				console.log('on valid func called');
+				setIsOnValidFuncCalled(true);
 			}
 		} else if(actionStatus === 'error') {
 			setCurrSubmitIndex(0);

@@ -10,4 +10,8 @@
 		.errorText {}
 		.submitBtn {}
 	}
+	.buttons {
+		@include row-align;
+		gap: 8px;
+	}
 }
