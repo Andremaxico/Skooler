@@ -143,25 +143,6 @@ export const Registration: React.FC<PropsType> = ({}) => {
 		navigate(prevPage || '/');
 	}
 
-	const getIsRegistrationCancelled = async () => {
-
-	}
-
-	// useEffect(() => {
-	// 	const beforeUnloadEventHandler = (e: BeforeUnloadEvent) => {
-	// 		setIsCancelModalShow(true);
-	// 		console.log('before unload event handler');
-	// 		const isRegistrationCancelled = getIsRegistrationCancelled();
-	// 		e.preventDefault();
-	// 	};
-
-	// 	window.addEventListener('onbeforeunload', beforeUnloadEventHandler);
-
-	// 	return () => {
-	// 		window.removeEventListener('onbeforeunload', beforeUnloadEventHandler);
-	// 	}
-	// }, []);
-
 	useEffect(() => {
 		//TODO:
 		//delete this
@@ -177,7 +158,8 @@ export const Registration: React.FC<PropsType> = ({}) => {
 	const nextStep = () => {
 		console.log('next step');
 		console.log('server error', serverError);
-		if(!serverError) navigate(`/registration/${step+1}`)
+		console.log('step + 1', step+1);
+		if(!serverError) navigate(`/registration/${+(stepNum || 0)+1}`)
 	}; //+1 to curr Step
 
 	//return to previous step

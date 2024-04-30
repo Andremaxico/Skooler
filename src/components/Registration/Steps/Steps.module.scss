@@ -32,6 +32,13 @@
 	}
 
 	.form {
+		max-width: 400px;
+		@media (max-width: $md2) {
+			max-width: 320px;
+		}
+		@media (max-width: $md3) {
+			max-width: 280px;
+		}		
 		width: 100%;
 		margin-bottom: 12px;
 		.textarea {
