@@ -15,7 +15,9 @@ type PropsType = {
 export const AvatarStep: React.FC<PropsType> = ({errors, setValue, getValues}) => {
 	const [selectedFile, setSelectedFile] = useState<File | Blob | null>(null);
 
-	const [name, surname] = getValues('fullName').split(' ');
+	//use separated name/surname because we haven't fullName fiield in registration
+	const name = getValues('name');
+	const surname = getValues('surname');
 
 	//run after positive validiting in SaveBtn
 	const handleSubmit = async () => {
@@ -33,6 +35,7 @@ export const AvatarStep: React.FC<PropsType> = ({errors, setValue, getValues}) =
 
 	return (
 		<div className={`${classes.AvatarStep} ${classes.Step}`}>
+			<h2 className={classes.title}>Оберіть зображення аватара</h2>
 			<AvatarUpload 
 				selectedFile={selectedFile}
 				setSelectedFile={setSelectedFile}

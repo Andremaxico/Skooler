@@ -1,9 +1,17 @@
 @import '../../../global-styles';
 
 .Step {
+	width: 100%;
+	max-width: 400px;
 	@include column-align;
 	align-items: center;
 	transition: all 0.3s ease-out 0s; 
+	@media (max-width: $md2) {
+		max-width: 320px;
+	}
+	@media (max-width: $md3) {
+		max-width: 280px;
+	}	
 	.form {
 		@include column-align;
 		.fieldWrapper {
@@ -29,6 +37,10 @@
 	.title {
 		@include smallTitle;
 		margin-bottom: 24px;
+	}
+
+	.verifyText {
+		margin-bottom: 8px;
 	}
 
 	.form {
@@ -60,6 +72,12 @@
 		width: 100%;
 		@include row-align;
 		justify-content: space-between;
+		.saveBtn {
+			span {
+				//on mobile screens text slides to the left
+				text-align: right;
+			}
+		}
 		.btn {
 			width: 100%;
 			cursor: pointer;

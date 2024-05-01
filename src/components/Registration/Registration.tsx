@@ -28,6 +28,8 @@ export type RegistrationFieldValues = AccountDataType & {
 	emailCode: number,
 	email: string, 
 	password: string,
+	name: string,
+	surname: string,
 };
 
 type ContextType = {
@@ -156,9 +158,6 @@ export const Registration: React.FC<PropsType> = ({}) => {
 
 	//перейти на наступний крок
 	const nextStep = () => {
-		console.log('next step');
-		console.log('server error', serverError);
-		console.log('step + 1', step+1);
 		if(!serverError) navigate(`/registration/${+(stepNum || 0)+1}`)
 	}; //+1 to curr Step
 
