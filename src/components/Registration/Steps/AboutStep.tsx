@@ -17,22 +17,23 @@ type PropsType = {
 export const AboutStep: React.FC<PropsType> = ({errors, control}) => {
 
   return (
-	 <div>
+	 <div className={classes.Step}>
+		<Controller
+			control={control}
+			name='aboutMe'
+			rules={{
+				maxLength: {value: ABOUT_ME_MAX_LENGTH, message: `Повинно бути менше ${ABOUT_ME_MAX_LENGTH} символів`}
+			}}
+			render={({field: {value, onChange}}) => (
+				<AboutField
+					error={errors.aboutMe?.message}
+					onChange={onChange}
+					value={value || ''}
+					className={classes.textarea}
+				/>
+			)}
+		/>
 		<div className={classes.buttons}>
-			<Controller
-				control={control}
-				name='aboutMe'
-				rules={{
-					maxLength: {value: ABOUT_ME_MAX_LENGTH, message: `Повинно бути менше ${ABOUT_ME_MAX_LENGTH} символів`}
-				}}
-				render={({field: {value, onChange  }}) => (
-					<AboutField
-						error={errors.aboutMe?.message}
-						onChange={onChange}
-						value={value || ''}
-					/>
-				)}
-			/>
 			<ReturnBtn />
 			<SaveBtn
 				errors={errors}

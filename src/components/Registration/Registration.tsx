@@ -91,7 +91,7 @@ export const Registration: React.FC<PropsType> = ({}) => {
 		formRef.current?.submit();
 	}
 
-	const lastStep = 4;
+	const lastStep = 7;
 
 	useEffect(() => {
 		//if we went to this page accidantly(we have authData) -> come back
@@ -133,6 +133,7 @@ export const Registration: React.FC<PropsType> = ({}) => {
 	}
 
 	const clearAfterRegistration = () => {
+		console.log('clear after rigisration');
 		dispatch(authActionStatusRemoved('register'));
 		dispatch(authErrorRemoved('register'));
 		reset();

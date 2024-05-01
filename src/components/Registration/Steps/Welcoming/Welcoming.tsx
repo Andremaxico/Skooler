@@ -14,7 +14,9 @@ export const Welcoming: React.FC<PropsType> = ({isLoading}) => {
 		console.log('is loading', isLoading);
 
 		if(!isLoading) {
-			navigate('/', {replace: true});
+			const timeout = setTimeout(() => {
+				navigate('/', {replace: true});
+			}, 2000);
 		}
 	}, [isLoading]);
 

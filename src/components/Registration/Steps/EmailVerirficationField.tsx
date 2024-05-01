@@ -37,7 +37,7 @@ export const EmailVerirficationField: React.FC<PropsType> = ({errors}) => {
 			<div className={classes.title}>Підтвердження електронної пошти</div>
 			<p className={classes.infoText}>
 				Перейдіть за посиланням, що прийшло на вашу пошту
-				<span style={{'fontWeight': 'bold'}}>{email}</span> для підтвердження
+				<span style={{'fontWeight': 'bold'}}> {email}</span> для підтвердження.
 				Ви можете закрити цю сторінку
 			</p>
 			{/* <div className={classes.form}>

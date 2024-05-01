@@ -17,7 +17,7 @@ export const InitialsFields: React.FC<PropsType> = ({errors}) => {
 
 	return (
 		<section className={classes.Step}>
-			<p className={classes.verifyText}>Вашу електронну адресу перевірено, продовжуйте реєстрацію</p>
+			<p className={classes.infoText}>Вашу електронну адресу перевірено, продовжуйте реєстрацію</p>
 			<h2 className={classes.title}>Як Вас звуть?</h2>
 			{/* <div className={classes.image}>
 				<img src={initialsImg} />

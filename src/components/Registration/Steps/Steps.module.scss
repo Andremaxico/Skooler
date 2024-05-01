@@ -23,8 +23,12 @@
 
 	}
 	.infoText {
+		@include text;
 		text-align: center;
 		margin-bottom: 12px;
+	}
+	.avatarUpload {
+		margin-bottom: 8px;
 	}
 	.image {
 		width: 150px;
@@ -35,12 +39,21 @@
 		}
 	}
 	.title {
+		text-align: center;
 		@include smallTitle;
 		margin-bottom: 24px;
 	}
 
 	.verifyText {
 		margin-bottom: 8px;
+	}
+
+	.textarea {
+		margin-bottom: 8px;
+		width: 100%;
+		@media (max-width: $md2) {
+			min-width: 260px;
+		}
 	}
 
 	.form {
@@ -53,11 +66,6 @@
 		}		
 		width: 100%;
 		margin-bottom: 12px;
-		.textarea {
-			@media (max-width: $md2) {
-				min-width: 260px;
-			}
-		}
 		.radioGroup {
 			@include row-align;
 			flex-direction: row;

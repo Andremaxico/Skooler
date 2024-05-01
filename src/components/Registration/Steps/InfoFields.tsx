@@ -35,7 +35,7 @@ export const InfoFields: React.FC<PropsType> = ({errors}) => {
 
 	return (
 		<div className={classes.Step}>
-			<h2 className={classes.title}>Напишіть про себ е</h2>
+			<h2 className={classes.title}>Давайте познайомимося ближче</h2>
 			<div className={classes.image}>
 				<img src={aboutImg} />
 			</div>

@@ -1,21 +1,12 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
-import { FieldErrors, UseFormGetValues, UseFormRegister, UseFormSetValue, useWatch } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 import { selectCurrAvatarUrl, selectMyUid } from '../../../Redux/account/account-selectors';
-import { RegistrationFieldValues } from '../../../components/Registration/Registration';
 import classes from './AvatarUpload.module.scss';
-import { sendMyCurrentAvatar } from '../../../Redux/account/account-reducer';
 import { AppDispatchType, useAppDispatch } from '../../../Redux/store';
-import { Modal } from '../../Modal';
-import AvatarEdit from 'react-avatar-edit';
-import { SaveBtn } from '../../../components/Registration/SaveBtn';
-import { CloseBtn } from '../../CloseBtn';
-import { dataURItoBlob } from '../../../utils/helpers/converters';
-import { Avatar } from '@mui/joy';
 import Preloader from '../../Preloader/Preloader';
-import { ReturnBtn } from '../../../components/Registration/ReturnBtn';
 import { UserAvatar } from '../../UserAvatar';
 import { getFileReader } from '../../../utils/helpers/getFileReader';
+import cn from 'classnames';
 
 //TODO:
 //Add new avatar cropping
@@ -26,6 +17,7 @@ type PropsType = {
 	setSelectedFile: (f: File | Blob) => void,
 	selectedFile: File | Blob | null,
 	existingAvatarUrl?: string,
+	className?: string,
 	size?: number,
 };
 
@@ -50,7 +42,7 @@ function stringToColor(string: string) {
 }
 
 
-export const AvatarUpload: React.FC<PropsType> = ({ name, surname, setSelectedFile, selectedFile, size, existingAvatarUrl }) => {
+export const AvatarUpload: React.FC<PropsType> = ({ name, surname, setSelectedFile, selectedFile, size, existingAvatarUrl, className }) => {
 	const [isCutting, setIsCutting] = useState<boolean>(false);
 	const [localImgSrc, setLocalImgSrc] = useState<string | undefined>(existingAvatarUrl);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -127,7 +119,7 @@ export const AvatarUpload: React.FC<PropsType> = ({ name, surname, setSelectedFi
 
 	return (
 		<div 
-			className={classes.AvatarUpload}
+			className={cn(classes.AvatarUpload, className)}
 			style={{
 				width: `${size || 100}px`,
 				height: `${size || 100}px`,

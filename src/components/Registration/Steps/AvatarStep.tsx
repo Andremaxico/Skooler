@@ -41,6 +41,7 @@ export const AvatarStep: React.FC<PropsType> = ({errors, setValue, getValues}) =
 				setSelectedFile={setSelectedFile}
 				name={name}
 				surname={surname}
+				className={classes.avatarUpload}
 			/>
 			<div className={classes.buttons}>
 				<ReturnBtn />
