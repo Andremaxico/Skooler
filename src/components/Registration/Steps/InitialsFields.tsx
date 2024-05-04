@@ -78,7 +78,6 @@ export const InitialsFields: React.FC<PropsType> = ({errors}) => {
 				/>
 			</div>
 			<div className={classes.buttons}>
-				<ReturnBtn />
 				<SaveBtn 
 					className={classes.btn}
 					errors={errors}

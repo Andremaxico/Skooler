@@ -140,7 +140,8 @@ const App = () => {
     const continueRegistration = modeValue === 'verifyEmail';
 
     if(continueRegistration) {
-      navigate('/registration/3');
+      //navigate('/registration/3');
+      window.history.pushState({}, document.title, "/" + 'registration/3' );
     }
   }, [document.location.search]);
 
