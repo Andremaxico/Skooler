@@ -167,7 +167,7 @@ export const Registration: React.FC<PropsType> = ({}) => {
 
 	//return to previous step
 	const prevStep = () => {
-		if(step > 0) navigate(`registration/${step-1}`);
+		if(step > 0) navigate(`/registration/${+(stepNum || 0)-1}`);
 	}
 
 	//step element
