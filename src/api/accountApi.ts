@@ -21,6 +21,7 @@ export const accountAPI = {
 		console.log('send my account data', data);
 		//send account data to database
 		await setDoc(doc(firestore, 'users', uid), data);
+		debugger;
 	},
 
 	async updateMyAccountData(data: FinalUpdatedAccountDataType, uid: string,) {

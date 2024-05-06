@@ -209,6 +209,8 @@ export const sendMyAccountData = (data: AccountDataType) => async (dispatch: App
 	const loginData = getState().account.myLoginData;
 	const uid = loginData?.uid;
 
+	debugger;
+
 	console.log('uid', uid, data.avatar );
 
 	if(uid) {
@@ -226,6 +228,8 @@ export const sendMyAccountData = (data: AccountDataType) => async (dispatch: App
 			year: birthDate.year(),
 			date: birthDate.date(),
 		};
+
+		debugger;
 
 		console.log('birth date', birthDate);
 
@@ -251,6 +255,8 @@ export const sendMyAccountData = (data: AccountDataType) => async (dispatch: App
 				email: loginData.email,
 			}; 
 		}
+
+		debugger;
 
 		//server send account data
 		await accountAPI.setMyAccountData(accountData, uid);
@@ -284,7 +290,7 @@ export const updateMyAccountData = (data: UpdatedAccountDataType) => async (disp
 		try {
 
 			//if user didn't change avatar, without getting it we setting it to null
-			let avatarUrl: string | null | undefined = getState().account.myAccountData?.avatarUrl || null; 
+			let avatarUrl: string | null = getState().account.myAccountData?.avatarUrl || null; 
 			if(avatar) {
 				avatarUrl = await accountAPI.sendAvatar(avatar, uid);
 				if(avatarUrl === undefined) avatarUrl = null;

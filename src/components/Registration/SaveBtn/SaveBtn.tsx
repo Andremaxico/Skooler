@@ -20,13 +20,13 @@ type PropsType = {
 	className?: string,
 	errors: FieldErrors<RegistrationFieldValues>,
 	fieldsNames: Array<KeysType>,
-	submit?: boolean,
+	isSubmit?: boolean,
 	waitForAction?: boolean, //if we dispatching thunk that have validation out of form
 	onSubmitFunctions?: Array<() => Promise<void>>, //after click on btn, while validation
 	onValid?: () => Promise<void>, //after positive validation
 }
 
-export const SaveBtn: React.FC<PropsType> = ({className, fieldsNames, errors, submit, onSubmitFunctions, onValid, waitForAction}) => {
+export const SaveBtn: React.FC<PropsType> = ({className, fieldsNames, errors, isSubmit, onSubmitFunctions, onValid, waitForAction}) => {
 	//we set null as a initial value of valid status 
 	//for effect with isValid dependency work for the first time
 	const [isValid, setIsValid] = useState<boolean | null>(null);
@@ -38,7 +38,7 @@ export const SaveBtn: React.FC<PropsType> = ({className, fieldsNames, errors, su
 
 	// we use trigger and nextStep, because they are static
 	const { 
-		trigger, nextStep, control, setValue
+		trigger, nextStep, control, setValue, submit
 	} = useContext(FormContext) || {};
 	//const [errorsDeps, setErrorsDeps] = useState(second)
 
@@ -59,6 +59,13 @@ export const SaveBtn: React.FC<PropsType> = ({className, fieldsNames, errors, su
 
 	const dispatch = useAppDispatch();
 
+	const [name, surname] = fieldsNames;
+	const isInitials = !!name && !!surname;
+
+	if(isInitials) {
+		if(!!setValue) setValue('fullName', `${name} ${surname}`)
+	}
+
 	const increaseSubmitIndex = () => setCurrSubmitIndex(i => i + 1);
 	const decreaseSubmitIndex = () => setCurrSubmitIndex(i => i > 0 ? i - 1 : i); 
 
@@ -72,6 +79,7 @@ export const SaveBtn: React.FC<PropsType> = ({className, fieldsNames, errors, su
 	}
 
 	const endSubmit = () => {
+		debugger;
 		console.log('end submit');
 		clearStatus();
 		//if(onValid) onValid();
@@ -200,33 +208,26 @@ export const SaveBtn: React.FC<PropsType> = ({className, fieldsNames, errors, su
 			setIsSubmitting(true);
 			setIsTriggerred(true);
 		} else {
+			debugger;
 			checkValidity();
 		}
 	
-		if(!submit) {
+		if(!isSubmit) {
 			//for preventing untimely submitting of whole form
 			e.preventDefault();
+		} else {
+			debugger;
+			if(!!submit) submit();
 		}
 	}
 
-
-	// const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-	// 	e.preventDefault();
-	// 	console.log('disabled', disabled);
-	// 	if(!disabled) {
-	// 		onClick();
-	// 	} else {
-	// 		//треба анімашку намутити  
-	// 	}
-	// }
-
 	return (
 		<div className={cn(classes.SaveBtn, className)}>
-			<span>{submit ? 'Завершити реєстрацію' : 'Зберегти'}</span>
+			<span>{isSubmit ? 'Завершити реєстрацію' : 'Зберегти'}</span>
 			<IconButton
 				className={classes.iconBtn} 
 				onClick={handleSubmit} 
-				type={submit ? 'submit' : 'button'} 
+				type={'submit'} 
 				disabled={actionStatus === 'loading'}
 			>
 				<EastIcon color='primary' className={classes.icon} />

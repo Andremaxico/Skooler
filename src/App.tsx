@@ -139,9 +139,11 @@ const App = () => {
     const modeValue = searchParams.get('mode');
     const continueRegistration = modeValue === 'verifyEmail';
 
+    console.log(continueRegistration);
+
     if(continueRegistration) {
-      //navigate('/registration/3');
-      window.history.pushState({}, document.title, "/" + 'registration/3' );
+      window.history.pushState({}, document.title, "/Skooler/" + '#/registration/3' );
+      navigate('/registration/3');
     }
   }, [document.location.search]);
 

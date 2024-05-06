@@ -50,7 +50,7 @@ export const AvatarStep: React.FC<PropsType> = ({errors, setValue, getValues}) =
 					fieldsNames={['avatar']}
 					className={classes.saveBtn}
 					onSubmitFunctions={[handleSubmit]}
-					submit={true}
+					isSubmit={true}
 				/>
 			</div>
 		</div>

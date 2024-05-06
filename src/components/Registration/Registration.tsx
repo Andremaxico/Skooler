@@ -42,6 +42,7 @@ type ContextType = {
 	currStep: number,
 	setError: UseFormSetError<RegistrationFieldValues>,
 	prevStep: () => void,
+	submit: () => void,
 }
 
 //context for all steps
@@ -63,7 +64,7 @@ export const Registration: React.FC<PropsType> = ({}) => {
 	const { 
 		control, handleSubmit, reset, formState: {errors}, 
 		trigger, watch, setValue, register, getValues, 
-		getFieldState, setError
+		getFieldState, setError, 
 	} = useForm<RegistrationFieldValues>({
 		defaultValues: {
 			email: loginData?.email || undefined,
@@ -119,6 +120,7 @@ export const Registration: React.FC<PropsType> = ({}) => {
 
 	//надсилання даних на сервер
 	const onSubmit = async (data: AccountDataType) => {
+		debugger;
 		console.log('submit data', data);
 		setIsLoading(true);
 		//another properties setting in redux
@@ -140,25 +142,26 @@ export const Registration: React.FC<PropsType> = ({}) => {
 	}
 
 	const cancelRegistration = async () => {
+		debugger;
 		clearAfterRegistration();
 		closeModal();
 		await dispatch(removeAccount());
 		navigate(prevPage || '/');
 	}
 
-	useEffect(() => {
-		//TODO:
-		//delete this
-		dispatch(logOut());
+	// useEffect(() => {
+	// 	//TODO:
+	// 	//delete this
 
-		dispatch(returnBtnShowStatusChanged(false));
-		return () => {
-			clearAfterRegistration();
-		}
-	}, []);
+	// 	dispatch(returnBtnShowStatusChanged(false));
+	// 	return () => {
+	// 		clearAfterRegistration();
+	// 	}
+	// }, []);
 
 	//перейти на наступний крок
 	const nextStep = () => {
+		debugger;
 		if(!serverError) navigate(`/registration/${+(stepNum || 0)+1}`)
 	}; //+1 to curr Step
 
@@ -204,7 +207,7 @@ export const Registration: React.FC<PropsType> = ({}) => {
 		<form ref={formRef} className={classes.Registration} onSubmit={handleSubmit(onSubmit)}>
 			<FormContext.Provider value={{
 				control, errors, nextStep, trigger, setValue,
-				lastStep, currStep: step, setError, prevStep
+				lastStep, currStep: step, setError, prevStep, submit
 			}}>
 				{currStep}
 				<ActionStatus 
