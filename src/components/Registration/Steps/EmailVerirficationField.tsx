@@ -19,18 +19,14 @@ export const EmailVerirficationField: React.FC<PropsType> = ({errors}) => {
 
 	const dispatch = useAppDispatch();
 
-	const activeEmailCode = useSelector(selectActiveRegistrationCode);
-
-	const emailCodeRegExp = new RegExp(`${activeEmailCode}`);
-
 	const [email, password] = useWatch({
 		control, 
 		name: ['email', 'password', 'emailCode'],
 	})
 
-	const onSubmit  = async () => {
-		//await dispatch(markEmailAsVerified(email, password));
-	}
+	// const onSubmit  = async () => {
+	// 	//await dispatch(markEmailAsVerified(email, password));
+	// }
 
 	return (
 		<div className={classes.Step}>

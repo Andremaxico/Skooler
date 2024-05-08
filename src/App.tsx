@@ -133,7 +133,7 @@ const App = () => {
   //because useLcation read params after #(we have HashRouter)
   //but params are located before it
   //so react-router dom doesn't see them
-  //if we see 'mode=emailVerificate' -> go to Registration Step 3
+  //if we see 'mode=emailVerify' -> go to Registration Step 3
   useEffect(() => {
     const searchParams = new URLSearchParams(document.location.search);
     const modeValue = searchParams.get('mode');

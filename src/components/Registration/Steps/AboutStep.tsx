@@ -18,6 +18,7 @@ export const AboutStep: React.FC<PropsType> = ({errors, control}) => {
 
   return (
 	 <div className={classes.Step}>
+		<h2 className={classes.title}>Додайте більше інформації</h2>
 		<Controller
 			control={control}
 			name='aboutMe'

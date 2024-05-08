@@ -80,10 +80,15 @@ export const SaveBtn: React.FC<PropsType> = ({className, fieldsNames, errors, is
 
 	const endSubmit = () => {
 		debugger;
-		console.log('end submit');
 		clearStatus();
-		//if(onValid) onValid();
-		if(nextStep) nextStep();
+		if(isSubmit) {
+			debugger;
+			if(!!submit) submit();
+		} else {
+			debugger;
+			console.log('end submit');
+			if(nextStep) nextStep();
+		}
 	}
 
 	//set is valid after errors changing
@@ -198,7 +203,7 @@ export const SaveBtn: React.FC<PropsType> = ({className, fieldsNames, errors, is
 		}
 	}, []);
 
-	const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+	const handleClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
 		//we cant check validity from first time
 		//beacause validity status cant update in time
 		//so from first we set submitting and triggering
@@ -211,14 +216,8 @@ export const SaveBtn: React.FC<PropsType> = ({className, fieldsNames, errors, is
 			debugger;
 			checkValidity();
 		}
-	
-		if(!isSubmit) {
-			//for preventing untimely submitting of whole form
-			e.preventDefault();
-		} else {
-			debugger;
-			if(!!submit) submit();
-		}
+
+		e.preventDefault();
 	}
 
 	return (
@@ -226,8 +225,8 @@ export const SaveBtn: React.FC<PropsType> = ({className, fieldsNames, errors, is
 			<span>{isSubmit ? 'Завершити реєстрацію' : 'Зберегти'}</span>
 			<IconButton
 				className={classes.iconBtn} 
-				onClick={handleSubmit} 
-				type={'submit'} 
+				onClick={handleClick} 
+				type={'button'} 
 				disabled={actionStatus === 'loading'}
 			>
 				<EastIcon color='primary' className={classes.icon} />

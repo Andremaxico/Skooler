@@ -29,6 +29,8 @@ export const AvatarStep: React.FC<PropsType> = ({errors, setValue, getValues}) =
 			//dispatch(sendMyCurrentAvatar(selectedFile, uid));
 			setValue('avatar', selectedFile);
 
+			debugger;
+
 			console.log('value of avatar setted', selectedFile);
 		}
 	}

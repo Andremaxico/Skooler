@@ -24,7 +24,6 @@ export type AccountStateType = {
 	isAuthed: boolean,
 	authErrors: AuthErrorsType,
 	authActionsStatuses: AuthActionsType,
-	activeRegistrationCode: number | null,
 }
 type _ThunkType = ThunkAction<void, AccountStateType, unknown, AnyAction>;
 
@@ -42,7 +41,6 @@ export const newQuestionLiked = createAction<string>('account/NEW_QUESTION_LIKED
 export const questionUnliked = createAction<string>('account/QESTION_UNLIKED');
 export const authStatusChanged = createAction<boolean>('account/AUTH_STATUS_CHANGED');
 export const currUserQuestionsReceived = createAction<PostDataType[] | null>('account/CURR_USER_QUESTIONS_RECEIVED');
-export const activeRegistrationCodeReceived = createAction<number | null>('auth/ACTIVE_REGISTRATION_CODE_RECEIVED')
 
 export const authErrorReceived = createAction('auth/AUTH_ERROR_RECEIVED', (type: AuthActionsTypesType, message: string) => {
 	return {
@@ -75,7 +73,6 @@ const initialState: AccountStateType = {
 	isAuthed: false,
 	authErrors: {},
 	authActionsStatuses: {},
-	activeRegistrationCode: null,
 }
 
 //using in ReceivedAccountDataType
@@ -154,9 +151,6 @@ const accountReducer = createReducer(initialState, (builder) => {
 		})
 		.addCase(authActionStatusRemoved, (state, action) => {
 			delete state.authActionsStatuses[action.payload];
-		})
-		.addCase(activeRegistrationCodeReceived, (state, action) => {
-			state.activeRegistrationCode = action.payload;
 		})
 		.addDefaultCase((state, action) => {});
 });

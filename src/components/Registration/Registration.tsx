@@ -38,7 +38,6 @@ type ContextType = {
 	nextStep: () => void,
 	control: Control<RegistrationFieldValues, any>,
 	setValue:  UseFormSetValue<RegistrationFieldValues>,
-	lastStep: number,
 	currStep: number,
 	setError: UseFormSetError<RegistrationFieldValues>,
 	prevStep: () => void,
@@ -88,11 +87,22 @@ export const Registration: React.FC<PropsType> = ({}) => {
 	const searchParams = useSearchParams();
 
 	const formRef= useRef<HTMLFormElement>(null);
-	const submit = () => {
-		formRef.current?.submit();
+
+	//перейти на наступний крок
+	const nextStep = () => {
+		debugger;
+		if(!serverError) navigate(`/registration/${+(stepNum || 0)+1}`)
+	}; //+1 to curr Step
+
+	//return to previous step
+	const prevStep = () => {
+		if(step > 0) navigate(`/registration/${+(stepNum || 0)-1}`);
 	}
 
-	const lastStep = 7;
+	const submit = () => {
+		debugger;
+		formRef.current?.requestSubmit();
+	}
 
 	useEffect(() => {
 		//if we went to this page accidantly(we have authData) -> come back
@@ -126,6 +136,7 @@ export const Registration: React.FC<PropsType> = ({}) => {
 		//another properties setting in redux
 		await dispatch(sendMyAccountData(data));
 		setIsLoading(false);
+		nextStep();
 		//account register in firestore run after 1 step 
 		//because we need new uid in 5 step(avatarupload )
 	}
@@ -158,17 +169,6 @@ export const Registration: React.FC<PropsType> = ({}) => {
 	// 		clearAfterRegistration();
 	// 	}
 	// }, []);
-
-	//перейти на наступний крок
-	const nextStep = () => {
-		debugger;
-		if(!serverError) navigate(`/registration/${+(stepNum || 0)+1}`)
-	}; //+1 to curr Step
-
-	//return to previous step
-	const prevStep = () => {
-		if(step > 0) navigate(`/registration/${+(stepNum || 0)-1}`);
-	}
 
 	//step element
 	let currStep: JSX.Element | null = null;
@@ -207,7 +207,7 @@ export const Registration: React.FC<PropsType> = ({}) => {
 		<form ref={formRef} className={classes.Registration} onSubmit={handleSubmit(onSubmit)}>
 			<FormContext.Provider value={{
 				control, errors, nextStep, trigger, setValue,
-				lastStep, currStep: step, setError, prevStep, submit
+				currStep: step, setError, prevStep, submit
 			}}>
 				{currStep}
 				<ActionStatus 
