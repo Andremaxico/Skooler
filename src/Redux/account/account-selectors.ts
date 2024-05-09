@@ -39,7 +39,3 @@ export const selectAuthErrors = (state: RootStateType) => {
 export const selectAuthActionsStatuses = (state: RootStateType) => {
 	return state.account.authActionsStatuses;
 }
-
-export const selectActiveRegistrationCode = (state: RootStateType) => {
-	return state.account.activeRegistrationCode;
-}

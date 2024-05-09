@@ -24,13 +24,23 @@ export const InfoFields: React.FC<PropsType> = ({errors}) => {
 	const { nextStep, control, setError, setValue } = useContext(FormContext) || {};
 
 	const fiveYearsAgo = dayjs().set('year', dayjs().year() - 5);
+	const twentyYearsAgo = dayjs().set('year', dayjs().year() - 20);
 
 	const handleError = (error: DateValidationError) => {
 		console.log('error', error);  
-		if(setError) setError('birthDate', {
-			type: 'max', 
-			message: `Вам повинно бути більше чотирьох років`
-		});
+		if(setError) {
+			if(error === 'minDate') {
+				setError('birthDate', {
+					type: 'max', 
+					message: `Вам повинно бути менше 20 років`
+				});
+			} else if(error === 'maxDate') {
+				setError('birthDate', {
+					type: 'max', 
+					message: `Вам повинно бути більше чотирьох років`
+				});
+			}
+		} 
 	}
 
 	return (
@@ -59,9 +69,11 @@ export const InfoFields: React.FC<PropsType> = ({errors}) => {
 									onError={handleError}
 									disableFuture
 									maxDate={fiveYearsAgo}
+									minDate={twentyYearsAgo}
 									label='Дата народження'
 								/>
 							</LocalizationProvider>
+							<FormHelperText className={'fieldErrorText'}>{errors.birthDate?.message}</FormHelperText>
 						</FormControl>
 					)}
 				/>

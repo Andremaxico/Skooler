@@ -7,7 +7,6 @@ import { ReturnBtn } from '../ReturnBtn';
 import { SaveBtn } from '../SaveBtn';
 import { useAppDispatch } from '../../../Redux/store';
 import { createAccountByEmail } from '../../../Redux/account/account-reducer';
-import { selectActiveRegistrationCode } from '../../../Redux/account/account-selectors';
 import { useSelector } from 'react-redux';
 
 type PropsType = {
