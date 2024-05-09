@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useRef, useState } from 'react'
-import { Control, FieldErrors, UseFormSetError, UseFormSetValue, UseFormTrigger, useForm } from 'react-hook-form';
+import { Control, FieldErrors, UseFormGetValues, UseFormSetError, UseFormSetValue, UseFormTrigger, useForm } from 'react-hook-form';
 import { AccountDataType } from '../../utils/types';
 import { InitialsFields } from './Steps/InitialsFields';
 import classes from './Registration.module.scss';
@@ -35,6 +35,7 @@ export type RegistrationFieldValues = AccountDataType & {
 type ContextType = {
 	errors: FieldErrors<RegistrationFieldValues>,
 	trigger: UseFormTrigger<RegistrationFieldValues>,
+	getValues: UseFormGetValues<RegistrationFieldValues>,
 	nextStep: () => void,
 	control: Control<RegistrationFieldValues, any>,
 	setValue:  UseFormSetValue<RegistrationFieldValues>,
@@ -207,7 +208,7 @@ export const Registration: React.FC<PropsType> = ({}) => {
 		<form ref={formRef} className={classes.Registration} onSubmit={handleSubmit(onSubmit)}>
 			<FormContext.Provider value={{
 				control, errors, nextStep, trigger, setValue,
-				currStep: step, setError, prevStep, submit
+				currStep: step, setError, prevStep, submit, getValues
 			}}>
 				{currStep}
 				<ActionStatus 

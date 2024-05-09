@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { Control, Controller, FieldErrors } from 'react-hook-form';
+import { Control, Controller, FieldErrors, useWatch } from 'react-hook-form';
 import { FormContext, RegistrationFieldValues } from '../Registration';
 import classes from './Steps.module.scss';
 import { FormControl, FormHelperText, FormLabel, Input } from '@mui/joy';
@@ -11,9 +11,20 @@ type PropsType = {
 	errors: FieldErrors<RegistrationFieldValues>,
 };  
 export const InitialsFields: React.FC<PropsType> = ({errors}) => {
-	const {control, nextStep, trigger} = useContext(FormContext) || {};
+	const {control, getValues, setValue} = useContext(FormContext) || {};
 
-	if(!control || !nextStep || !errors || !trigger) return <Preloader />
+
+	const handleSubmit = () => {
+		debugger;
+		if(getValues && setValue) {
+			const name= getValues('name');
+			const surname = getValues('surname');
+
+			debugger;
+
+			setValue('fullName', `${name} ${surname}`);
+		}
+	}
 
 	return (
 		<section className={classes.Step}>
@@ -81,6 +92,7 @@ export const InitialsFields: React.FC<PropsType> = ({errors}) => {
 				<SaveBtn 
 					className={classes.btn}
 					errors={errors}
+					onValid={handleSubmit}
 					fieldsNames={['name', 'surname']}
 				/>
 			</div>

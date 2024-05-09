@@ -23,7 +23,7 @@ type PropsType = {
 	isSubmit?: boolean,
 	waitForAction?: boolean, //if we dispatching thunk that have validation out of form
 	onSubmitFunctions?: Array<() => Promise<void>>, //after click on btn, while validation
-	onValid?: () => Promise<void>, //after positive validation
+	onValid?: (() => Promise<void>) | (() => void), //after positive validation
 }
 
 export const SaveBtn: React.FC<PropsType> = ({className, fieldsNames, errors, isSubmit, onSubmitFunctions, onValid, waitForAction}) => {
@@ -59,13 +59,6 @@ export const SaveBtn: React.FC<PropsType> = ({className, fieldsNames, errors, is
 
 	const dispatch = useAppDispatch();
 
-	const [name, surname] = fieldsNames;
-	const isInitials = !!name && !!surname;
-
-	if(isInitials) {
-		if(!!setValue) setValue('fullName', `${name} ${surname}`)
-	}
-
 	const increaseSubmitIndex = () => setCurrSubmitIndex(i => i + 1);
 	const decreaseSubmitIndex = () => setCurrSubmitIndex(i => i > 0 ? i - 1 : i); 
 
@@ -80,6 +73,7 @@ export const SaveBtn: React.FC<PropsType> = ({className, fieldsNames, errors, is
 
 	const endSubmit = () => {
 		debugger;
+		if(onValid) onValid();
 		clearStatus();
 		if(isSubmit) {
 			debugger;
@@ -164,10 +158,11 @@ export const SaveBtn: React.FC<PropsType> = ({className, fieldsNames, errors, is
 	//we can have an error
 	//and then we cant do nextStep();
 	//but in submit function we always havent an error
+	// generally, this is the fuse
 	useEffect(() => {
-		console.log('action status', actionStatus, waitForAction, isOnValidFuncCalled);
+		console.log('action status', actionStatus, waitForAction, isOnValidFuncCalled, isValid);
 
-		if(actionStatus === 'success' && waitForAction && !isOnValidFuncCalled) {
+		if((actionStatus === 'success' || isValid) && waitForAction && !isOnValidFuncCalled) {
 			if(onValid) {
 				(async () => {
 					console.log('on valid finction call', onValid);
@@ -182,7 +177,8 @@ export const SaveBtn: React.FC<PropsType> = ({className, fieldsNames, errors, is
 		} else if(actionStatus === 'error') {
 			setCurrSubmitIndex(0);
 		}
-	}, [actionStatus, serverError]);
+	//need to change use action status in all actions that can cause an error
+	}, [actionStatus, serverError, isValid]);
 
 	useEffect(() => {
 		if(actionStatus === 'error') {
