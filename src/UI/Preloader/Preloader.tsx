@@ -22,7 +22,9 @@ const Preloader: React.FC<PropsType> = ({width = 50, height = width, fixed, abso
 			)} 
 			id='preloader'
 		>
-			<div className={classes.clockLoader}></div>
+			<div className={classes.container}>
+				<div className={classes.clockLoader}></div>
+			</div>
 		</div>
 	)
 }

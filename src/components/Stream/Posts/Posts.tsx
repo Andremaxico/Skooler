@@ -13,6 +13,7 @@ import { NoResults } from './NoResults';
 import { selectFooterHeight, selectHeaderHeight } from '../../../Redux/app/appSelectors';
 import { useInView } from 'react-intersection-observer';
 import { debounce } from 'lodash';
+import { Tumbleweed } from '../../../UI/Tumbleweed';
 
 type PropsType = {
 	isLoading: boolean,
@@ -162,7 +163,7 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 			: searchedPosts && searchedPosts?.length < 1 ?
 				<NoResults reloadStream={reloadStream} />
 			: 
-				<div>Питань немає взагалі</div>
+				<Tumbleweed />
 			}
 		</div>
 	)

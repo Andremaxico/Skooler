@@ -14,7 +14,6 @@ const Stream: React.FC<PropsType> = ({}) => {
 		<div className={classes.Stream}>
 			<Search setIsLoading={setIsLoading} />
 			<Posts isLoading={isLoading} />
-			
 		</div>
 	)
 }

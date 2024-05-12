@@ -45,7 +45,7 @@ const Account: React.FC<PropsType> = ({}) => {
 	console.log('is fetching', isFetching);
 
 	if(!isAuthed) return <Navigate to='/login' replace={true}/>
-	if(isFetching && isLoading || !myAccountData) return <Preloader />;
+	if(isFetching && isLoading || !myAccountData) return <Preloader fixed />;
 	return (
 		<div className={classes.Account}>
 			{
