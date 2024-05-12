@@ -15,7 +15,7 @@ import { firestore } from '../../firebase/firebaseApi';
 import { globalErrorStateChanged } from '../app/appReducer';
 
 export type AccountStateType = {
-	myAccountData: ReceivedAccountDataType | null,
+	myAccountData: ReceivedAccountDataType | null | undefined, //null - initital, undefined -> no data in server
 	myLoginData: User | null,
 	currUserAccount: ReceivedAccountDataType | null | undefined,
 	currUserQuestions: PostDataType[] | null,
@@ -29,7 +29,7 @@ type _ThunkType = ThunkAction<void, AccountStateType, unknown, AnyAction>;
 
 
 //=========ACTIONS=========
-export const myAccountDataReceived = createAction<ReceivedAccountDataType | null>('account/SET_MY_ACCOUNT_DATA');
+export const myAccountDataReceived = createAction<ReceivedAccountDataType | null | undefined>('account/SET_MY_ACCOUNT_DATA');
 export const myAccountDataUpdated = createAction<FinalUpdatedAccountDataType>('account/MY_ACCOUNT_DATA_UPDATED');
 export const loginDataReceived = createAction<User | null>('account/LOGIN_DATA_RECEIVED');
 export const currUserAccountReceived = createAction<ReceivedAccountDataType | undefined>('account/CURR_USER_ACCOUNT_RECEIVED');
@@ -169,6 +169,8 @@ export const setMyAccountData = (authData: UserType) => async (dispatch: AppDisp
 	if(data) {
 		dispatch(myAccountDataReceived(data));
 		dispatch(authStatusChanged(true));
+	} else {
+		dispatch(myAccountDataReceived(undefined));
 	}
 	//dispatch(isFetchingStatusChanged(false));
 }
@@ -203,8 +205,6 @@ export const sendMyAccountData = (data: AccountDataType) => async (dispatch: App
 	const loginData = getState().account.myLoginData;
 	const uid = loginData?.uid;
 
-	debugger;
-
 	console.log('uid', uid, data.avatar );
 
 	if(uid) {
@@ -222,8 +222,6 @@ export const sendMyAccountData = (data: AccountDataType) => async (dispatch: App
 			year: birthDate.year(),
 			date: birthDate.date(),
 		};
-
-		debugger;
 
 		console.log('birth date', birthDate);
 
@@ -249,8 +247,6 @@ export const sendMyAccountData = (data: AccountDataType) => async (dispatch: App
 				email: loginData.email,
 			}; 
 		}
-
-		debugger;
 
 		//server send account data
 		await accountAPI.setMyAccountData(accountData, uid);

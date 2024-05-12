@@ -42,6 +42,7 @@ import { SearchUsers } from './components/SearchUsers';
 import { getSuccessTextByTarget } from './utils/helpers/getSuccessTextByTarget';
 import ErrorBoundary from 'antd/es/alert/ErrorBoundary';
 import { ErrorBanner } from './UI/ErrorBanner';
+import { selectMyAccountData } from './Redux/account/account-selectors';
 
 //const Chat = React.lazy(() => import('./components/Chat'));
 const Chats = React.lazy(() => import('./components/Chats'));
@@ -64,6 +65,7 @@ const App = () => {
   const userAction = useSelector(selectUserAction); 
   const prevPage = useSelector(selectPrevPage);
   const isGlobalError = useSelector(selectGlobalErrorState);
+  const myAccountData = useSelector(selectMyAccountData);
 
   const dispatch = useAppDispatch();
 
@@ -99,6 +101,13 @@ const App = () => {
     console.log('naviagtor online check', navigator.onLine);
   }, [navigator.onLine]);
   
+  //if user authed in firease but haven't main account data
+  useEffect(() => {
+    if(myAccountData === undefined) {
+      navigate('registration/3');
+    }
+  }, [myAccountData])
+
   useEffect(() => {
     if(auth) {
       onAuthStateChanged(auth, async (user) => {
@@ -106,7 +115,7 @@ const App = () => {
         console.log('user', user);
         if (user) {
           dispatch(loginDataReceived({...user}));
-          //await dispatch(setMyAccountData(user));	
+          await dispatch(setMyAccountData(user));	
         } else {
           console.log('logout');
         }

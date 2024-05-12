@@ -72,14 +72,11 @@ export const SaveBtn: React.FC<PropsType> = ({className, fieldsNames, errors, is
 	}
 
 	const endSubmit = () => {
-		debugger;
 		if(onValid) onValid();
 		clearStatus();
 		if(isSubmit) {
-			debugger;
 			if(!!submit) submit();
 		} else {
-			debugger;
 			console.log('end submit');
 			if(nextStep) nextStep();
 		}

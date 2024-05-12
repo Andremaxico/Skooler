@@ -91,7 +91,6 @@ export const Registration: React.FC<PropsType> = ({}) => {
 
 	//перейти на наступний крок
 	const nextStep = () => {
-		debugger;
 		if(!serverError) navigate(`/registration/${+(stepNum || 0)+1}`)
 	}; //+1 to curr Step
 
@@ -101,7 +100,6 @@ export const Registration: React.FC<PropsType> = ({}) => {
 	}
 
 	const submit = () => {
-		debugger;
 		formRef.current?.requestSubmit();
 	}
 
@@ -131,7 +129,6 @@ export const Registration: React.FC<PropsType> = ({}) => {
 
 	//надсилання даних на сервер
 	const onSubmit = async (data: AccountDataType) => {
-		debugger;
 		console.log('submit data', data);
 		setIsLoading(true);
 		//another properties setting in redux
