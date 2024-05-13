@@ -1,0 +1,34 @@
+@import '../../global-styles';
+
+.UserCard {
+    display: flex;
+    margin-bottom: 16px;
+    padding: 8px 4px;
+    @include text;
+    border-radius: 16px;
+    box-shadow: 0px 17px 20px -10px rgba(199, 199, 199, 0.1);
+    cursor: pointer;
+    &:last-child {
+        margin-bottom: 0;
+    }
+    .avatar {
+        margin-right: 12px;
+        .img {
+            @include size(64px)
+        }
+    }
+    .about {
+        flex: 1 1 auto;
+        .fullName {
+            @include bigText;
+            font-weight: 500;
+        }
+        .aboutText {
+            @include text;
+        }
+        .noAboutText {
+        
+            font-style: italic;
+        }
+    }
+}

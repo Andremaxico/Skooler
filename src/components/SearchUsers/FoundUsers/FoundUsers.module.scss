@@ -1,0 +1,8 @@
+@import '../../../global-styles';
+
+.FoundUsers {
+    display: grid;
+    gap: 8px;
+    grid-template-columns: repeat(auto-fit,minmax(320px,1fr)); ;
+}
+

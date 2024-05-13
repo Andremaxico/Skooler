@@ -1,0 +1,14 @@
+@import '../../../global-styles';
+
+.NoUsersFound {
+    @include column-align;
+    align-items: center;
+    .icon {
+        font-size: 64px;
+        margin-bottom: 8px;
+        color: $primary;
+    }
+    .text {
+        @include text;
+    }
+}

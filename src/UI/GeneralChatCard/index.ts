@@ -1,0 +1,1 @@
+export { GeneralChatCard } from './GeneralChatCard';

@@ -1,0 +1,13 @@
+@import '../../../global-styles';
+
+.Links {
+    @include row-align;
+    justify-content: space-between;
+    @media (max-width: $md2) {
+        @include column-align;
+        align-items: center;
+    }   
+    .link {
+        @include text;
+    }
+}
