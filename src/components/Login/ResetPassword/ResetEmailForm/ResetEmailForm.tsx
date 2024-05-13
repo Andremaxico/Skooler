@@ -7,7 +7,7 @@ import { useAppDispatch } from '../../../../Redux/store';
 import { sendPasswordResetEmail } from '../../../../Redux/account/account-reducer';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { selectPrevPage } from '../../../../Redux/app/appSelectors';
+import { selectLastPrevPage } from '../../../../Redux/app/appSelectors';
 
 type PropsType = {
 	className?: string,
@@ -20,7 +20,7 @@ type FieldsValues = {
 export const ResetEmailForm: React.FC<PropsType> = ({ className }) => {
 	const { control, formState: { errors }, handleSubmit, reset  } = useForm<FieldsValues>();
 
-	const prevPage = useSelector(selectPrevPage);
+	const lastPrevPage = useSelector(selectLastPrevPage);
 
 	const navigate = useNavigate();
 
@@ -33,7 +33,7 @@ export const ResetEmailForm: React.FC<PropsType> = ({ className }) => {
 	}
 
 	const returnBack = () => {
-		navigate(prevPage || '/login');
+		navigate(lastPrevPage || '/login');
 	}
 
 	return (

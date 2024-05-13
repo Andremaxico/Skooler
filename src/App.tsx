@@ -12,7 +12,7 @@ import { createBrowserHistory } from 'history';
 import { Provider, useSelector } from 'react-redux';
 
 import { store, useAppDispatch } from './Redux/store';
-import { networkErrorStatusChanged, prevPageChanged, returnBtnShowStatusChanged } from './Redux/app/appReducer';
+import { networkErrorStatusChanged, prevPageAdded, returnBtnShowStatusChanged } from './Redux/app/appReducer';
 import { loginDataReceived, sendMyAccountData, setMyAccountData } from './Redux/account/account-reducer';
 
 import Preloader from './UI/Preloader';
@@ -20,7 +20,7 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { Auth, User, onAuthStateChanged } from 'firebase/auth';
 import MySchool from './components/MySchool';
 
-import { selectFooterHeight, selectGlobalErrorState, selectHeaderHeight, selectNetworkError, selectPrevPage, selectUserAction } from './Redux/app/appSelectors';
+import { selectFooterHeight, selectGlobalErrorState, selectHeaderHeight, selectNetworkError, selectPrevPages, selectUserAction } from './Redux/app/appSelectors';
 import { NetworkError } from './UI/NetworkError';
 import { AppFooter } from './components/AppFooter';
 import Stream from './components/Stream';
@@ -63,7 +63,7 @@ const App = () => {
 
   const networkError = useSelector(selectNetworkError);
   const userAction = useSelector(selectUserAction); 
-  const prevPage = useSelector(selectPrevPage);
+  const prevPages = useSelector(selectPrevPages);
   const isGlobalError = useSelector(selectGlobalErrorState);
   const myAccountData = useSelector(selectMyAccountData);
 
@@ -162,7 +162,7 @@ const App = () => {
     //but have return to some page
     //so when we have login or registration in pathname, we dont setting prevPage 
     if(!location.pathname.includes('login') && !location.pathname.includes('registration')) {
-      dispatch(prevPageChanged(prevLocation));
+      dispatch(prevPageAdded(prevLocation));
       //update location
       setPrevLocation(location.pathname);
     }
@@ -172,7 +172,7 @@ const App = () => {
   useEffect(() => {
     if(location.pathname === '/') {
       dispatch(returnBtnShowStatusChanged(false)); 
-    } else if(prevPage) {
+    } else if(prevPages.length > 0) {
       dispatch(returnBtnShowStatusChanged(true));
     }
   }, [location])

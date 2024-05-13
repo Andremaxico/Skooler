@@ -12,7 +12,7 @@ import { useSelector } from 'react-redux';
 import { selectAuthActionsStatuses, selectAuthErrors, selectAuthedStatus, selectMyAccountData, selectMyLoginData } from '../../Redux/account/account-selectors';
 import { Welcoming } from './Steps/Welcoming';
 import { ActionStatus } from '../../UI/ActionStatus';
-import { selectPrevPage } from '../../Redux/app/appSelectors';
+import { selectPrevPages, selectLastPrevPage } from '../../Redux/app/appSelectors';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { returnBtnShowStatusChanged } from '../../Redux/app/appReducer';
 import { EmailVerirficationField } from './Steps/EmailVerirficationField';
@@ -75,7 +75,7 @@ export const Registration: React.FC<PropsType> = ({}) => {
 
 	const authErrors = useSelector(selectAuthErrors);
 	const authActionsStatuses = useSelector(selectAuthActionsStatuses);
-	const prevPage = useSelector(selectPrevPage);
+	const prevPages = useSelector(selectPrevPages);
 	const isAuthed = useSelector(selectAuthedStatus);
 	const myAccountData = useSelector(selectMyAccountData);
 
@@ -88,6 +88,9 @@ export const Registration: React.FC<PropsType> = ({}) => {
 	const searchParams = useSearchParams();
 
 	const formRef= useRef<HTMLFormElement>(null);
+
+	const lastNonRegistrationPages = prevPages.filter(page => !page.includes('registration'));
+	const lastNonRegistrationPage = lastNonRegistrationPages[lastNonRegistrationPages.length-1];
 
 	//перейти на наступний крок
 	const nextStep = () => {
@@ -108,11 +111,12 @@ export const Registration: React.FC<PropsType> = ({}) => {
 		//it happens after first site's opening beacause we getting authData
 		//and it cant load in the time
 		console.log('is authed', isAuthed);
+		console.log('prev pages', prevPages);
 		if(isAuthed && myAccountData) {
-			if(!prevPage || prevPage.includes('login')) {
+			if(!lastNonRegistrationPage || lastNonRegistrationPage.includes('login')) {
 				navigate('/', {replace: true});	
 			} else {
-				navigate(prevPage, {replace: true});
+				navigate(lastNonRegistrationPage, {replace: true});
 			}
 		}
 		setIsLoading(false);
@@ -155,7 +159,7 @@ export const Registration: React.FC<PropsType> = ({}) => {
 		clearAfterRegistration();
 		closeModal();
 		await dispatch(removeAccount());
-		navigate(prevPage || '/');
+		navigate(lastNonRegistrationPage || '/');
 	}
 
 	// useEffect(() => {

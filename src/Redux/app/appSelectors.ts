@@ -13,8 +13,12 @@ export const selectHeaderHeight = (state: RootStateType) => {
 }
 
 
-export const selectPrevPage = (state: RootStateType) => {
-	return state.app.prevPage;
+export const selectPrevPages = (state: RootStateType) => {
+	return state.app.prevPages;
+}
+
+export const selectLastPrevPage = (state: RootStateType) => {
+	return state.app.prevPages[state.app.prevPages.length - 1];
 }
 
 export const selectReturnBtnShowStatus = (state: RootStateType) => {

@@ -9,7 +9,7 @@ import { useAppDispatch } from '../../Redux/store';
 import { headerHeightReceived, returnBtnShowStatusChanged } from '../../Redux/app/appReducer';
 import { SearchButtons } from './SearchButtons';
 import { ReturnBtn } from './ReturnBtn';
-import { selectPrevPage, selectReturnBtnShowStatus } from '../../Redux/app/appSelectors';
+import { selectLastPrevPage, selectPrevPages, selectReturnBtnShowStatus } from '../../Redux/app/appSelectors';
 import LoginIcon from '@mui/icons-material/Login';
 import { IconButton } from '@mui/joy';
 import cn from 'classnames';
@@ -24,7 +24,8 @@ const AppHeader: React.FC<PropsType> = ({}) => {
 	const loginData = useSelector(selectMyLoginData);
 	const myAccountData = useSelector(selectMyAccountData);
 	const isReturnBtnShow = useSelector(selectReturnBtnShowStatus);
-	const prevPage = useSelector(selectPrevPage);
+	const prevPages = useSelector(selectPrevPages);
+	const lastPrevPage = useSelector(selectLastPrevPage);
 
 	const headerRef = useRef<HTMLDivElement>(null);
 
@@ -37,18 +38,22 @@ const AppHeader: React.FC<PropsType> = ({}) => {
 	}
 
 	useEffect(() => {
+		console.log('prev pahges', prevPages);
+	}, [isSearchUsersFormShow])
+
+	useEffect(() => {
 		const headerHeight = headerRef.current?.clientHeight || 0;
 		dispatch(headerHeightReceived(headerHeight));
 	}, [headerRef]);
 
 	useEffect(() => {
-		console.log('prev page', prevPage === pathname);
-		if(prevPage === pathname)  {
+		console.log('prev page', lastPrevPage === pathname);
+		if(lastPrevPage === pathname)  {
 			dispatch(returnBtnShowStatusChanged(false));
 		} else {
 			dispatch(returnBtnShowStatusChanged(true));
 		}
-	}, [prevPage, pathname])
+	}, [prevPages, pathname, lastPrevPage]);
 
 	return (
 		<header 
