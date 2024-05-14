@@ -9,8 +9,8 @@ import { globalErrorStateChanged } from '../app/appReducer';
 
 
 //=================ACTIONS==================
-export const usersReceived = createAction<ReceivedAccountDataType[]>('users/USERS_RECEIVED');
-export const usersFound = createAction<ReceivedAccountDataType[]>('users/USERS_FOUND');
+export const usersReceived = createAction<ReceivedAccountDataType[] | null>('users/USERS_RECEIVED');
+export const usersFound = createAction<ReceivedAccountDataType[] | null>('users/USERS_FOUND');
 
 //====================REDUCER=================
 type UsersStateType = {

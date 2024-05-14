@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import classes from './SearchUsers.module.scss'
 import { useParams } from 'react-router-dom'
 import { useAppDispatch } from '../../Redux/store';
-import { searchUsersByFullname } from '../../Redux/users/users-reducer';
+import { searchUsersByFullname, usersFound } from '../../Redux/users/users-reducer';
 import { selectFoundUsers } from '../../Redux/users/users-selectors';
 import { useSelector } from 'react-redux';
 import { FoundUsers } from './FoundUsers/FoundUsers';
@@ -27,11 +27,16 @@ export const SearchUsers: React.FC<PropsType> = ({}) => {
                 setIsLoading(false);
             })();
         }
-    }, [searchTerm])
+
+        return () => {
+            dispatch(usersFound(null));
+        }
+    }, [searchTerm]);
  
     if(isLoading) return <Preloader fixed />
     return (
         <section className={classes.SearchUsers}>
+            <h2 className={classes.title}>Результати пошуку</h2>
             {foundUsers && foundUsers.length > 0 ?
                 <FoundUsers 
                     data={foundUsers}

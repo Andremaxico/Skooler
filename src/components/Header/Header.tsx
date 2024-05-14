@@ -20,6 +20,8 @@ type PropsType = {};
 
 const AppHeader: React.FC<PropsType> = ({}) => {
 	const [isSearchUsersFormShow, setIsSearchUsersFormShow] = useState<boolean>(false);
+    //const [isReturnBtnShow, setIsReturnBtnShow] = useState<boolean>(false);
+
 
 	const loginData = useSelector(selectMyLoginData);
 	const myAccountData = useSelector(selectMyAccountData);
@@ -46,14 +48,24 @@ const AppHeader: React.FC<PropsType> = ({}) => {
 		dispatch(headerHeightReceived(headerHeight));
 	}, [headerRef]);
 
+	// useEffect(() => {
+	// 	console.log('prev page', lastPrevPage === pathname);
+	// 	if(lastPrevPage === pathname)  {
+	// 		dispatch(returnBtnShowStatusChanged(false));
+	// 	} else {
+	// 		dispatch(returnBtnShowStatusChanged(true));
+	// 	}
+	// }, [prevPages, pathname, lastPrevPage]);
+
+	//setting is return btn show
 	useEffect(() => {
-		console.log('prev page', lastPrevPage === pathname);
-		if(lastPrevPage === pathname)  {
-			dispatch(returnBtnShowStatusChanged(false));
-		} else {
-			dispatch(returnBtnShowStatusChanged(true));
-		}
-	}, [prevPages, pathname, lastPrevPage]);
+		console.log('pathname', pathname);
+        if(pathname.includes('searchUser')) {
+            returnBtnShowStatusChanged(true);
+        } else {
+            returnBtnShowStatusChanged(false);
+        }
+    }, [pathname]);
 
 	return (
 		<header 
@@ -65,7 +77,7 @@ const AppHeader: React.FC<PropsType> = ({}) => {
 			id='appHeader'
 		>
 			<div className={classes.buttons}>
-				{/* {isReturnBtnShow && <ReturnBtn />} */}
+				{isReturnBtnShow && <ReturnBtn />}
 				<SearchButtons 
 					setIsSearchUserFormShow={setIsSearchUsersFormShow}
 					isUsersSearching={isSearchUsersFormShow}

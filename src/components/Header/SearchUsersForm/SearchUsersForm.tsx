@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import classes from './SearchUsersForm.module.scss';
 import { FormControl, FormHelperText, FormLabel, IconButton, Input } from '@mui/joy';
 import cn from 'classnames';
@@ -7,7 +7,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { ViewSidebar } from '@mui/icons-material';
 import { useAppDispatch } from '../../../Redux/store';
 import { searchUsersByFullname } from '../../../Redux/users/users-reducer';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import PersonSearchIcon from '@mui/icons-material/PersonSearch';
 import { event } from 'firebase-functions/v1/analytics';
 
@@ -21,7 +21,7 @@ type FormFieldsType = {
 
 export const SearchUsersForm: React.FC<PropsType> = ({closeForm}) => {
     const { control, handleSubmit, formState: {errors} } = useForm<FormFieldsType>();
-    
+
     //joy Ui provides <div> instead of <input />
     const inputRef = useRef<HTMLDivElement>(null);
     const formRef = useRef<HTMLFormElement>(null);
