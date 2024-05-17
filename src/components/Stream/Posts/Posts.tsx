@@ -14,6 +14,7 @@ import { selectFooterHeight, selectHeaderHeight } from '../../../Redux/app/appSe
 import { useInView } from 'react-intersection-observer';
 import { debounce } from 'lodash';
 import { Tumbleweed } from '../../../UI/Tumbleweed';
+import { PostsList } from './PostsList';
 
 type PropsType = {
 	isLoading: boolean,
@@ -21,7 +22,7 @@ type PropsType = {
 
 export const Posts: React.FC<PropsType> = ({isLoading}) => {
 	const [openedAnswerFormQId, setOpenedAnswerFormQId] = useState<string | null>(null);
-	const [isPostsFetching, setIsPostsFetching] = useState<boolean>(true);
+	const [isPostsFetching, setIsPostsFetching] = useState<boolean>(false);
 	
 
 	const lastVisiblePost = useSelector(selectlastVisiblePost);
@@ -29,6 +30,8 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 	const searchedPosts = useSelector(selectSearchedPosts);
 	const isSearching = useSelector(selectIsSearchShowing);
 	const savedScrollValue = useSelector(selectCurrStreamScrollValue);
+
+	console.log('posts', posts);
 
 	const { ref: isInViewRef, inView, entry  } = useInView({
 		threshold: 0.7,
@@ -47,6 +50,7 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 		dispatch(searchedPostsReceived(null));
 
 		if(postsRef.current) {
+			//understand this
 			const postsDiv = postsRef.current;
 			postsDiv.scrollTop = 100;
 			console.log('scroll top ', postsRef.current.scrollTop, postsRef);
@@ -90,6 +94,10 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 		}
 	}, [isSearching]);
 
+	useEffect(() => {
+		console.log('posts first', posts ? posts[0] : 'nof first post');
+	}, [posts]);
+
 	//get next posts if at down
 	// const handleScroll = debounce(() => {
 	// 	const scrollTop = window.scrollY;
@@ -118,6 +126,8 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 		console.log('is posts fetching', isPostsFetching);
 	}, [isPostsFetching]);
 
+	console.log(isLoading, 'is loadiing', isPostsFetching, 'isPostsFetching');
+
 	if(isLoading || posts === null) return <Preloader fixed />;
 
 	return (
@@ -144,16 +154,12 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 				</>
 			: searchedPosts == null && !!posts && posts.length || 0 > 0 ?
 				<>
-					{posts?.map(data => (
-						<PostCard 
-							data={data} 
-							key={data.id} 
-							isOpen={false} 
-							ref={isInViewRef}
-							answeringQuestionId={openedAnswerFormQId}
-							setAnsweringQuestionId={setOpenedAnswerFormQId}
-						/>
-					))}
+					<PostsList 
+						ref={isInViewRef}
+						openedAnswerFormQId={openedAnswerFormQId}
+						setOpenedAnswerFormQId={setOpenedAnswerFormQId}
+						posts={posts}
+					/>
 					{isPostsFetching &&
 						<div className={classes.loaderBox}>
 							<Preloader width={20} height={20} />
