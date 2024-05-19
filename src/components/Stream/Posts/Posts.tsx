@@ -3,7 +3,7 @@ import classes from './Posts.module.scss';
 
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from '../../../Redux/store';
-import { currPostAnswersReceived, currStreamScrollValueChanged, getNextPosts, searchedPostsReceived } from '../../../Redux/stream/stream-reducer';
+import { allPostsReceived, currPostAnswersReceived, currStreamScrollValueChanged, getNextPosts, searchedPostsReceived } from '../../../Redux/stream/stream-reducer';
 import { selectCurrStreamScrollValue, selectIsSearchShowing, selectlastVisiblePost, selectPosts, selectSearchedPosts, selectUserActionStatus } from '../../../Redux/stream/stream-selectors';
 import { PostCard } from './PostCard';
 import Preloader from '../../../UI/Preloader';
@@ -31,8 +31,6 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 	const isSearching = useSelector(selectIsSearchShowing);
 	const savedScrollValue = useSelector(selectCurrStreamScrollValue);
 
-	console.log('posts', posts);
-
 	const { ref: isInViewRef, inView, entry  } = useInView({
 		threshold: 0.7,
 	});
@@ -50,35 +48,50 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 		dispatch(searchedPostsReceived(null));
 
 		if(postsRef.current) {
-			//understand this
+			//u todo: understand this
 			const postsDiv = postsRef.current;
 			postsDiv.scrollTop = 100;
 			console.log('scroll top ', postsRef.current.scrollTop, postsRef);
 		}
 	}
 
-	//=============GET POSTS.===========	
+	//=============GET POSTS===========	
 	useEffect(() => {
 		//if first posts -> loader
 		if(!posts) {
 			//if last vivisble post in not setted 
 			//-> get first posts and show loader
-			if(lastVisiblePost === null) {
+			console.log('last visible post', lastVisiblePost, isPostsFetching);
+			if(lastVisiblePost === null && !isPostsFetching) {
 				const getFirstPosts = async () => {
+					console.log('get first posts');
+					setIsPostsFetching(true);
 					await dispatch(getNextPosts());
+					setIsPostsFetching(false);
 				}
 
 				getFirstPosts();
 			}
 		}
+
+		//first posts fetching twice, 
+		//because we visit /(1x) -> /login -> /(2x) 
+		//we need to clear posts in login page
+		// return () => {
+		// 	dispatch(allPostsReceived(null));
+		// }
 	}, []);
 
+
+	//if user see last post -> fetch new
 	useEffect(() => {
 		console.log('is in view', inView);
-		if(inView) {
+		if(inView && !isPostsFetching) {
 			//set newPosts
+			console.log('last visible post', lastVisiblePost);
 			const fetchPosts = async () => {
 				setIsPostsFetching(true);
+				console.log('fetch posts');
 				await dispatch(getNextPosts());
 				setIsPostsFetching(false);
 			}
@@ -95,7 +108,7 @@ export const Posts: React.FC<PropsType> = ({isLoading}) => {
 	}, [isSearching]);
 
 	useEffect(() => {
-		console.log('posts first', posts ? posts[0] : 'nof first post');
+		console.log('posts first', posts ? posts[0] : 'no posts');
 	}, [posts]);
 
 	//get next posts if at down

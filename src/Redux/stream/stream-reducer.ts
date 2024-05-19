@@ -6,6 +6,7 @@ import { AppDispatchType } from '../store';
 import { globalErrorStateChanged, userActionStatusChanged } from '../app/appReducer';
 
 //=================ACTIONS========================
+export const allPostsReceived = createAction<PostDataType[] | null>('stream/ALL_POSTS_RECEIVED');
 export const newPostsReceived = createAction<PostDataType[]>('stream/NEW_POSTS_RECEIVED');
 export const nextPostsReceived = createAction<PostDataType[]>('stream/NEXT_POSTS_RECEIVED');
 export const newPostReceived = createAction<PostDataType>('stream/NEW_POST_RECEIVED');
@@ -225,6 +226,9 @@ export const streamReducer = createReducer(inititalState, (builder) => {
 		.addCase(lastVisiblePostChanged, (state, action) => {
 			state.lastVisiblePost = action.payload;
 		})
+		.addCase(allPostsReceived, (state, action) => {
+			state.posts = action.payload;
+		})
 		.addDefaultCase(() => {})
 });
 
@@ -244,7 +248,12 @@ export const getNextPosts = () => async (dispatch: AppDispatchType, getState: ()
 			//set last post for triggering loading next posts if we see lastPost 
 			const lastPost = nextPosts[nextPosts.length - 1];
 
-			dispatch(lastVisiblePostChanged(lastPost));
+			console.log('last post', lastPost);
+			//sometimes we get 'undefined' for last Post 
+			//and fetching the same posts(first)
+			if(lastPost) {
+				dispatch(lastVisiblePostChanged(lastPost));
+			}
 			dispatch(nextPostsReceived(nextPosts));	
 		}
 	} catch(e) {

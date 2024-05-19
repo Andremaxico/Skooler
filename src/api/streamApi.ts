@@ -15,6 +15,7 @@ let documentSnapshots: QuerySnapshot<DocumentData> | null = null;
 
 export const streamAPI =  {
 	async getPosts(lastVisiblePostId: string | null) {
+		console.log('get posts in api', lastVisiblePostId);
 		const postsRef = collection(firestore, 'questions');
 		const postsLimit = POSTS_QUERY_LIMIT;
 		let nextPosts: DocumentData[] = [];
@@ -28,7 +29,7 @@ export const streamAPI =  {
 		// console.log("last", lastVisible);
 
 		// Construct a new query starting at this document,
-		// get the next 25 cities.
+		// get the next [postLimit] posts.
 		if(lastVisiblePostId) {
 			const lastVisiblePostQ = query(postsRef, where('id', '==', lastVisiblePostId));
 			const lastVisiblePostSnaps = await getDocs(lastVisiblePostQ);

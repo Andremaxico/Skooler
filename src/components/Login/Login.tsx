@@ -7,18 +7,19 @@ import { useAppDispatch } from '../../Redux/store';
 import { useSelector } from 'react-redux';
 import { selectAuthedStatus, selectMyAccountData, selectMyLoginData } from '../../Redux/account/account-selectors';
 import { Button } from '@mui/joy';
-import { selectPrevPage } from '../../Redux/app/appSelectors';
+import { selectLastPrevPage } from '../../Redux/app/appSelectors';
 import { SignInForm } from './SignInForm';
 import { OtherLoginMethods } from './OtherLoginMethods';
 import { Links } from './Links';
 import { authErrorRemoved } from '../../Redux/account/account-reducer';
+import { allPostsReceived } from '../../Redux/stream/stream-reducer';
 
 type PropsType = {}
 
 const Login: React.FC<PropsType> = ({}) => {
 	const accountData = useSelector(selectMyAccountData);
 	const isAuthed = useSelector(selectAuthedStatus);
-	const prevPage = useSelector(selectPrevPage);
+	const prevPage = useSelector(selectLastPrevPage);
 
 	const navigate = useNavigate();
 
@@ -44,6 +45,13 @@ const Login: React.FC<PropsType> = ({}) => {
 			dispatch(authErrorRemoved('signin'));
 		}
 	}, []);
+
+	//first posts fetching twice, 
+	//because we visit /(1x) -> /login -> /(2x) 
+	//we need to clear posts in login page
+	useEffect(() => {
+		dispatch(allPostsReceived(null));
+	}, [])
 	
 	const toNavigation = ()   => {
 		console.log('to navigation');
